@@ -1,0 +1,4 @@
+{
+  "pythonIndent.trimLinesWithOnlyWhitespace": true,
+  "python.languageServer": "Pylance"
+}
