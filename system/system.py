@@ -11,6 +11,7 @@ from components.hr_extractor.fft import FFT
 from system.pipeline import Pipeline
 from components.roi_selector.cheeks import Cheeks
 from components.roi_selector.forehead import Forehead
+from system.metrics import Metrics
 
 class System:
   def __init__(self, 
@@ -46,6 +47,9 @@ class System:
     self.running = False
     
     self.heart_rates = {}
+
+    self.processing_metrics = Metrics()
+    self.skipped_frames = 0
     
   def start(self):
     self.running = True
@@ -71,11 +75,12 @@ class System:
     cv2.destroyAllWindows()
 
     print("System stopped.")
+
+    print(f"Skipped frames: {self.skipped_frames}")
+    print(self.processing_metrics)
       
   def capture_frames(self):
-    print("Starting frame capture...")
     while self.running:
-      print("Capturing frames...")
       ret, frame = self.cap.read()
       if not ret:
         self.running = False
@@ -85,43 +90,75 @@ class System:
         self.frame_queue.put(frame, block=False)
       except queue.Full:
         # If queue is full, skip
+        self.skipped_frames += 1
         pass
               
   def process_frames(self):
     while self.running:
       try:
         frame = self.frame_queue.get(timeout=1)
-        timestamp = time.time()
+        t0 = time.time()
         
         face_rects = self.face_detector.detect(frame)
+        t1 = time.time()
+        self.processing_metrics.processing_time['face_detection'] += t1 - t0
+        
         objects = self.face_tracker.update(face_rects)
+        t2 = time.time()
+        self.processing_metrics.processing_time['face_tracking'] += t2 - t1
         
         for (object_id, centroid) in objects.items():
           for face_rect in face_rects:
+            t3 = time.time()
             x, y, x_end, y_end = face_rect
             c_x = (x + x_end) // 2
             c_y = (y + y_end) // 2
+            dist = np.linalg.norm(np.array([c_x, c_y]) - np.array(centroid))
+            t4 = time.time()
+
+            self.processing_metrics.processing_time['face_tracking'] += t4 - t3
             
-            if np.linalg.norm(np.array([c_x, c_y]) - np.array(centroid)) < 30:
+            if dist < 30:
               roi = self.roi_selector.select(frame, face_rect)
-              self.pipeline.add_face_data(object_id, roi, timestamp)
+              t5 = time.time()
+              self.processing_metrics.processing_time['roi_selection'] += t5 - t4
+              
+              self.pipeline.add_face_data(object_id, roi, t0)
               break
         
-        new_results = self.pipeline.process_faces()
+        new_results, signal_extraction_time, hr_extraction_time = self.pipeline.process_faces()
+
+        self.processing_metrics.processing_time['signal_extraction'] += signal_extraction_time
+        self.processing_metrics.processing_time['hr_extraction'] += hr_extraction_time
         
         for face_id, hr in new_results.items():
           self.heart_rates[face_id] = hr
         
         self.result_queue.put((frame, face_rects, objects, self.heart_rates.copy()))
-          
+
+        self.processing_metrics.processing_count += 1
+        self.processing_metrics.total_processing_time += time.time() - t0
+ 
       except queue.Empty:
         continue
-              
+
   def display_frames(self):
+    prev_time = time.time()
+    frame_count = 0
+    fps = 0
+    
     while self.running:
       try:
         frame, rects, objects, heart_rates = self.result_queue.get(timeout=1)
+        frame_count += 1
         
+        current_time = time.time()
+        elapsed_time = current_time - prev_time
+        if elapsed_time >= 1.0:
+          fps = frame_count / elapsed_time
+          frame_count = 0
+          prev_time = current_time
+    
         for (object_id, centroid) in objects.items():
           for (x, y, x_end, y_end) in rects:
             c_x = (x + x_end) // 2
@@ -129,51 +166,6 @@ class System:
             
             if np.linalg.norm(np.array([c_x, c_y]) - np.array(centroid)) < 30:
               cv2.rectangle(frame, (x, y), (x_end, y_end), (0, 255, 0), 2)
-                
-              if isinstance(self.roi_selector, FullFace):
-                overlay = frame.copy()
-                cv2.rectangle(overlay, (x, y), (x_end, y_end), (0, 255, 255), -1)
-                cv2.addWeighted(overlay, 0.3, frame, 0.7, 0, frame)
-                  
-              elif isinstance(self.roi_selector, Cheeks):
-                face_width = x_end - x
-                face_height = y_end - y
-                
-                left_cheek_x = x + int(face_width * 0.1)
-                right_cheek_x = x + int(face_width * 0.6)
-                cheek_y = y + int(face_height * 0.4)
-                cheek_width = int(face_width * 0.3)
-                cheek_height = int(face_height * 0.3)
-                
-                left_cheek_points = np.array([
-                  [left_cheek_x, cheek_y],
-                  [left_cheek_x + cheek_width, cheek_y],
-                  [left_cheek_x + cheek_width, cheek_y + cheek_height],
-                  [left_cheek_x, cheek_y + cheek_height]
-                ])
-                cv2.polylines(frame, [left_cheek_points], True, (0, 255, 255), 2)
-                
-                right_cheek_points = np.array([
-                  [right_cheek_x, cheek_y],
-                  [right_cheek_x + cheek_width, cheek_y],
-                  [right_cheek_x + cheek_width, cheek_y + cheek_height],
-                  [right_cheek_x, cheek_y + cheek_height]
-                ])
-                cv2.polylines(frame, [right_cheek_points], True, (0, 255, 255), 2)
-                  
-              elif isinstance(self.roi_selector, Forehead):
-                forehead_x = x + int((x_end - x) * 0.2)
-                forehead_width = int((x_end - x) * 0.6)
-                forehead_y = y + int((y_end - y) * 0.05)
-                forehead_height = int((y_end - y) * 0.25)
-                  
-                forehead_points = np.array([
-                  [forehead_x, forehead_y],
-                  [forehead_x + forehead_width, forehead_y],
-                  [forehead_x + forehead_width, forehead_y + forehead_height],
-                  [forehead_x, forehead_y + forehead_height]
-                ])
-                cv2.polylines(frame, [forehead_points], True, (0, 255, 255), 2)
                     
               text = f"ID: {object_id}"
               cv2.putText(frame, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
@@ -182,6 +174,8 @@ class System:
                   hr_text = f"HR: {heart_rates[object_id]:.1f} BPM"
                   cv2.putText(frame, hr_text, (x, y - 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
               break
+        fps_text = f"FPS: {fps:.2f}"
+        cv2.putText(frame, fps_text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
         
         cv2.imshow("Multi-Person rPPG [Press 'q' to exit]", frame)
         

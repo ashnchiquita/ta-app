@@ -33,17 +33,26 @@ class Pipeline:
   def process_faces(self):
     current_time = time.time()
     results = {}
+
+    signal_extraction_time = 0
+    hr_extraction_time = 0
     
     for face_id, data in self.face_data.items():
       if (len(data['roi_data']) >= self.window_size and 
         current_time - data['last_processed'] >= (self.step_size / self.fps)):
         
+        t1 = time.time()
         roi_data = np.array(list(data['roi_data']))
         pulse_signal = self.rppg_signal_extractor.extract(roi_data)
+        t2 = time.time()
+        signal_extraction_time += (t2 - t1)
+        
         heart_rate = self.hr_extractor.extract(pulse_signal)
+        t3 = time.time()
+        hr_extraction_time += (t3 - t2)
         
         data['heart_rate'] = heart_rate
         data['last_processed'] = current_time
         results[face_id] = heart_rate
     
-    return results
+    return results, signal_extraction_time, hr_extraction_time

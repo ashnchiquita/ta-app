@@ -350,6 +350,14 @@
         "documentation": {}
     },
     {
+        "label": "Metrics",
+        "importPath": "system.metrics",
+        "description": "system.metrics",
+        "isExtraImport": true,
+        "detail": "system.metrics",
+        "documentation": {}
+    },
+    {
         "label": "System",
         "importPath": "system.system",
         "description": "system.system",
@@ -510,6 +518,15 @@
         "documentation": {}
     },
     {
+        "label": "Metrics",
+        "kind": 6,
+        "importPath": "system.metrics",
+        "description": "system.metrics",
+        "peekOfCode": "class Metrics:\n  def __init__(self):\n    self.processing_count = 0\n    self.total_processing_time = 0\n    self.processing_time = {\n      'face_detection': 0,\n      'face_tracking': 0,\n      'roi_selection': 0,\n      'signal_extraction': 0,\n      'hr_extraction': 0",
+        "detail": "system.metrics",
+        "documentation": {}
+    },
+    {
         "label": "Pipeline",
         "kind": 6,
         "importPath": "system.pipeline",
@@ -541,7 +558,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def run_custom_system():\n    \"\"\"Run the system with custom components\"\"\"\n    # Create custom components\n    face_detector = HaarCascade(scale_factor=1.2, min_neighbors=6)\n    face_tracker = Centroid(max_disappeared=20)\n    roi_selector = Cheeks(target_size=(64, 64))\n    rppg_signal_extractor = CHROM()\n    hr_extractor = FFT()\n    rppg_system = System(\n      camera_id=0,",
+        "peekOfCode": "def run_custom_system():\n    face_detector = HaarCascade(scale_factor=1.2, min_neighbors=6)\n    face_tracker = Centroid(max_disappeared=20)\n    roi_selector = Cheeks(target_size=(64, 64))\n    rppg_signal_extractor = CHROM()\n    hr_extractor = FFT()\n    rppg_system = System(\n      camera_id=0,\n      face_detector=face_detector,\n      face_tracker=face_tracker,",
         "detail": "main",
         "documentation": {}
     }
