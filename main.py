@@ -19,8 +19,6 @@ def run_default_system():
     rppg_system.stop()
 
 def run_custom_system():
-    """Run the system with custom components"""
-    # Create custom components
     face_detector = HaarCascade(scale_factor=1.2, min_neighbors=6)
     face_tracker = Centroid(max_disappeared=20)
     roi_selector = Cheeks(target_size=(64, 64))
@@ -47,7 +45,7 @@ def run_custom_system():
       pass
     finally:
       rppg_system.stop()
-
+      
 if __name__ == "__main__":
-  # run_default_system()
-  run_custom_system()
+  run_default_system()
+  # run_custom_system()
