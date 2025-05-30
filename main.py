@@ -33,7 +33,8 @@ def run_custom_system():
             rppg_signal_extractor=rppg_signal_extractor,
             hr_extractor=hr_extractor,
             window_size=300,
-            step_size=30
+            step_size=30,
+            fps=30
         )
         
         try:

@@ -4,11 +4,11 @@ import numpy as np
 
 class Pipeline:
     def __init__(self, 
-                            rppg_signal_extractor, 
-                            hr_extractor,
-                            window_size=300,
-                            fps=30,
-                            step_size=30):
+                    rppg_signal_extractor, 
+                    hr_extractor,
+                    window_size=300,
+                    fps=30,
+                    step_size=30):
         self.rppg_signal_extractor = rppg_signal_extractor
         self.hr_extractor = hr_extractor
         self.window_size = window_size

@@ -16,15 +16,15 @@ from system.metrics import Metrics
 
 class System:
     def __init__(self, 
-                                camera_id=0,
-                                face_detector=None,
-                                face_tracker=None,
-                                roi_selector=None,
-                                rppg_signal_extractor=None,
-                                hr_extractor=None,
-                                window_size=300,
-                                fps=30,
-                                step_size=30):
+                    camera_id=0,
+                    face_detector=None,
+                    face_tracker=None,
+                    roi_selector=None,
+                    rppg_signal_extractor=None,
+                    hr_extractor=None,
+                    window_size=300,
+                    fps=30,
+                    step_size=30):
         
         self.camera_id = camera_id
         self.cap = cv2.VideoCapture(camera_id)
