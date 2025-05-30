@@ -4,6 +4,7 @@ import threading
 import queue
 import time
 from components.face_detector.haar_cascade import HaarCascade
+from components.face_detector.hailo import HailoFaceDetector
 from components.face_tracker.centroid import Centroid
 from components.roi_selector.fullface import FullFace
 from components.rppg_signal_extractor.conventional.pos import POS
@@ -28,7 +29,8 @@ class System:
     self.camera_id = camera_id
     self.cap = cv2.VideoCapture(camera_id)
     
-    self.face_detector = face_detector or HaarCascade()
+    # self.face_detector = face_detector or HaarCascade()
+    self.face_detector = face_detector or HailoFaceDetector()
     self.face_tracker = face_tracker or Centroid()
     self.roi_selector = roi_selector or FullFace()
     self.rppg_signal_extractor = rppg_signal_extractor or POS(fps=fps)
@@ -91,6 +93,7 @@ class System:
       except queue.Full:
         # If queue is full, skip
         self.skipped_frames += 1
+        print(f"[{self.skipped_frames}] Frame skipped due to full queue.")
         pass
               
   def process_frames(self):
