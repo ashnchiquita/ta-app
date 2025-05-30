@@ -14,8 +14,9 @@ class MediaPipe(FaceDetector):
         faces = []
         for detection in results.detections:
             bbox = detection.location_data.relative_bounding_box
-            h, w, _ = frame.shape
-            x, y, width, height = int(bbox.xmin * w), int(bbox.ymin * h), int(bbox.width * w), int(bbox.height * h)
-            faces.append((x, y, width, height))
+            frame_h, frame_w, _ = frame.shape
+            x_min, y_min = int(bbox.xmin * frame_w), int(bbox.ymin * frame_h)
+            x_max, y_max = int((bbox.xmin + bbox.width) * frame_w), int((bbox.ymin + bbox.height) * frame_h)
+            faces.append((x_min, y_min, x_max, y_max))
 
         return faces
