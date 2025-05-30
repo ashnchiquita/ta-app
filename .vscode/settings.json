@@ -1,4 +1,9 @@
 {
   "pythonIndent.trimLinesWithOnlyWhitespace": true,
-  "python.languageServer": "Pylance"
+  "python.languageServer": "Pylance",
+  "[python]": {
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false
+  }
 }

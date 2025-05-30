@@ -105,12 +105,20 @@
         "documentation": {}
     },
     {
-        "label": "mediapipe",
+        "label": "FaceDetector",
+        "importPath": "components.face_detector.base",
+        "description": "components.face_detector.base",
+        "isExtraImport": true,
+        "detail": "components.face_detector.base",
+        "documentation": {}
+    },
+    {
+        "label": "degirum",
         "kind": 6,
         "isExtraImport": true,
-        "importPath": "mediapipe",
-        "description": "mediapipe",
-        "detail": "mediapipe",
+        "importPath": "degirum",
+        "description": "degirum",
+        "detail": "degirum",
         "documentation": {}
     },
     {
@@ -120,6 +128,15 @@
         "importPath": "numpy",
         "description": "numpy",
         "detail": "numpy",
+        "documentation": {}
+    },
+    {
+        "label": "mediapipe",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "mediapipe",
+        "description": "mediapipe",
+        "detail": "mediapipe",
         "documentation": {}
     },
     {
@@ -270,6 +287,14 @@
         "documentation": {}
     },
     {
+        "label": "HailoFaceDetector",
+        "importPath": "components.face_detector.hailo",
+        "description": "components.face_detector.hailo",
+        "isExtraImport": true,
+        "detail": "components.face_detector.hailo",
+        "documentation": {}
+    },
+    {
         "label": "Centroid",
         "importPath": "components.face_tracker.centroid",
         "description": "components.face_tracker.centroid",
@@ -378,7 +403,7 @@
         "kind": 6,
         "importPath": "components.face_detector.base",
         "description": "components.face_detector.base",
-        "peekOfCode": "class FaceDetector(ABC):\n  @abstractmethod\n  def detect(self, frame):\n    pass",
+        "peekOfCode": "class FaceDetector(ABC):\n    @abstractmethod\n    def detect(self, frame):\n        pass",
         "detail": "components.face_detector.base",
         "documentation": {}
     },
@@ -387,8 +412,17 @@
         "kind": 6,
         "importPath": "components.face_detector.haar_cascade",
         "description": "components.face_detector.haar_cascade",
-        "peekOfCode": "class HaarCascade(FaceDetector):\n  def __init__(self, scale_factor: float=1.1, min_neighbors: int=7):\n    self.scale_factor = scale_factor\n    self.min_neighbors = min_neighbors\n    self.detector = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')\n  def detect(self, frame):\n    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)\n    faces = self.detector.detectMultiScale(gray, scaleFactor=self.scale_factor, minNeighbors=self.min_neighbors)\n    return [(x, y, x + w, y + h) for (x, y, w, h) in faces]",
+        "peekOfCode": "class HaarCascade(FaceDetector):\n    def __init__(self, scale_factor: float=1.1, min_neighbors: int=7):\n        self.scale_factor = scale_factor\n        self.min_neighbors = min_neighbors\n        self.detector = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')\n    def detect(self, frame):\n        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)\n        faces = self.detector.detectMultiScale(gray, scaleFactor=self.scale_factor, minNeighbors=self.min_neighbors)\n        return [(x, y, x + w, y + h) for (x, y, w, h) in faces]",
         "detail": "components.face_detector.haar_cascade",
+        "documentation": {}
+    },
+    {
+        "label": "HailoFaceDetector",
+        "kind": 6,
+        "importPath": "components.face_detector.hailo",
+        "description": "components.face_detector.hailo",
+        "peekOfCode": "class HailoFaceDetector(FaceDetector):\n        def __init__(self, model_name=\"scrfd_10g--640x640_quant_hailort_hailo8l_1\", \n                                 confidence_threshold=0.5):\n                self.face_model = dg.load_model(\n                        model_name=model_name,\n                        inference_host_address=\"@local\",\n                        # zoo_url=\"degirum/models_hailort\",\n                        zoo_url=\"/home/pme/ta/ta-app/resources/zoo\",\n                        token=\"\",\n                        overlay_color=(0, 255, 0)",
+        "detail": "components.face_detector.hailo",
         "documentation": {}
     },
     {
@@ -396,7 +430,7 @@
         "kind": 6,
         "importPath": "components.face_detector.mediapipe",
         "description": "components.face_detector.mediapipe",
-        "peekOfCode": "class MediaPipe(FaceDetector):\n  def __init__(self, min_confidence: float=0.5):\n    self.detector = mp.solutions.face_detection.FaceDetection(min_detection_confidence=min_confidence)\n  def detect(self, frame):\n    rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)\n    results = self.detector.process(rgb_image)\n    # [TODO] possibility to parallelize this\n    faces = []\n    for detection in results.detections:\n      bbox = detection.location_data.relative_bounding_box",
+        "peekOfCode": "class MediaPipe(FaceDetector):\n    def __init__(self, min_confidence: float=0.5):\n        self.detector = mp.solutions.face_detection.FaceDetection(min_detection_confidence=min_confidence)\n    def detect(self, frame):\n        rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)\n        results = self.detector.process(rgb_image)\n        # [TODO] possibility to parallelize this\n        faces = []\n        for detection in results.detections:\n            bbox = detection.location_data.relative_bounding_box",
         "detail": "components.face_detector.mediapipe",
         "documentation": {}
     },
@@ -405,7 +439,7 @@
         "kind": 6,
         "importPath": "components.face_tracker.base",
         "description": "components.face_tracker.base",
-        "peekOfCode": "class FaceTracker(ABC):\n  @abstractmethod\n  def update(self, rects):\n    pass",
+        "peekOfCode": "class FaceTracker(ABC):\n    @abstractmethod\n    def update(self, rects):\n        pass",
         "detail": "components.face_tracker.base",
         "documentation": {}
     },
@@ -414,7 +448,7 @@
         "kind": 6,
         "importPath": "components.face_tracker.centroid",
         "description": "components.face_tracker.centroid",
-        "peekOfCode": "class Centroid(FaceTracker):\n  def __init__(self, max_disappeared=50):\n    self.next_object_id = 0\n    self.objects = {}\n    self.disappeared = {}\n    self.max_disappeared = max_disappeared\n  def register(self, centroid):\n    self.objects[self.next_object_id] = centroid\n    self.disappeared[self.next_object_id] = 0\n    self.next_object_id += 1",
+        "peekOfCode": "class Centroid(FaceTracker):\n    def __init__(self, max_disappeared=50):\n        self.next_object_id = 0\n        self.objects = {}\n        self.disappeared = {}\n        self.max_disappeared = max_disappeared\n    def register(self, centroid):\n        self.objects[self.next_object_id] = centroid\n        self.disappeared[self.next_object_id] = 0\n        self.next_object_id += 1",
         "detail": "components.face_tracker.centroid",
         "documentation": {}
     },
@@ -423,7 +457,7 @@
         "kind": 6,
         "importPath": "components.hr_extractor.base",
         "description": "components.hr_extractor.base",
-        "peekOfCode": "class HRExtractor(ABC):\n  def __init__(self, fps: float=30.0):\n    self.fps = fps\n  @abstractmethod\n  def extract(self, pulse_signal):\n    pass",
+        "peekOfCode": "class HRExtractor(ABC):\n    def __init__(self, fps: float=30.0):\n        self.fps = fps\n    @abstractmethod\n    def extract(self, pulse_signal):\n        pass",
         "detail": "components.hr_extractor.base",
         "documentation": {}
     },
@@ -432,7 +466,7 @@
         "kind": 6,
         "importPath": "components.hr_extractor.fft",
         "description": "components.hr_extractor.fft",
-        "peekOfCode": "class FFT(HRExtractor):\n  def extract(self, pulse_signal):\n    fft_size = len(pulse_signal)\n    fft_data = np.abs(np.fft.rfft(pulse_signal, fft_size))\n    freqs = np.fft.rfftfreq(fft_size, d=1.0/self.fps)\n    # Expected heart rate range: 40-240 BPM\n    valid_range = np.where((freqs >= 0.7) & (freqs <= 4.0))\n    max_idx = np.argmax(fft_data[valid_range])\n    hr_freq = freqs[valid_range][max_idx]\n    heart_rate = hr_freq * 60  # Hz -> BPM",
+        "peekOfCode": "class FFT(HRExtractor):\n    def extract(self, pulse_signal):\n        fft_size = len(pulse_signal)\n        fft_data = np.abs(np.fft.rfft(pulse_signal, fft_size))\n        freqs = np.fft.rfftfreq(fft_size, d=1.0/self.fps)\n        # Expected heart rate range: 40-240 BPM\n        valid_range = np.where((freqs >= 0.7) & (freqs <= 4.0))\n        max_idx = np.argmax(fft_data[valid_range])\n        hr_freq = freqs[valid_range][max_idx]\n        heart_rate = hr_freq * 60    # Hz -> BPM",
         "detail": "components.hr_extractor.fft",
         "documentation": {}
     },
@@ -441,7 +475,7 @@
         "kind": 6,
         "importPath": "components.hr_extractor.peak_detection",
         "description": "components.hr_extractor.peak_detection",
-        "peekOfCode": "class PeakDetection(HRExtractor):\n  def extract(self, pulse_signal):\n    peaks, _ = signal.find_peaks(pulse_signal, distance=self.fps/4)\n    if len(peaks) < 2:\n      return 0\n    peak_times = peaks / self.fps\n    intervals = np.diff(peak_times)\n    avg_interval = np.mean(intervals)\n    heart_rate = 60 / avg_interval\n    return heart_rate",
+        "peekOfCode": "class PeakDetection(HRExtractor):\n    def extract(self, pulse_signal):\n        peaks, _ = signal.find_peaks(pulse_signal, distance=self.fps/4)\n        if len(peaks) < 2:\n            return 0\n        peak_times = peaks / self.fps\n        intervals = np.diff(peak_times)\n        avg_interval = np.mean(intervals)\n        heart_rate = 60 / avg_interval\n        return heart_rate",
         "detail": "components.hr_extractor.peak_detection",
         "documentation": {}
     },
@@ -450,7 +484,7 @@
         "kind": 6,
         "importPath": "components.roi_selector.base",
         "description": "components.roi_selector.base",
-        "peekOfCode": "class ROISelector(ABC):\n  def __init__(self, target_size=(64, 64)):\n    self.target_size = target_size\n  @abstractmethod\n  def select(self, frame, face_rect):\n    pass",
+        "peekOfCode": "class ROISelector(ABC):\n    def __init__(self, target_size=(64, 64)):\n        self.target_size = target_size\n    @abstractmethod\n    def select(self, frame, face_rect):\n        pass",
         "detail": "components.roi_selector.base",
         "documentation": {}
     },
@@ -459,7 +493,7 @@
         "kind": 6,
         "importPath": "components.roi_selector.cheeks",
         "description": "components.roi_selector.cheeks",
-        "peekOfCode": "class Cheeks(ROISelector):\n  def select(self, frame, face_rect):\n    x, y, x_end, y_end = face_rect\n    face_width = x_end - x\n    face_height = y_end - y\n    # [TODO] Adjust these values\n    left_cheek_x = x + int(face_width * 0.1)\n    right_cheek_x = x + int(face_width * 0.6)\n    cheek_y = y + int(face_height * 0.4)\n    cheek_width = int(face_width * 0.3)",
+        "peekOfCode": "class Cheeks(ROISelector):\n    def select(self, frame, face_rect):\n        x, y, x_end, y_end = face_rect\n        face_width = x_end - x\n        face_height = y_end - y\n        # [TODO] Adjust these values\n        left_cheek_x = x + int(face_width * 0.1)\n        right_cheek_x = x + int(face_width * 0.6)\n        cheek_y = y + int(face_height * 0.4)\n        cheek_width = int(face_width * 0.3)",
         "detail": "components.roi_selector.cheeks",
         "documentation": {}
     },
@@ -468,7 +502,7 @@
         "kind": 6,
         "importPath": "components.roi_selector.forehead",
         "description": "components.roi_selector.forehead",
-        "peekOfCode": "class Forehead(ROISelector):\n  def select(self, frame, face_rect):\n    x, y, x_end, y_end = face_rect\n    face_width = x_end - x\n    face_height = y_end - y\n    # TODO: Adjust these values\n    forehead_x = x + int(face_width * 0.2)\n    forehead_width = int(face_width * 0.6)\n    forehead_y = y + int(face_height * 0.05)\n    forehead_height = int(face_height * 0.25)",
+        "peekOfCode": "class Forehead(ROISelector):\n    def select(self, frame, face_rect):\n        x, y, x_end, y_end = face_rect\n        face_width = x_end - x\n        face_height = y_end - y\n        # TODO: Adjust these values\n        forehead_x = x + int(face_width * 0.2)\n        forehead_width = int(face_width * 0.6)\n        forehead_y = y + int(face_height * 0.05)\n        forehead_height = int(face_height * 0.25)",
         "detail": "components.roi_selector.forehead",
         "documentation": {}
     },
@@ -477,7 +511,7 @@
         "kind": 6,
         "importPath": "components.roi_selector.fullface",
         "description": "components.roi_selector.fullface",
-        "peekOfCode": "class FullFace(ROISelector):\n  def select(self, frame, face_rect):\n    x, y, x_end, y_end = face_rect\n    roi = frame[y:y_end, x:x_end]\n    if roi.size == 0:\n      return None\n    return cv2.resize(roi, self.target_size)",
+        "peekOfCode": "class FullFace(ROISelector):\n    def select(self, frame, face_rect):\n        x, y, x_end, y_end = face_rect\n        roi = frame[y:y_end, x:x_end]\n        if roi.size == 0:\n            return None\n        return cv2.resize(roi, self.target_size)",
         "detail": "components.roi_selector.fullface",
         "documentation": {}
     },
@@ -486,7 +520,7 @@
         "kind": 6,
         "importPath": "components.rppg_signal_extractor.conventional.chrom",
         "description": "components.rppg_signal_extractor.conventional.chrom",
-        "peekOfCode": "class CHROM(RPPGSignalExtractor):\n  def extract(self, roi_data):\n    rgb_signals = np.mean(roi_data, axis=(1, 2))\n    rgb_norm = rgb_signals / np.mean(rgb_signals, axis=0)\n    X_chrom = 3 * rgb_norm[:, 0] - 2 * rgb_norm[:, 1]\n    Y_chrom = 1.5 * rgb_norm[:, 0] + rgb_norm[:, 1] - 1.5 * rgb_norm[:, 2]\n    std_X = np.std(X_chrom)\n    std_Y = np.std(Y_chrom)\n    alpha = std_X / std_Y\n    pulse = X_chrom - alpha * Y_chrom",
+        "peekOfCode": "class CHROM(RPPGSignalExtractor):\n    def extract(self, roi_data):\n        rgb_signals = np.mean(roi_data, axis=(1, 2))\n        rgb_norm = rgb_signals / np.mean(rgb_signals, axis=0)\n        X_chrom = 3 * rgb_norm[:, 0] - 2 * rgb_norm[:, 1]\n        Y_chrom = 1.5 * rgb_norm[:, 0] + rgb_norm[:, 1] - 1.5 * rgb_norm[:, 2]\n        std_X = np.std(X_chrom)\n        std_Y = np.std(Y_chrom)\n        alpha = std_X / std_Y\n        pulse = X_chrom - alpha * Y_chrom",
         "detail": "components.rppg_signal_extractor.conventional.chrom",
         "documentation": {}
     },
@@ -495,7 +529,7 @@
         "kind": 6,
         "importPath": "components.rppg_signal_extractor.conventional.pos",
         "description": "components.rppg_signal_extractor.conventional.pos",
-        "peekOfCode": "class POS(RPPGSignalExtractor):\n  def extract(self, roi_data):\n    rgb_signals = np.mean(roi_data, axis=(1, 2))\n    rgb_norm = rgb_signals / np.mean(rgb_signals, axis=0)\n    X = rgb_norm[:, 0] - rgb_norm[:, 1]  # R-G\n    Y = rgb_norm[:, 0] + rgb_norm[:, 1] - 2 * rgb_norm[:, 2]  # R+G-2B\n    alpha = np.std(X) / np.std(Y)\n    pulse = X - alpha * Y\n    # Bandpass filtering (0.7-4Hz, typical heart rate range 42-240 BPM)\n    b, a = signal.butter(3, [0.7/self.fps*2, 4/self.fps*2], btype='bandpass')",
+        "peekOfCode": "class POS(RPPGSignalExtractor):\n    def extract(self, roi_data):\n        rgb_signals = np.mean(roi_data, axis=(1, 2))\n        rgb_norm = rgb_signals / np.mean(rgb_signals, axis=0)\n        X = rgb_norm[:, 0] - rgb_norm[:, 1]    # R-G\n        Y = rgb_norm[:, 0] + rgb_norm[:, 1] - 2 * rgb_norm[:, 2]    # R+G-2B\n        alpha = np.std(X) / np.std(Y)\n        pulse = X - alpha * Y\n        # Bandpass filtering (0.7-4Hz, typical heart rate range 42-240 BPM)\n        b, a = signal.butter(3, [0.7/self.fps*2, 4/self.fps*2], btype='bandpass')",
         "detail": "components.rppg_signal_extractor.conventional.pos",
         "documentation": {}
     },
@@ -504,7 +538,7 @@
         "kind": 6,
         "importPath": "components.rppg_signal_extractor.deep_learning.deep_phys",
         "description": "components.rppg_signal_extractor.deep_learning.deep_phys",
-        "peekOfCode": "class DeepPhys(RPPGSignalExtractor):\n  def __init__(self, model_path: str, fps: float=30.0):\n    super().__init__(fps)\n    self.model_path = model_path\n    # TODO: Load the model\n    self.model = None  \n  # TODO: Implement the extraction method\n  def extract(self, roi_data):\n    raise NotImplementedError(\"DeepPhys extraction is not implemented yet.\")",
+        "peekOfCode": "class DeepPhys(RPPGSignalExtractor):\n    def __init__(self, model_path: str, fps: float=30.0):\n        super().__init__(fps)\n        self.model_path = model_path\n        # TODO: Load the model\n        self.model = None    \n    # TODO: Implement the extraction method\n    def extract(self, roi_data):\n        raise NotImplementedError(\"DeepPhys extraction is not implemented yet.\")",
         "detail": "components.rppg_signal_extractor.deep_learning.deep_phys",
         "documentation": {}
     },
@@ -513,7 +547,7 @@
         "kind": 6,
         "importPath": "components.rppg_signal_extractor.base",
         "description": "components.rppg_signal_extractor.base",
-        "peekOfCode": "class RPPGSignalExtractor(ABC):\n  def __init__(self, fps: float=30.0):\n    self.fps = fps\n  @abstractmethod\n  def extract(self, roi_data):\n    pass",
+        "peekOfCode": "class RPPGSignalExtractor(ABC):\n    def __init__(self, fps: float=30.0):\n        self.fps = fps\n    @abstractmethod\n    def extract(self, roi_data):\n        pass",
         "detail": "components.rppg_signal_extractor.base",
         "documentation": {}
     },
@@ -522,7 +556,7 @@
         "kind": 6,
         "importPath": "system.metrics",
         "description": "system.metrics",
-        "peekOfCode": "class Metrics:\n  def __init__(self):\n    self.processing_count = 0\n    self.total_processing_time = 0\n    self.processing_time = {\n      'face_detection': 0,\n      'face_tracking': 0,\n      'roi_selection': 0,\n      'signal_extraction': 0,\n      'hr_extraction': 0",
+        "peekOfCode": "class Metrics:\n    def __init__(self):\n        self.processing_count = 0\n        self.total_processing_time = 0\n        self.processing_time = {\n            'face_detection': 0,\n            'face_tracking': 0,\n            'roi_selection': 0,\n            'signal_extraction': 0,\n            'hr_extraction': 0",
         "detail": "system.metrics",
         "documentation": {}
     },
@@ -531,7 +565,7 @@
         "kind": 6,
         "importPath": "system.pipeline",
         "description": "system.pipeline",
-        "peekOfCode": "class Pipeline:\n  def __init__(self, \n              rppg_signal_extractor, \n              hr_extractor,\n              window_size=300,\n              fps=30,\n              step_size=30):\n    self.rppg_signal_extractor = rppg_signal_extractor\n    self.hr_extractor = hr_extractor\n    self.window_size = window_size",
+        "peekOfCode": "class Pipeline:\n    def __init__(self, \n                            rppg_signal_extractor, \n                            hr_extractor,\n                            window_size=300,\n                            fps=30,\n                            step_size=30):\n        self.rppg_signal_extractor = rppg_signal_extractor\n        self.hr_extractor = hr_extractor\n        self.window_size = window_size",
         "detail": "system.pipeline",
         "documentation": {}
     },
@@ -540,7 +574,7 @@
         "kind": 6,
         "importPath": "system.system",
         "description": "system.system",
-        "peekOfCode": "class System:\n  def __init__(self, \n                camera_id=0,\n                face_detector=None,\n                face_tracker=None,\n                roi_selector=None,\n                rppg_signal_extractor=None,\n                hr_extractor=None,\n                window_size=300,\n                fps=30,",
+        "peekOfCode": "class System:\n    def __init__(self, \n                                camera_id=0,\n                                face_detector=None,\n                                face_tracker=None,\n                                roi_selector=None,\n                                rppg_signal_extractor=None,\n                                hr_extractor=None,\n                                window_size=300,\n                                fps=30,",
         "detail": "system.system",
         "documentation": {}
     },
@@ -549,7 +583,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def run_default_system():\n  rppg_system = System(camera_id=0)\n  try:\n    rppg_system.start()\n    while rppg_system.running:\n      time.sleep(0.1)\n  except KeyboardInterrupt:\n    pass\n  finally:\n    rppg_system.stop()",
+        "peekOfCode": "def run_default_system():\n    rppg_system = System(camera_id=0)\n    try:\n        rppg_system.start()\n        while rppg_system.running:\n            time.sleep(0.1)\n    except KeyboardInterrupt:\n        pass\n    finally:\n        rppg_system.stop()",
         "detail": "main",
         "documentation": {}
     },
@@ -558,7 +592,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def run_custom_system():\n    face_detector = HaarCascade(scale_factor=1.2, min_neighbors=6)\n    face_tracker = Centroid(max_disappeared=20)\n    roi_selector = Cheeks(target_size=(64, 64))\n    rppg_signal_extractor = CHROM()\n    hr_extractor = FFT()\n    rppg_system = System(\n      camera_id=0,\n      face_detector=face_detector,\n      face_tracker=face_tracker,",
+        "peekOfCode": "def run_custom_system():\n        face_detector = HaarCascade(scale_factor=1.2, min_neighbors=6)\n        face_tracker = Centroid(max_disappeared=20)\n        roi_selector = Cheeks(target_size=(64, 64))\n        rppg_signal_extractor = CHROM()\n        hr_extractor = FFT()\n        rppg_system = System(\n            camera_id=0,\n            face_detector=face_detector,\n            face_tracker=face_tracker,",
         "detail": "main",
         "documentation": {}
     }
