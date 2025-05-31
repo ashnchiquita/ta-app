@@ -4,7 +4,9 @@ import threading
 import queue
 import time
 from components.face_detector.haar_cascade import HaarCascade
+from components.face_detector.mediapipe import MediaPipe
 from components.face_detector.hailo import HailoFaceDetector
+from components.face_detector.degirum import DegirumFaceDetector
 from components.face_tracker.centroid import Centroid
 from components.roi_selector.fullface import FullFace
 from components.rppg_signal_extractor.conventional.pos import POS
@@ -106,29 +108,30 @@ class System:
                 t1 = time.time()
                 self.processing_metrics.processing_time['face_detection'] += t1 - t0
                 
-                objects = self.face_tracker.update(face_rects)
+                centroid_map = self.face_tracker.update(face_rects)
                 t2 = time.time()
                 self.processing_metrics.processing_time['face_tracking'] += t2 - t1
                 
-                for (object_id, centroid) in objects.items():
-                    for face_rect in face_rects:
-                        t3 = time.time()
-                        x, y, x_end, y_end = face_rect
-                        c_x = (x + x_end) // 2
-                        c_y = (y + y_end) // 2
-                        dist = np.linalg.norm(np.array([c_x, c_y]) - np.array(centroid))
-                        t4 = time.time()
+                for face_rect in face_rects:
+                    t3 = time.time()
+                    x, y, x_end, y_end = face_rect
+                    c_x = (x + x_end) // 2
+                    c_y = (y + y_end) // 2
 
-                        self.processing_metrics.processing_time['face_tracking'] += t4 - t3
-                        
-                        if dist < 30:
-                            roi = self.roi_selector.select(frame, face_rect)
-                            t5 = time.time()
-                            self.processing_metrics.processing_time['roi_selection'] += t5 - t4
-                            
-                            self.pipeline.add_face_data(object_id, roi, t0)
-                            break
-                
+                    object_id = centroid_map[(c_x, c_y)]
+                    if object_id is None:
+                        raise ValueError(f"Centroid ({c_x}, {c_y}) not found in centroid map.")
+                    
+                    t4 = time.time()
+
+                    self.processing_metrics.processing_time['face_tracking'] += t4 - t3
+                    
+                    roi = self.roi_selector.select(frame, face_rect)
+                    t5 = time.time()
+                    self.processing_metrics.processing_time['roi_selection'] += t5 - t4
+                    
+                    self.pipeline.add_face_data(object_id, roi, t0)
+            
                 new_results, signal_extraction_time, hr_extraction_time = self.pipeline.process_faces()
 
                 self.processing_metrics.processing_time['signal_extraction'] += signal_extraction_time
@@ -137,7 +140,7 @@ class System:
                 for face_id, hr in new_results.items():
                     self.heart_rates[face_id] = hr
                 
-                self.result_queue.put((frame, face_rects, objects, self.heart_rates.copy()))
+                self.result_queue.put((frame, face_rects, centroid_map, self.heart_rates.copy()))
 
                 self.processing_metrics.processing_count += 1
                 self.processing_metrics.total_processing_time += time.time() - t0
@@ -152,7 +155,7 @@ class System:
         
         while self.running:
             try:
-                frame, rects, objects, heart_rates = self.result_queue.get(timeout=1)
+                frame, rects, centroid_map, heart_rates = self.result_queue.get(timeout=1)
                 frame_count += 1
                 
                 current_time = time.time()
@@ -162,21 +165,20 @@ class System:
                     frame_count = 0
                     prev_time = current_time
         
-                for (object_id, centroid) in objects.items():
-                    for (x, y, x_end, y_end) in rects:
-                        c_x = (x + x_end) // 2
-                        c_y = (y + y_end) // 2
-                        
-                        if np.linalg.norm(np.array([c_x, c_y]) - np.array(centroid)) < 30:
-                            cv2.rectangle(frame, (x, y), (x_end, y_end), (0, 255, 0), 2)
-                                        
-                            text = f"ID: {object_id}"
-                            cv2.putText(frame, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-                            
-                            if object_id in heart_rates:
-                                    hr_text = f"HR: {heart_rates[object_id]:.1f} BPM"
-                                    cv2.putText(frame, hr_text, (x, y - 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-                            break
+                for (x, y, x_end, y_end) in rects:
+                    c_x = (x + x_end) // 2
+                    c_y = (y + y_end) // 2
+                    object_id = centroid_map[(c_x, c_y)]
+                    
+                    cv2.rectangle(frame, (x, y), (x_end, y_end), (0, 255, 0), 2)
+                                
+                    text = f"ID: {object_id}"
+                    cv2.putText(frame, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                    
+                    if object_id in heart_rates:
+                            hr_text = f"HR: {heart_rates[object_id]:.1f} BPM"
+                            cv2.putText(frame, hr_text, (x, y - 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+            
                 fps_text = f"FPS: {fps:.2f}"
                 cv2.putText(frame, fps_text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
                 

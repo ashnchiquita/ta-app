@@ -7,13 +7,19 @@ class Centroid(FaceTracker):
         self.objects = {}
         self.disappeared = {}
         self.max_disappeared = max_disappeared
+
+        self.centroid_map = {}
             
     def register(self, centroid):
         self.objects[self.next_object_id] = centroid
         self.disappeared[self.next_object_id] = 0
+        self.centroid_map[(centroid[0], centroid[1])] = self.next_object_id
+        
         self.next_object_id += 1
             
     def deregister(self, object_id):
+        centroid = self.objects[object_id]
+        del self.centroid_map[(centroid[0], centroid[1])]
         del self.objects[object_id]
         del self.disappeared[object_id]
             
@@ -56,6 +62,7 @@ class Centroid(FaceTracker):
                 object_id = object_ids[row]
                 
                 self.objects[object_id] = input_centroids[col]
+                self.centroid_map[(input_centroids[col][0], input_centroids[col][1])] = object_id
                 self.disappeared[object_id] = 0
                 
                 used_rows.add(row)
@@ -75,4 +82,4 @@ class Centroid(FaceTracker):
                 for col in unused_cols:
                     self.register(input_centroids[col])
                             
-        return self.objects
+        return self.centroid_map

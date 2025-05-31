@@ -2,13 +2,13 @@ from components.face_detector.base import FaceDetector
 import degirum as dg
 import numpy as np
 
-class HailoFaceDetector(FaceDetector):
-    def __init__(self, model_name="yolov8n_relu6_face--640x640_quant_hailort_hailo8l_1", 
+class DegirumFaceDetector(FaceDetector):
+    def __init__(self, model_name="yolov8n_relu6_face--640x640_quant_tflite_multidevice_1", 
                     confidence_threshold=0.5):
         self.face_model = dg.load_model(
             model_name=model_name,
             inference_host_address="@local",
-            # zoo_url="degirum/models_hailort",
+            # zoo_url="degirum/public",
             zoo_url="/home/pme/ta/ta-app/resources/zoo",
             token="",
             overlay_color=(0, 255, 0)
@@ -35,5 +35,5 @@ class HailoFaceDetector(FaceDetector):
             return faces
                 
         except Exception as e:
-            print(f"Error in Hailo face detection: {e}")
+            print(f"Error in Degirum face detection: {e}")
             return []
