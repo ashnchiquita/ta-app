@@ -11,4 +11,4 @@ class HaarCascade(FaceDetector):
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         faces = self.detector.detectMultiScale(gray, scaleFactor=self.scale_factor, minNeighbors=self.min_neighbors)
 
-        return [(x, y, x + w, y + h) for (x, y, w, h) in faces]
+        return [(int(x), int(y), int(x + w), int(y + h)) for (x, y, w, h) in faces]
