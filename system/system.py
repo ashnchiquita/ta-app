@@ -16,6 +16,7 @@ from system.pipeline import Pipeline
 from components.roi_selector.cheeks import Cheeks
 from components.roi_selector.forehead import Forehead
 from system.metrics import Metrics
+import system.colors as colors
 
 class System:
     def __init__(self, 
@@ -273,16 +274,16 @@ class System:
                     c_x = (x + x_end) // 2
                     c_y = (y + y_end) // 2
                     object_id = centroid_map[(c_x, c_y)]
-                    
-                    cv2.rectangle(frame, (x, y), (x_end, y_end), (0, 255, 0), 2)
+
+                    color = colors.get_annotation_color(object_id)
+                    cv2.rectangle(frame, (x, y), (x_end, y_end), color, 2)
                                 
-                    text = f"ID: {object_id}"
-                    cv2.putText(frame, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-                    
+                    text = f"[{object_id}]"
                     if object_id in heart_rates:
-                            hr_text = f"HR: {heart_rates[object_id]:.1f} BPM"
-                            cv2.putText(frame, hr_text, (x, y - 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-            
+                        text += f" {heart_rates[object_id]:.1f}"
+                        
+                    cv2.putText(frame, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.4, color, 2)
+                    
                 fps_text = f"FPS: {fps:.2f}"
                 cv2.putText(frame, fps_text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
                 
