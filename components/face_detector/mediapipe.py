@@ -10,13 +10,13 @@ class MediaPipe(FaceDetector):
         rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         results = self.detector.process(rgb_image)
 
-        # [TODO] possibility to parallelize this
         faces = []
-        for detection in results.detections:
-            bbox = detection.location_data.relative_bounding_box
-            frame_h, frame_w, _ = frame.shape
-            x_min, y_min = int(bbox.xmin * frame_w), int(bbox.ymin * frame_h)
-            x_max, y_max = int((bbox.xmin + bbox.width) * frame_w), int((bbox.ymin + bbox.height) * frame_h)
-            faces.append((x_min, y_min, x_max, y_max))
+        if results.detections is not None:
+            for detection in results.detections:
+                bbox = detection.location_data.relative_bounding_box
+                frame_h, frame_w, _ = frame.shape
+                x_min, y_min = int(bbox.xmin * frame_w), int(bbox.ymin * frame_h)
+                x_max, y_max = int((bbox.xmin + bbox.width) * frame_w), int((bbox.ymin + bbox.height) * frame_h)
+                faces.append((x_min, y_min, x_max, y_max))
 
         return faces
