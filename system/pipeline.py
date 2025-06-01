@@ -33,6 +33,7 @@ class Pipeline:
 
     def process_faces(self):
         return self.process_faces_parallel()
+        # return self.process_faces_sequential()
 
     def process_faces_parallel(self):
         current_time = time.time()
@@ -50,8 +51,9 @@ class Pipeline:
         
         if not faces_to_process:
             return results, signal_extraction_time, hr_extraction_time
-        
-        with ThreadPoolExecutor(max_workers=min(len(faces_to_process), 2)) as executor:
+
+        max_workers = min(len(faces_to_process), 10)
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
             future_face_map = {}
             
             for face_id, roi_data, data in faces_to_process:

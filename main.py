@@ -18,6 +18,33 @@ def run_default_system():
     finally:
         rppg_system.stop()
 
+def run_default_system_npy():
+    rppg_system = System(video_file='/home/pme/ta/ta-app/videos/29/video_29_20250503_171818.npy')
+    try:
+        rppg_system.start()
+        
+        while rppg_system.running:
+            time.sleep(0.1)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        rppg_system.stop()
+
+def run_default_system_npy_timestamp():
+    rppg_system = System(
+        video_file='/home/pme/ta/ta-app/videos/29/video_29_20250503_171818.npy',
+        timestamp_file='/home/pme/ta/ta-app/videos/29/timestamps_29_20250503_171818.csv',
+    )
+    try:
+        rppg_system.start()
+        
+        while rppg_system.running:
+            time.sleep(0.1)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        rppg_system.stop()
+        
 def run_custom_system():
         face_detector = HaarCascade(scale_factor=1.2, min_neighbors=6)
         face_tracker = Centroid(max_disappeared=20)
@@ -49,4 +76,6 @@ def run_custom_system():
             
 if __name__ == "__main__":
     run_default_system()
+    # run_default_system_npy()
+    # run_default_system_npy_timestamp()
     # run_custom_system()

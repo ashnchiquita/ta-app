@@ -47,6 +47,7 @@ opencv-python==4.11.0.86
 opt_einsum==3.4.0
 packaging==25.0
 pafy==0.5.5
+pandas==2.2.3
 parso==0.8.4
 pexpect==4.9.0
 pillow==10.4.0
@@ -64,6 +65,7 @@ python-dateutil==2.9.0.post0
 python-dotenv==1.1.0
 python-engineio==4.12.1
 python-socketio==5.13.0
+pytz==2025.2
 PyYAML==6.0.2
 pyzmq==26.4.0
 referencing==0.36.2
@@ -80,6 +82,7 @@ traitlets==5.14.3
 types-PyYAML==6.0.12.20250516
 types-requests==2.32.0.20250515
 typing_extensions==4.13.2
+tzdata==2025.2
 urllib3==2.4.0
 wcwidth==0.2.13
 websocket-client==1.8.0

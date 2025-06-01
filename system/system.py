@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import pandas as pd
 import threading
 import queue
 import time
@@ -18,18 +19,52 @@ from system.metrics import Metrics
 
 class System:
     def __init__(self, 
-                    camera_id=0,
+                    camera_id=None,
+                    video_file=None,
+                    timestamp_file=None,
+                    
                     face_detector=None,
                     face_tracker=None,
                     roi_selector=None,
                     rppg_signal_extractor=None,
                     hr_extractor=None,
+                    
                     window_size=300,
                     fps=30,
                     step_size=30):
         
         self.camera_id = camera_id
-        self.cap = cv2.VideoCapture(camera_id)
+        self.video_file = video_file
+        self.timestamp_file = timestamp_file
+        self.fps = fps
+
+        if video_file is not None:
+            print(f'Using video file: {video_file}')
+            self.video_frames = np.load(video_file)
+            print(f'Video frames loaded: {len(self.video_frames)} frames')
+            self.total_frames = len(self.video_frames)
+            self.current_frame_idx = 0
+            self.cap = None
+
+            if timestamp_file is not None:
+                print(f'Using timestamps from: {timestamp_file}')
+                self.timestamps_df = pd.read_csv(
+                    timestamp_file, 
+                    names=['frame_number', 'timestamp'],
+                    dtype={'frame_number': int, 'timestamp': float},
+                    header=0
+                )
+                self.use_timestamps = True
+                self.start_time = None
+            else:
+                print('No timestamps provided, using constant FPS.')
+                self.use_timestamps = False
+                self.frame_interval = 1.0 / fps
+        else:
+            print(f'Using camera ID: {camera_id}')
+            self.cap = cv2.VideoCapture(camera_id)
+            self.video_frames = None
+            self.use_timestamps = False
         
         # self.face_detector = face_detector or HaarCascade()
         self.face_detector = face_detector or HailoFaceDetector()
@@ -39,11 +74,11 @@ class System:
         self.hr_extractor = hr_extractor or FFT(fps=fps)
         
         self.pipeline = Pipeline(
-                self.rppg_signal_extractor,
-                self.hr_extractor,
-                window_size=window_size,
-                fps=fps,
-                step_size=step_size
+            self.rppg_signal_extractor,
+            self.hr_extractor,
+            window_size=window_size,
+            fps=fps,
+            step_size=step_size
         )
 
         self.frame_queue = queue.Queue(maxsize=30)
@@ -74,8 +109,9 @@ class System:
         self.capture_thread.join()
         self.processing_thread.join()
         self.display_thread.join()
-        
-        self.cap.release()
+
+        if self.cap is not None:
+            self.cap.release()
         cv2.destroyAllWindows()
 
         print("System stopped.")
@@ -84,6 +120,12 @@ class System:
         print(self.processing_metrics)
             
     def capture_frames(self):
+        if self.video_frames is not None:
+            self._capture_from_npy()
+        else:
+            self._capture_from_camera()
+
+    def _capture_from_camera(self):
         while self.running:
             ret, frame = self.cap.read()
             if not ret:
@@ -97,7 +139,69 @@ class System:
                 self.skipped_frames += 1
                 print(f"[{self.skipped_frames}] Frame skipped due to full queue.")
                 pass
-                            
+    def _capture_from_npy(self):
+        if self.use_timestamps:
+            self._capture_with_timestamps()
+        else:
+            self._capture_with_constant_fps()
+
+    def _capture_with_constant_fps(self):
+        frame_start_time = time.time()
+        
+        while self.running and self.current_frame_idx < self.total_frames:
+            frame = self.video_frames[self.current_frame_idx]
+            
+            try:
+                self.frame_queue.put(frame, block=False)
+            except queue.Full:
+                self.skipped_frames += 1
+                print(f"[{self.skipped_frames}] Frame skipped due to full queue.")
+            
+            self.current_frame_idx += 1
+            
+            expected_time = frame_start_time + (self.current_frame_idx * self.frame_interval)
+            current_time = time.time()
+            
+            if expected_time > current_time:
+                time.sleep(expected_time - current_time)
+        
+        if self.current_frame_idx >= self.total_frames:
+            print("Reached end of video file.")
+            self.running = False
+    
+    def _capture_with_timestamps(self):
+        if self.start_time is None:
+            self.start_time = time.time()
+            first_timestamp = self.timestamps_df.iloc[0]['timestamp']
+            self.timestamp_offset = self.start_time - first_timestamp
+        
+        while self.running and self.current_frame_idx < self.total_frames:
+            if self.current_frame_idx >= len(self.timestamps_df):
+                print("Reached end of timestamp file.")
+                self.running = False
+                break
+                
+            frame = self.video_frames[self.current_frame_idx]
+            
+            expected_timestamp = self.timestamps_df.iloc[self.current_frame_idx]['timestamp'] + self.timestamp_offset
+            current_time = time.time()
+            
+            # Wait until it's time to display this frame
+            if expected_timestamp > current_time:
+                time.sleep(expected_timestamp - current_time)
+            
+            try:
+                self.frame_queue.put(frame, block=False)
+            except queue.Full:
+                self.skipped_frames += 1
+                print(f"[{self.skipped_frames}] Frame skipped due to full queue.")
+            
+            self.current_frame_idx += 1
+        
+        if self.current_frame_idx >= self.total_frames:
+            print("Reached end of video file.")
+            self.running = False
+                    
     def process_frames(self):
         while self.running:
             try:
