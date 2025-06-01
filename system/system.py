@@ -213,30 +213,20 @@ class System:
                 t1 = time.time()
                 self.processing_metrics.processing_time['face_detection'] += t1 - t0
                 
-                centroid_map = self.face_tracker.update(face_rects)
+                objects = self.face_tracker.update(face_rects)
                 t2 = time.time()
                 self.processing_metrics.processing_time['face_tracking'] += t2 - t1
-                
-                for face_rect in face_rects:
+
+                for object_id, data in objects.items():
+                    face_rect = data['rect']
+
                     t3 = time.time()
-                    x, y, x_end, y_end = face_rect
-                    c_x = (x + x_end) // 2
-                    c_y = (y + y_end) // 2
-
-                    object_id = centroid_map[(c_x, c_y)]
-                    if object_id is None:
-                        raise ValueError(f"Centroid ({c_x}, {c_y}) not found in centroid map.")
-                    
-                    t4 = time.time()
-
-                    self.processing_metrics.processing_time['face_tracking'] += t4 - t3
-                    
                     roi = self.roi_selector.select(frame, face_rect)
-                    t5 = time.time()
-                    self.processing_metrics.processing_time['roi_selection'] += t5 - t4
+                    t4 = time.time()
+                    self.processing_metrics.processing_time['roi_selection'] += t4 - t3
                     
                     self.pipeline.add_face_data(object_id, roi, t0)
-            
+
                 new_results, signal_extraction_time, hr_extraction_time = self.pipeline.process_faces()
 
                 self.processing_metrics.processing_time['signal_extraction'] += signal_extraction_time
@@ -245,7 +235,7 @@ class System:
                 for face_id, hr in new_results.items():
                     self.heart_rates[face_id] = hr
                 
-                self.result_queue.put((frame, face_rects, centroid_map, self.heart_rates.copy()))
+                self.result_queue.put((frame, objects, self.heart_rates.copy()))
 
                 self.processing_metrics.processing_count += 1
                 self.processing_metrics.total_processing_time += time.time() - t0
@@ -260,7 +250,7 @@ class System:
         
         while self.running:
             try:
-                frame, rects, centroid_map, heart_rates = self.result_queue.get(timeout=1)
+                frame, objects, heart_rates = self.result_queue.get(timeout=1)
                 frame_count += 1
                 
                 current_time = time.time()
@@ -269,18 +259,18 @@ class System:
                     fps = frame_count / elapsed_time
                     frame_count = 0
                     prev_time = current_time
-        
-                for (x, y, x_end, y_end) in rects:
-                    c_x = (x + x_end) // 2
-                    c_y = (y + y_end) // 2
-                    object_id = centroid_map[(c_x, c_y)]
+
+                for object_id, data in objects.items():
+                    x, y, x_end, y_end = data['rect']
 
                     color = colors.get_annotation_color(object_id)
                     cv2.rectangle(frame, (x, y), (x_end, y_end), color, 2)
                                 
-                    text = f"[{object_id}]"
+                    text = f"{object_id} | "
                     if object_id in heart_rates:
-                        text += f" {heart_rates[object_id]:.1f}"
+                        text += f"{heart_rates[object_id]:.1f}"
+                    else:
+                        text += "-"
                         
                     cv2.putText(frame, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.4, color, 2)
                     
