@@ -68,7 +68,9 @@ class System:
             self.use_timestamps = False
         
         # self.face_detector = face_detector or HaarCascade()
-        self.face_detector = face_detector or HailoFaceDetector()
+        # self.face_detector = face_detector or MediaPipe()
+        # self.face_detector = face_detector or HailoFaceDetector()
+        self.face_detector = face_detector or DegirumFaceDetector()
         self.face_tracker = face_tracker or Centroid()
         self.roi_selector = roi_selector or FullFace()
         self.rppg_signal_extractor = rppg_signal_extractor or POS(fps=fps)
