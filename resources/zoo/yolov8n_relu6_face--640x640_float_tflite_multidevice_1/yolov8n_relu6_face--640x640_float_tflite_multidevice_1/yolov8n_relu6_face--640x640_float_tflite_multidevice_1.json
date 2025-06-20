@@ -1,0 +1,67 @@
+{
+    "ConfigVersion": 6,
+    "Checksum": "e5150cbef0a345468e3cc378bf943b11909297220d66f07438bc56d6ed55d7fe",
+    "DEVICE": [
+        {
+            "DeviceType": "CPU",
+            "RuntimeAgent": "TFLITE",
+            "SupportedDeviceTypes": "TFLITE/ARMNN, TFLITE/CPU"
+        }
+    ],
+    "PRE_PROCESS": [
+        {
+            "InputN": 1,
+            "InputType": "Image",
+            "InputResizeMethod": "bilinear",
+            "InputPadMethod": "letterbox",
+            "ImageBackend": "auto",
+            "InputH": 640,
+            "InputW": 640,
+            "InputC": 3,
+            "InputQuantEn": false,
+            "InputQuantOffset": 0,
+            "InputQuantScale": 1,
+            "InputImgNormEn": true,
+            "InputImgNormCoeff": 0.00392156862745098,
+            "InputNormMean": [
+                0,
+                0,
+                0
+            ],
+            "InputNormStd": [
+                1,
+                1,
+                1
+            ],
+            "InputTensorLayout": "NHWC",
+            "InputImgSliceType": "None"
+        }
+    ],
+    "MODEL_PARAMETERS": [
+        {
+            "ModelPath": "yolov8n_relu6_face--640x640_float_tflite_multidevice_1.tflite"
+        }
+    ],
+    "POST_PROCESS": [
+        {
+            "OutputPostprocessType": "DetectionYoloV8",
+            "PostProcessorInputs": [
+                255,
+                247,
+                239,
+                259,
+                251,
+                243
+            ],
+            "OutputNumClasses": 1,
+            "LabelsPath": "labels_yolov8n_relu6_face.json",
+            "OutputClassIDAdjustment": 0,
+            "OutputNMSThreshold": 0.6,
+            "MaxDetectionsPerClass": 100,
+            "MaxClassesPerDetection": 1,
+            "UseRegularNMS": true,
+            "OutputConfThreshold": 0.3,
+            "MaxDetections": 100
+        }
+    ]
+}
