@@ -2,12 +2,13 @@ from collections import deque
 import time
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from components.rppg_signal_extractor.deep_learning.base import DeepLearningRPPGSignalExtractor
 
 class Pipeline:
     def __init__(self, 
                     rppg_signal_extractor, 
                     hr_extractor,
-                    window_size=300,
+                    window_size=180,
                     fps=30,
                     step_size=30):
         self.rppg_signal_extractor = rppg_signal_extractor
@@ -32,8 +33,53 @@ class Pipeline:
             self.face_data[face_id]['roi_data'].append(roi)
 
     def process_faces(self):
+        if isinstance(self.rppg_signal_extractor, DeepLearningRPPGSignalExtractor):
+            # If using multiple models, process in parallel
+            return self.process_faces_batch()
+
         return self.process_faces_parallel()
+        
         # return self.process_faces_sequential()
+
+    def process_faces_batch(self):
+        current_time = time.time()
+        results = {}
+        signal_extraction_time = 0
+        hr_extraction_time = 0
+        
+        # filter to avoid unnecessary thread creation
+        faces_to_process = []
+        for face_id, data in self.face_data.items():
+            if (len(data['roi_data']) >= self.window_size and 
+                current_time - data['last_processed'] >= (self.step_size / self.fps)):
+                roi_data = np.array(list(data['roi_data']))
+                faces_to_process.append((face_id, roi_data, data))
+        
+        if not faces_to_process:
+            return results, signal_extraction_time, hr_extraction_time
+
+        # merge all ROIs into a single batch
+        roi_batch = np.array([roi for _, roi, _ in faces_to_process])
+        roi_batch = roi_batch.reshape(-1, *roi_batch.shape[2:])  # Flatten batch for processing
+
+        print(f"Processing {len(faces_to_process)} faces in batch with shape: {roi_batch.shape}")
+
+        t1 = time.time()
+        pulse_signal = self.rppg_signal_extractor.extract(roi_batch)
+        t2 = time.time()
+        signal_extraction_time += t2 - t1
+
+        for i, (face_id, _, data) in enumerate(faces_to_process):
+            curr_signal = pulse_signal[180*i:180*(i+1)]
+            heart_rate = self.hr_extractor.extract(curr_signal)
+            results[face_id] = heart_rate
+            data['heart_rate'] = heart_rate
+            data['last_processed'] = current_time
+
+        t3 = time.time()
+        hr_extraction_time += t3 - t2
+
+        return results, signal_extraction_time, hr_extraction_time
 
     def process_faces_parallel(self):
         current_time = time.time()

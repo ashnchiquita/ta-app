@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import os
 import pandas as pd
 import threading
 import queue
@@ -7,7 +8,7 @@ import time
 from components.face_detector.haar_cascade import HaarCascade
 from components.face_detector.mediapipe import MediaPipe
 from components.face_detector.hailo import HailoFaceDetector
-from components.face_detector.degirum import DegirumFaceDetector
+# from components.face_detector.degirum import DegirumFaceDetector
 from components.face_tracker.centroid import Centroid
 from components.roi_selector.fullface import FullFace
 from components.rppg_signal_extractor.conventional.pos import POS
@@ -17,6 +18,10 @@ from components.roi_selector.cheeks import Cheeks
 from components.roi_selector.forehead import Forehead
 from system.metrics import Metrics
 import system.colors as colors
+from components.rppg_signal_extractor.deep_learning.onnx.efficient_phys import EfficientPhys
+from components.rppg_signal_extractor.deep_learning.onnx.deep_phys import DeepPhys
+from components.rppg_signal_extractor.deep_learning.onnx.tscan import TSCAN
+from constants import ONNX_DIR
 
 class System:
     def __init__(self, 
@@ -30,7 +35,7 @@ class System:
                     rppg_signal_extractor=None,
                     hr_extractor=None,
                     
-                    window_size=300,
+                    window_size=180,
                     fps=30,
                     step_size=30):
         
@@ -67,13 +72,17 @@ class System:
             self.video_frames = None
             self.use_timestamps = False
         
-        # self.face_detector = face_detector or HaarCascade()
+        self.face_detector = face_detector or HaarCascade()
         # self.face_detector = face_detector or MediaPipe()
         # self.face_detector = face_detector or HailoFaceDetector()
-        self.face_detector = face_detector or DegirumFaceDetector()
+        # self.face_detector = face_detector or DegirumFaceDetector()
         self.face_tracker = face_tracker or Centroid()
         self.roi_selector = roi_selector or FullFace()
-        self.rppg_signal_extractor = rppg_signal_extractor or POS(fps=fps)
+        # self.rppg_signal_extractor = rppg_signal_extractor or POS(fps=fps)
+        self.rppg_signal_extractor = rppg_signal_extractor or DeepPhys(fps=fps, model_path=os.path.join(ONNX_DIR, "PURE_DeepPhys.onnx"))
+        # self.rppg_signal_extractor = rppg_signal_extractor or EfficientPhys(fps=fps, model_path=os.path.join(ONNX_DIR, "PURE_EfficientPhys.onnx"))
+        # self.rppg_signal_extractor = rppg_signal_extractor or TSCAN(fps=fps, model_path=os.path.join(ONNX_DIR, "PURE_TSCAN.onnx"))
+        
         self.hr_extractor = hr_extractor or FFT(fps=fps)
         
         self.pipeline = Pipeline(
