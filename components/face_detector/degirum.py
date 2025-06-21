@@ -1,6 +1,7 @@
 from components.face_detector.base import FaceDetector
 import degirum as dg
 import numpy as np
+from constants import DEGIRUM_ZOO_DIR
 
 class DegirumFaceDetector(FaceDetector):
     def __init__(self, model_name="yolov8n_relu6_face--640x640_quant_tflite_multidevice_1", 
@@ -8,8 +9,7 @@ class DegirumFaceDetector(FaceDetector):
         self.face_model = dg.load_model(
             model_name=model_name,
             inference_host_address="@local",
-            # zoo_url="degirum/public",
-            zoo_url="/home/pme/ta/ta-app/resources/zoo",
+            zoo_url=DEGIRUM_ZOO_DIR,
             token="",
             overlay_color=(0, 255, 0)
         )
