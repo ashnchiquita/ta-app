@@ -19,7 +19,10 @@ def run_default_system():
         rppg_system.stop()
 
 def run_default_system_npy():
-    rppg_system = System(video_file='/home/pme/ta/ta-app/videos/29/video_29_20250503_171818.npy')
+    rppg_system = System(
+        video_file='/home/pme/ta/ta-app/videos/29/video_29_20250503_171818.npy'
+        # video_file='C:\\Users\\dyogggeming\\TA\\tes\\rppg-data\\fix\\camera\\29\\video_29_20250503_171818.npy',
+    )
     try:
         rppg_system.start()
         
@@ -34,6 +37,8 @@ def run_default_system_npy_timestamp():
     rppg_system = System(
         video_file='/home/pme/ta/ta-app/videos/29/video_29_20250503_171818.npy',
         timestamp_file='/home/pme/ta/ta-app/videos/29/timestamps_29_20250503_171818.csv',
+        # video_file='C:\\Users\\dyogggeming\\TA\\tes\\rppg-data\\fix\\camera\\29\\video_29_20250503_171818.npy',
+        # timestamps='C:\\Users\\dyogggeming\\TA\\tes\\rppg-data\\fix\\camera\\29\\timestamps_29_20250503_171818.csv'
     )
     try:
         rppg_system.start()
@@ -59,7 +64,7 @@ def run_custom_system():
             roi_selector=roi_selector,
             rppg_signal_extractor=rppg_signal_extractor,
             hr_extractor=hr_extractor,
-            window_size=300,
+            window_size=180,
             step_size=30,
             fps=30
         )
