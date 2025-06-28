@@ -80,7 +80,7 @@ def run_custom_system():
             rppg_system.stop()
             
 if __name__ == "__main__":
-    run_default_system()
-    # run_default_system_npy()
+    # run_default_system()
+    run_default_system_npy()
     # run_default_system_npy_timestamp()
     # run_custom_system()

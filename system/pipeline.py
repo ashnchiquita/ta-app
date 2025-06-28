@@ -35,7 +35,8 @@ class Pipeline:
     def process_faces(self):
         if isinstance(self.rppg_signal_extractor, DeepLearningRPPGSignalExtractor):
             # If using multiple models, process in parallel
-            return self.process_faces_batch()
+            # return self.process_faces_batch() # Todo: batch processing slows down the system because of memory limitations. find out best batch size then try again
+            return self.process_faces_sequential()
 
         return self.process_faces_parallel()
         

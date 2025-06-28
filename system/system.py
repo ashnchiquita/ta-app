@@ -7,7 +7,6 @@ import queue
 import time
 from components.face_detector.haar_cascade import HaarCascade
 from components.face_detector.mediapipe import MediaPipe
-from components.face_detector.hailo import HailoFaceDetector
 # from components.face_detector.degirum import DegirumFaceDetector
 from components.face_tracker.centroid import Centroid
 from components.roi_selector.fullface import FullFace
@@ -19,9 +18,23 @@ from components.roi_selector.forehead import Forehead
 from system.metrics import Metrics
 import system.colors as colors
 from components.rppg_signal_extractor.deep_learning.onnx.efficient_phys import EfficientPhys
-from components.rppg_signal_extractor.deep_learning.onnx.deep_phys import DeepPhys
+from components.rppg_signal_extractor.deep_learning.onnx.deep_phys import DeepPhys as ONNXDeepPhys
+from components.rppg_signal_extractor.deep_learning.hef.deep_phys import DeepPhys as HEFDeepPhys
 from components.rppg_signal_extractor.deep_learning.onnx.tscan import TSCAN
-from constants import ONNX_DIR
+from components.face_detector.hef.retina_face.retina_face import RetinaFace
+from components.face_detector.hef.scrfd.scrfd import SCRFD
+from constants import ONNX_DIR, HEF_DIR
+from hailo_platform import (
+    HEF,
+    ConfigureParams,
+    FormatType,
+    HailoSchedulingAlgorithm,
+    HailoStreamInterface,
+    InputVStreamParams,
+    InferVStreams,
+    OutputVStreamParams,
+    VDevice,
+)
 
 class System:
     def __init__(self, 
@@ -71,15 +84,20 @@ class System:
             self.cap = cv2.VideoCapture(camera_id)
             self.video_frames = None
             self.use_timestamps = False
-        
-        self.face_detector = face_detector or HaarCascade()
+
+        params = VDevice.create_params()
+        params.scheduling_algorithm = HailoSchedulingAlgorithm.NONE
+        self.target = VDevice(params=params)
+        # # self.face_detector = face_detector or HaarCascade()
         # self.face_detector = face_detector or MediaPipe()
+        self.rppg_signal_extractor = rppg_signal_extractor or HEFDeepPhys(fps=fps, target=self.target, model_path=os.path.join(HEF_DIR, "PURE_DeepPhys_fp_optimized.hef"))
         # self.face_detector = face_detector or HailoFaceDetector()
+        self.face_detector = SCRFD(self.target, variant='10g')
         # self.face_detector = face_detector or DegirumFaceDetector()
         self.face_tracker = face_tracker or Centroid()
         self.roi_selector = roi_selector or FullFace()
-        # self.rppg_signal_extractor = rppg_signal_extractor or POS(fps=fps)
-        self.rppg_signal_extractor = rppg_signal_extractor or DeepPhys(fps=fps, model_path=os.path.join(ONNX_DIR, "PURE_DeepPhys.onnx"))
+        self.rppg_signal_extractor = rppg_signal_extractor or POS(fps=fps)
+        # self.rppg_signal_extractor = rppg_signal_extractor or ONNXDeepPhys(fps=fps, model_path=os.path.join(ONNX_DIR, "PURE_DeepPhys.onnx"))
         # self.rppg_signal_extractor = rppg_signal_extractor or EfficientPhys(fps=fps, model_path=os.path.join(ONNX_DIR, "PURE_EfficientPhys.onnx"))
         # self.rppg_signal_extractor = rppg_signal_extractor or TSCAN(fps=fps, model_path=os.path.join(ONNX_DIR, "PURE_TSCAN.onnx"))
         
@@ -121,6 +139,11 @@ class System:
         self.capture_thread.join()
         self.processing_thread.join()
         self.display_thread.join()
+
+        self.rppg_signal_extractor.cleanup()
+
+        self.target.release()
+        del self.target
 
         if self.cap is not None:
             self.cap.release()

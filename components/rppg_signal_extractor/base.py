@@ -7,3 +7,7 @@ class RPPGSignalExtractor(ABC):
     @abstractmethod
     def extract(self, roi_data):
         pass
+
+    def cleanup(self):
+        """Cleanup resources if needed."""
+        pass

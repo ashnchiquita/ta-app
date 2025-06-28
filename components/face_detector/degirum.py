@@ -18,7 +18,7 @@ class DegirumFaceDetector(FaceDetector):
 
         # warm up the model because it use lazy initialization
         dummy_frame = np.zeros((640, 640, 3), dtype=np.uint8)
-        _ = self.face_model(dummy_frame)    
+        _ = self.face_model(dummy_frame) 
             
     def detect(self, frame):
         try:
