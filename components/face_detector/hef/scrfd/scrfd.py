@@ -11,7 +11,7 @@ from hailo_platform import (
 )
 
 class SCRFD(HEFModel):
-    def __init__(self, target, variant):
+    def __init__(self, variant):
         variants = ['2.5g', '500m', '10g']
         if variant not in variants:
             raise ValueError(f"Invalid variant '{variant}'. Supported variants: {variants}")
@@ -44,7 +44,6 @@ class SCRFD(HEFModel):
 
         super().__init__(
             model_path=hef_path,
-            target=target
         )
 
     def detect(self, frame):

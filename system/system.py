@@ -24,17 +24,7 @@ from components.rppg_signal_extractor.deep_learning.onnx.tscan import TSCAN
 from components.face_detector.hef.retina_face.retina_face import RetinaFace
 from components.face_detector.hef.scrfd.scrfd import SCRFD
 from constants import ONNX_DIR, HEF_DIR
-from hailo_platform import (
-    HEF,
-    ConfigureParams,
-    FormatType,
-    HailoSchedulingAlgorithm,
-    HailoStreamInterface,
-    InputVStreamParams,
-    InferVStreams,
-    OutputVStreamParams,
-    VDevice,
-)
+
 
 class System:
     def __init__(self, 
@@ -85,14 +75,11 @@ class System:
             self.video_frames = None
             self.use_timestamps = False
 
-        params = VDevice.create_params()
-        params.scheduling_algorithm = HailoSchedulingAlgorithm.NONE
-        self.target = VDevice(params=params)
         # # self.face_detector = face_detector or HaarCascade()
         # self.face_detector = face_detector or MediaPipe()
-        self.rppg_signal_extractor = rppg_signal_extractor or HEFDeepPhys(fps=fps, target=self.target, model_path=os.path.join(HEF_DIR, "PURE_DeepPhys_fp_optimized.hef"))
+        self.rppg_signal_extractor = rppg_signal_extractor or HEFDeepPhys(fps=fps, model_path=os.path.join(HEF_DIR, "PURE_DeepPhys_fp_optimized.hef"))
         # self.face_detector = face_detector or HailoFaceDetector()
-        self.face_detector = SCRFD(self.target, variant='10g')
+        self.face_detector = SCRFD(variant='500m')
         # self.face_detector = face_detector or DegirumFaceDetector()
         self.face_tracker = face_tracker or Centroid()
         self.roi_selector = roi_selector or FullFace()
@@ -139,11 +126,6 @@ class System:
         self.capture_thread.join()
         self.processing_thread.join()
         self.display_thread.join()
-
-        self.rppg_signal_extractor.cleanup()
-
-        self.target.release()
-        del self.target
 
         if self.cap is not None:
             self.cap.release()

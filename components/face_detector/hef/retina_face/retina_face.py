@@ -11,7 +11,7 @@ from hailo_platform import (
 )
 
 class RetinaFace(HEFModel):
-    def __init__(self, target):
+    def __init__(self):
         model_name = "retinaface_mobilenet--736x1280_quant_hailort_hailo8l_1"
         zoo_path = os.path.join(DEGIRUM_ZOO_DIR, model_name)
         hef_path = os.path.join(zoo_path, f"{model_name}.hef")
@@ -31,7 +31,6 @@ class RetinaFace(HEFModel):
 
         super().__init__(
             model_path=hef_path,
-            target=target
         )
 
     def detect(self, frame):

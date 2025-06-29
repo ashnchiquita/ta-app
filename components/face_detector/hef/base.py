@@ -6,15 +6,15 @@ from hailo_platform import (
     FormatType,
     HailoStreamInterface,
     InputVStreamParams,
-    InferVStreams,
     OutputVStreamParams,
 )
+from components.manager.hailo_target_manager import HailoTargetManager
 
 class HEFModel(FaceDetector):
-    def __init__(self, model_path: str, target):
+    def __init__(self, model_path: str):
         if not model_path.endswith('.hef'):
             raise ValueError("Model path must point to an HEF file.")
-        self.target = target
+        self.target = HailoTargetManager().target
         self.model_path = model_path
 
         self._load_model()

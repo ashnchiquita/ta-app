@@ -13,8 +13,8 @@ from hailo_platform import (
 )
 
 class DeepPhys(HEFModel):
-    def __init__(self, model_path: str, target, fps: float=30.0):
-        super().__init__(model_path, target, fps)
+    def __init__(self, model_path: str, fps: float=30.0):
+        super().__init__(model_path, fps)
         self.n_frames = 180
 
     def preprocess(self, roi_data):
