@@ -11,11 +11,10 @@ from components.face_detector.mt_cnn import MT_CNN
 # from components.face_detector.degirum import DegirumFaceDetector
 from components.face_tracker.centroid import Centroid
 from components.roi_selector.fullface import FullFace
+from components.roi_selector.fullface_square import FullFaceSquare
 from components.rppg_signal_extractor.conventional.pos import POS
 from components.hr_extractor.fft import FFT
 from system.pipeline import Pipeline
-from components.roi_selector.cheeks import Cheeks
-from components.roi_selector.forehead import Forehead
 from system.metrics import Metrics
 import system.colors as colors
 from components.rppg_signal_extractor.deep_learning.onnx.efficient_phys import EfficientPhys
@@ -85,6 +84,7 @@ class System:
         # self.face_detector = face_detector or DegirumFaceDetector()
         self.face_tracker = face_tracker or Centroid()
         self.roi_selector = roi_selector or FullFace()
+        # self.roi_selector = roi_selector or FullFaceSquare(target_size=(72,72), larger_box_coef=1.5)
         self.rppg_signal_extractor = rppg_signal_extractor or POS(fps=fps)
         # self.rppg_signal_extractor = rppg_signal_extractor or HEFDeepPhys(fps=fps, model_path=os.path.join(HEF_DIR, "PURE_DeepPhys_quantized_20250619-220734.hef"))
         # self.rppg_signal_extractor = rppg_signal_extractor or ONNXDeepPhys(fps=fps, model_path=os.path.join(ONNX_DIR, "PURE_DeepPhys.onnx"))
@@ -238,15 +238,18 @@ class System:
                 t2 = time.time()
                 self.processing_metrics.processing_time['face_tracking'] += t2 - t1
 
+                roi_coords = {}  # Store ROI coordinates for display
                 for object_id, data in objects.items():
                     face_rect = data['rect']
 
                     t3 = time.time()
-                    roi = self.roi_selector.select(frame, face_rect)
+                    roi, roi_coord = self.roi_selector.select(frame, face_rect)
                     t4 = time.time()
                     self.processing_metrics.processing_time['roi_selection'] += t4 - t3
                     
-                    self.pipeline.add_face_data(object_id, roi, t0)
+                    if roi is not None:
+                        roi_coords[object_id] = roi_coord
+                        self.pipeline.add_face_data(object_id, roi, t0)
 
                 new_results, signal_extraction_time, hr_extraction_time = self.pipeline.process_faces()
 
@@ -256,7 +259,7 @@ class System:
                 for face_id, hr in new_results.items():
                     self.heart_rates[face_id] = hr
                 
-                self.result_queue.put((frame, objects, self.heart_rates.copy()))
+                self.result_queue.put((frame, objects, self.heart_rates.copy(), roi_coords))
 
                 self.processing_metrics.processing_count += 1
                 self.processing_metrics.total_processing_time += time.time() - t0
@@ -271,7 +274,7 @@ class System:
         
         while self.running:
             try:
-                frame, objects, heart_rates = self.result_queue.get(timeout=1)
+                frame, objects, heart_rates, roi_coords = self.result_queue.get(timeout=1)
                 frame_count += 1
 
                 frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)  # Convert back to BGR for OpenCV display
@@ -283,19 +286,19 @@ class System:
                     frame_count = 0
                     prev_time = current_time
 
-                for object_id, data in objects.items():
-                    x, y, x_end, y_end = data['rect']
+                for object_id in objects.keys():
+                    roi_x, roi_y, roi_x_end, roi_y_end = roi_coords[object_id]
 
                     color = colors.get_annotation_color(object_id)
-                    cv2.rectangle(frame, (x, y), (x_end, y_end), color, 2)
+                    cv2.rectangle(frame, (roi_x, roi_y), (roi_x_end, roi_y_end), color, 2)
                                 
                     text = f"{object_id} | "
                     if object_id in heart_rates:
                         text += f"{heart_rates[object_id]:.1f}"
                     else:
                         text += "-"
-                        
-                    cv2.putText(frame, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.4, color, 2)
+                        text += "-"
+                    cv2.putText(frame, text, (roi_x, roi_y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.4, color, 2)
                     
                 fps_text = f"FPS: {fps:.2f}"
                 cv2.putText(frame, fps_text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)

@@ -53,7 +53,13 @@ class Pipeline:
         for face_id, data in self.face_data.items():
             if (len(data['roi_data']) >= self.window_size and 
                 current_time - data['last_processed'] >= (self.step_size / self.fps)):
-                roi_data = np.array(list(data['roi_data']))
+                
+                listed_roi_data = list(data['roi_data'])
+                try:
+                    roi_data = np.array(listed_roi_data)
+                except Exception as e: # Might happen if roi doesn't have static shape
+                    roi_data = listed_roi_data
+                    
                 faces_to_process.append((face_id, roi_data, data))
         
         if not faces_to_process:
@@ -93,7 +99,13 @@ class Pipeline:
         for face_id, data in self.face_data.items():
             if (len(data['roi_data']) >= self.window_size and 
                 current_time - data['last_processed'] >= (self.step_size / self.fps)):
-                roi_data = np.array(list(data['roi_data']))
+                
+                listed_roi_data = list(data['roi_data'])
+                try:
+                    roi_data = np.array(listed_roi_data)
+                except Exception as e: # Might happen if roi doesn't have static shape
+                    roi_data = listed_roi_data
+                    
                 faces_to_process.append((face_id, roi_data, data))
         
         if not faces_to_process:
@@ -150,7 +162,13 @@ class Pipeline:
                 current_time - data['last_processed'] >= (self.step_size / self.fps)):
                 
                 t1 = time.time()
-                roi_data = np.array(list(data['roi_data']))
+                
+                listed_roi_data = list(data['roi_data'])
+                try:
+                    roi_data = np.array(listed_roi_data)
+                except Exception as e: # Might happen if roi doesn't have static shape
+                    roi_data = listed_roi_data
+                
                 pulse_signal = self.rppg_signal_extractor.extract(roi_data)
                 t2 = time.time()
                 signal_extraction_time += (t2 - t1)

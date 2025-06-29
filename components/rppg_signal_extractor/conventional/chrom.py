@@ -4,7 +4,17 @@ from components.rppg_signal_extractor.base import RPPGSignalExtractor
 
 class CHROM(RPPGSignalExtractor):
     def extract(self, roi_data):
-        rgb_signals = np.mean(roi_data, axis=(1, 2))
+        # Handle varying ROI sizes by computing spatial mean for each frame
+        if isinstance(roi_data, list):
+            rgb_signals = []
+            for frame in roi_data:
+                frame_mean = np.mean(frame.reshape(-1, frame.shape[-1]), axis=0)
+                rgb_signals.append(frame_mean)
+            
+            rgb_signals = np.array(rgb_signals)
+        else: # Assuming roi_data is a numpy array
+            rgb_signals = np.mean(roi_data, axis=(1, 2))
+        
         rgb_norm = rgb_signals / np.mean(rgb_signals, axis=0)
         
         X_chrom = 3 * rgb_norm[:, 0] - 2 * rgb_norm[:, 1]

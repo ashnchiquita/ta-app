@@ -7,6 +7,6 @@ class FullFace(ROISelector):
         roi = frame[y:y_end, x:x_end]
         
         if roi.size == 0:
-            return None
-        
-        return cv2.resize(roi, self.target_size)
+            return None, None
+
+        return roi, (x, y, x_end, y_end)
