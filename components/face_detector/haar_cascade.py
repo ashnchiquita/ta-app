@@ -8,7 +8,7 @@ class HaarCascade(FaceDetector):
         self.detector = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
     def detect(self, frame):
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
         faces = self.detector.detectMultiScale(gray, scaleFactor=self.scale_factor, minNeighbors=self.min_neighbors)
 
         return [(int(x), int(y), int(x + w), int(y + h)) for (x, y, w, h) in faces]

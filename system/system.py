@@ -7,6 +7,7 @@ import queue
 import time
 from components.face_detector.haar_cascade import HaarCascade
 from components.face_detector.mediapipe import MediaPipe
+from components.face_detector.mt_cnn import MT_CNN
 # from components.face_detector.degirum import DegirumFaceDetector
 from components.face_tracker.centroid import Centroid
 from components.roi_selector.fullface import FullFace
@@ -50,6 +51,8 @@ class System:
         if video_file is not None:
             print(f'Using video file: {video_file}')
             self.video_frames = np.load(video_file)
+            self.video_frames = np.flip(self.video_frames, axis=3)  # Convert BGR to RGB by flipping the last axis
+            
             print(f'Video frames loaded: {len(self.video_frames)} frames')
             self.total_frames = len(self.video_frames)
             self.current_frame_idx = 0
@@ -75,15 +78,15 @@ class System:
             self.video_frames = None
             self.use_timestamps = False
 
-        # # self.face_detector = face_detector or HaarCascade()
+        # self.face_detector = face_detector or HaarCascade()
         # self.face_detector = face_detector or MediaPipe()
-        self.rppg_signal_extractor = rppg_signal_extractor or HEFDeepPhys(fps=fps, model_path=os.path.join(HEF_DIR, "PURE_DeepPhys_fp_optimized.hef"))
-        # self.face_detector = face_detector or HailoFaceDetector()
-        self.face_detector = SCRFD(variant='500m')
+        self.face_detector = face_detector or SCRFD(variant='500m')
+        # self.face_detector = face_detector or MT_CNN()
         # self.face_detector = face_detector or DegirumFaceDetector()
         self.face_tracker = face_tracker or Centroid()
         self.roi_selector = roi_selector or FullFace()
         self.rppg_signal_extractor = rppg_signal_extractor or POS(fps=fps)
+        # self.rppg_signal_extractor = rppg_signal_extractor or HEFDeepPhys(fps=fps, model_path=os.path.join(HEF_DIR, "PURE_DeepPhys_quantized_20250619-220734.hef"))
         # self.rppg_signal_extractor = rppg_signal_extractor or ONNXDeepPhys(fps=fps, model_path=os.path.join(ONNX_DIR, "PURE_DeepPhys.onnx"))
         # self.rppg_signal_extractor = rppg_signal_extractor or EfficientPhys(fps=fps, model_path=os.path.join(ONNX_DIR, "PURE_EfficientPhys.onnx"))
         # self.rppg_signal_extractor = rppg_signal_extractor or TSCAN(fps=fps, model_path=os.path.join(ONNX_DIR, "PURE_TSCAN.onnx"))
@@ -150,6 +153,8 @@ class System:
                 break
                     
             try:
+                # convert to RGB
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 self.frame_queue.put(frame, block=False)
             except queue.Full:
                 # If queue is full, skip
@@ -268,6 +273,8 @@ class System:
             try:
                 frame, objects, heart_rates = self.result_queue.get(timeout=1)
                 frame_count += 1
+
+                frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)  # Convert back to BGR for OpenCV display
                 
                 current_time = time.time()
                 elapsed_time = current_time - prev_time

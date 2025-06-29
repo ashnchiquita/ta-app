@@ -7,8 +7,7 @@ class MediaPipe(FaceDetector):
         self.detector = mp.solutions.face_detection.FaceDetection(min_detection_confidence=min_confidence)
 
     def detect(self, frame):
-        rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        results = self.detector.process(rgb_image)
+        results = self.detector.process(frame)
 
         faces = []
         if results.detections is not None:

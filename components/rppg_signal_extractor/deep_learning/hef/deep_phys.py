@@ -1,15 +1,7 @@
 import numpy as np
 from components.rppg_signal_extractor.deep_learning.hef.base import HEFModel
 from hailo_platform import (
-    HEF,
-    ConfigureParams,
-    FormatType,
-    HailoSchedulingAlgorithm,
-    HailoStreamInterface,
-    InputVStreamParams,
     InferVStreams,
-    OutputVStreamParams,
-    VDevice,
 )
 
 class DeepPhys(HEFModel):
@@ -56,8 +48,6 @@ class DeepPhys(HEFModel):
             preprocessed_data = self.preprocess(roi_data)
 
             print(f"Preprocessed data shape: {preprocessed_data.shape}")
-            
-            # outputs = self.infer_pipeline.infer({self.input_name: preprocessed_data})
             
             with InferVStreams(self.network_group, self.input_vstreams_params, self.output_vstreams_params) as infer_pipeline:
                 with self.network_group.activate(self.network_group_params):
