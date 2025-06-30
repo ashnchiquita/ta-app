@@ -1,7 +1,5 @@
 import numpy as np
 from scipy import sparse
-from scipy.sparse import diags
-from scipy.sparse.linalg import spsolve
 
 def detrend(input_signal, lambda_value):
     signal_length = input_signal.shape[0]
