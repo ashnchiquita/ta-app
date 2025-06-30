@@ -1,17 +1,14 @@
 import numpy as np
-from scipy import signal
+import scipy.signal
 from components.hr_extractor.base import HRExtractor
 
 class PeakDetection(HRExtractor):
-    def extract(self, pulse_signal):
-        peaks, _ = signal.find_peaks(pulse_signal, distance=self.fps/4)
-        if len(peaks) < 2:
-            return 0
-                
-        peak_times = peaks / self.fps
-        intervals = np.diff(peak_times)
+    @staticmethod
+    def _calculate_peak_hr(ppg_signal, fps):
+        """Calculate heart rate based on PPG using peak detection."""
+        ppg_peaks, _ = scipy.signal.find_peaks(ppg_signal)
+        hr_peak = 60 / (np.mean(np.diff(ppg_peaks)) / fps)
+        return hr_peak
 
-        avg_interval = np.mean(intervals)
-        heart_rate = 60 / avg_interval
-        
-        return heart_rate
+    def calculate_hr(self, predictions, fps=30):
+        return PeakDetection._calculate_peak_hr(predictions, fps=fps)

@@ -13,6 +13,8 @@ from components.face_tracker.centroid import Centroid
 from components.roi_selector.fullface import FullFace
 from components.roi_selector.fullface_square import FullFaceSquare
 from components.rppg_signal_extractor.conventional.pos import POS
+from components.rppg_signal_extractor.conventional.chrom import CHROM
+from components.rppg_signal_extractor.conventional.ica import ICA
 from components.hr_extractor.fft import FFT
 from system.pipeline import Pipeline
 from system.metrics import Metrics
@@ -24,6 +26,7 @@ from components.rppg_signal_extractor.deep_learning.onnx.tscan import TSCAN
 from components.face_detector.hef.retina_face.retina_face import RetinaFace
 from components.face_detector.hef.scrfd.scrfd import SCRFD
 from constants import ONNX_DIR, HEF_DIR
+from components.rppg_signal_extractor.deep_learning.base import DeepLearningRPPGSignalExtractor
 
 
 class System:
@@ -83,16 +86,18 @@ class System:
         # self.face_detector = face_detector or MT_CNN()
         # self.face_detector = face_detector or DegirumFaceDetector()
         self.face_tracker = face_tracker or Centroid()
-        self.roi_selector = roi_selector or FullFace()
-        # self.roi_selector = roi_selector or FullFaceSquare(target_size=(72,72), larger_box_coef=1.5)
+        # self.roi_selector = roi_selector or FullFace()
+        self.roi_selector = roi_selector or FullFaceSquare(target_size=(72,72), larger_box_coef=1.5)
         self.rppg_signal_extractor = rppg_signal_extractor or POS(fps=fps)
         # self.rppg_signal_extractor = rppg_signal_extractor or HEFDeepPhys(fps=fps, model_path=os.path.join(HEF_DIR, "PURE_DeepPhys_quantized_20250619-220734.hef"))
         # self.rppg_signal_extractor = rppg_signal_extractor or ONNXDeepPhys(fps=fps, model_path=os.path.join(ONNX_DIR, "PURE_DeepPhys.onnx"))
         # self.rppg_signal_extractor = rppg_signal_extractor or EfficientPhys(fps=fps, model_path=os.path.join(ONNX_DIR, "PURE_EfficientPhys.onnx"))
         # self.rppg_signal_extractor = rppg_signal_extractor or TSCAN(fps=fps, model_path=os.path.join(ONNX_DIR, "PURE_TSCAN.onnx"))
-        
-        self.hr_extractor = hr_extractor or FFT(fps=fps)
-        
+
+        diff_flag = isinstance(self.rppg_signal_extractor, DeepLearningRPPGSignalExtractor)
+        print(f"Using diff_flag={diff_flag} for rPPG signal extraction.")
+        self.hr_extractor = hr_extractor or FFT(fps=fps, diff_flag=diff_flag, use_bandpass=True)
+
         self.pipeline = Pipeline(
             self.rppg_signal_extractor,
             self.hr_extractor,

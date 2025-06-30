@@ -44,11 +44,8 @@ class DeepPhys(HEFModel):
     
     def extract(self, roi_data):
         try:
-            print("Starting rPPG signal extraction using DeepPhys...")
             preprocessed_data = self.preprocess(roi_data)
 
-            print(f"Preprocessed data shape: {preprocessed_data.shape}")
-            
             with InferVStreams(self.network_group, self.input_vstreams_params, self.output_vstreams_params) as infer_pipeline:
                 with self.network_group.activate(self.network_group_params):
                     outputs = infer_pipeline.infer({self.input_name: preprocessed_data})
