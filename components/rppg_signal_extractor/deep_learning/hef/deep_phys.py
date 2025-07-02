@@ -17,45 +17,44 @@ class DeepPhys(HEFModel):
     def preprocess(self, roi_data):
         """
         Preprocess the ROI data for DeepPhys model.
-        This method should be implemented based on the model's requirements.
+        Supports both full window processing and incremental segment processing.
         """
         if roi_data is None or len(roi_data) == 0:
             raise ValueError("ROI data is empty or None")
-        if len(roi_data) % self.n_frames != 0:
-            raise ValueError(f"ROI data must have {self.n_frames} frames")
-
-        n_clips = len(roi_data) // self.n_frames
-
+        
         roi_data = np.array(roi_data, dtype=np.float32)
-
-        if n_clips == 1:
+        data_length = len(roi_data)
+        
+        # Support incremental processing: process any length, not just multiples of n_frames
+        if data_length >= self.n_frames and data_length % self.n_frames == 0:
+            # Traditional full window processing
+            n_clips = data_length // self.n_frames
+            
+            if n_clips == 1:
+                diffnomz_clip = self.diff_normalize_data(roi_data)
+                stdz_clip = self.standardized_data(roi_data)
+                preprocessed_clip = np.concatenate([diffnomz_clip, stdz_clip], axis=-1)
+                return preprocessed_clip
+            
+            # Multiple clips processing
+            preprocessed_data = []
+            for i in range(n_clips):
+                start_idx = i * self.n_frames
+                end_idx = start_idx + self.n_frames
+                clip = roi_data[start_idx:end_idx]
+                diffnomz_clip = self.diff_normalize_data(clip)
+                stdz_clip = self.standardized_data(clip)
+                preprocessed_clip = np.concatenate([diffnomz_clip, stdz_clip], axis=-1)
+                preprocessed_data.append(preprocessed_clip)
+            
+            return np.concatenate(preprocessed_data, axis=0)
+        
+        else:
+            # Incremental segment processing - process any length
             diffnomz_clip = self.diff_normalize_data(roi_data)
             stdz_clip = self.standardized_data(roi_data)
             preprocessed_clip = np.concatenate([diffnomz_clip, stdz_clip], axis=-1)
-
             return preprocessed_clip
-        
-        # Convert to numpy array if not already
-        
-        # Standardize each frame
-        preprocessed_data = []
-
-        
-
-        for i in range(n_clips):
-            start_idx = i * self.n_frames
-            end_idx = start_idx + self.n_frames
-            clip = roi_data[start_idx:end_idx]
-            diffnomz_clip = self.diff_normalize_data(clip)
-            stdz_clip = self.standardized_data(clip)
-            preprocessed_clip = np.concatenate([diffnomz_clip, stdz_clip], axis=-1)
-
-            preprocessed_data.append(preprocessed_clip)
-
-        # Concatenate all clips
-        preprocessed_data = np.concatenate(preprocessed_data, axis=0)
-
-        return preprocessed_data
     
     def extract(self, roi_data):
         try:
