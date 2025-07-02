@@ -43,7 +43,7 @@ class System:
                     
                     window_size=180,
                     fps=30,
-                    step_size=30):
+                    step_size=180):
         
         self.camera_id = camera_id
         self.video_file = video_file
@@ -88,15 +88,15 @@ class System:
         self.face_tracker = face_tracker or Centroid()
         # self.roi_selector = roi_selector or FullFace()
         self.roi_selector = roi_selector or FullFaceSquare(target_size=(72,72), larger_box_coef=1.5)
-        self.rppg_signal_extractor = rppg_signal_extractor or POS(fps=fps)
-        # self.rppg_signal_extractor = rppg_signal_extractor or HEFDeepPhys(fps=fps, model_path=os.path.join(HEF_DIR, "PURE_DeepPhys_quantized_20250619-220734.hef"))
+        # self.rppg_signal_extractor = rppg_signal_extractor or POS(fps=fps)
+        self.rppg_signal_extractor = rppg_signal_extractor or HEFDeepPhys(fps=fps, model_path=os.path.join(HEF_DIR, "PURE_DeepPhys_quantized_20250619-220734.hef"))
         # self.rppg_signal_extractor = rppg_signal_extractor or ONNXDeepPhys(fps=fps, model_path=os.path.join(ONNX_DIR, "PURE_DeepPhys.onnx"))
         # self.rppg_signal_extractor = rppg_signal_extractor or EfficientPhys(fps=fps, model_path=os.path.join(ONNX_DIR, "PURE_EfficientPhys.onnx"))
         # self.rppg_signal_extractor = rppg_signal_extractor or TSCAN(fps=fps, model_path=os.path.join(ONNX_DIR, "PURE_TSCAN.onnx"))
 
         diff_flag = isinstance(self.rppg_signal_extractor, DeepLearningRPPGSignalExtractor)
         print(f"Using diff_flag={diff_flag} for rPPG signal extraction.")
-        self.hr_extractor = hr_extractor or FFT(fps=fps, diff_flag=diff_flag, use_bandpass=True)
+        self.hr_extractor = hr_extractor or FFT(fps=fps, diff_flag=diff_flag, use_bandpass=True, use_detrend=True)
 
         self.pipeline = Pipeline(
             self.rppg_signal_extractor,
@@ -162,10 +162,10 @@ class System:
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 self.frame_queue.put(frame, block=False)
             except queue.Full:
-                # If queue is full, skip
+                # If queue is full, skip and yield CPU briefly
                 self.skipped_frames += 1
                 print(f"[{self.skipped_frames}] Frame skipped due to full queue.")
-                pass
+                time.sleep(0.001)  # Brief yield to prevent tight loop
     def _capture_from_npy(self):
         if self.use_timestamps:
             self._capture_with_timestamps()
@@ -234,15 +234,18 @@ class System:
             try:
                 frame = self.frame_queue.get(timeout=1)
                 t0 = time.time()
-                
+
+                # Face Detection
                 face_rects = self.face_detector.detect(frame)
                 t1 = time.time()
                 self.processing_metrics.processing_time['face_detection'] += t1 - t0
-                
+
+                # Face Tracking
                 objects = self.face_tracker.update(face_rects)
                 t2 = time.time()
                 self.processing_metrics.processing_time['face_tracking'] += t2 - t1
 
+                # ROI Selection
                 roi_coords = {}  # Store ROI coordinates for display
                 for object_id, data in objects.items():
                     face_rect = data['rect']
@@ -256,11 +259,12 @@ class System:
                         roi_coords[object_id] = roi_coord
                         self.pipeline.add_face_data(object_id, roi, t0)
 
-                new_results, signal_extraction_time, hr_extraction_time = self.pipeline.process_faces()
+                # # CORE: BVP + HR Extraction
+                # new_results, core_time = self.pipeline.process_faces()
+                new_results, core_time = {}, 0
 
-                self.processing_metrics.processing_time['signal_extraction'] += signal_extraction_time
-                self.processing_metrics.processing_time['hr_extraction'] += hr_extraction_time
-                
+                self.processing_metrics.processing_time['core_time'] += core_time
+
                 for face_id, hr in new_results.items():
                     self.heart_rates[face_id] = hr
                 
@@ -270,6 +274,8 @@ class System:
                 self.processing_metrics.total_processing_time += time.time() - t0
  
             except queue.Empty:
+                # Yield CPU when no frames available
+                time.sleep(0.001)
                 continue
 
     def display_frames(self):
@@ -314,4 +320,6 @@ class System:
                     self.running = False
                             
             except queue.Empty:
+                # Yield CPU when no display data available
+                time.sleep(0.001)
                 continue

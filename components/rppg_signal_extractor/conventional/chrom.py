@@ -5,6 +5,7 @@ import math
 import numpy as np
 from scipy import signal
 from components.rppg_signal_extractor.base import RPPGSignalExtractor
+import time
 
 class CHROM(RPPGSignalExtractor):
     def extract(self, roi_data):
@@ -23,11 +24,15 @@ class CHROM(RPPGSignalExtractor):
 
     @staticmethod
     def CHROME_DEHAAN(roi_data, fps):
+        t1 = time.time()
+        
         LPF = 0.7
         HPF = 2.5
         WinSec = 1.6
 
         RGB = CHROM.avg_roi_data(roi_data)
+        t2 = time.time()
+        
         FN = RGB.shape[0]
         NyquistF = 1/2*fps
         B, A = signal.butter(3, [LPF/NyquistF, HPF/NyquistF], 'bandpass')
@@ -63,7 +68,11 @@ class CHROM(RPPGSignalExtractor):
             WinM = WinS+WinL//2
             WinE = WinS+WinL
         BVP = S
-        return BVP
+
+        t3 = time.time()
+        preprocessing_time = t2 - t1
+        inference_time = t3 - t2
+        return BVP, preprocessing_time, inference_time
 
     @staticmethod
     def avg_roi_data(roi_data):

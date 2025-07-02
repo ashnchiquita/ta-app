@@ -6,7 +6,6 @@ from hailo_platform import (
     FormatType,
     HailoStreamInterface,
     InputVStreamParams,
-    InferVStreams,
     OutputVStreamParams,
 )
 from components.manager.hailo_target_manager import HailoTargetManager
@@ -32,8 +31,3 @@ class HEFModel(DeepLearningRPPGSignalExtractor):
 
         self.input_name = hef.get_input_vstream_infos()[0].name
         self.output_name = hef.get_output_vstream_infos()[0].name
-
-        with InferVStreams(self.network_group, self.input_vstreams_params, self.output_vstreams_params) as infer_pipeline:
-            with self.network_group.activate(self.network_group_params):
-                infer_results = infer_pipeline.infer(self.get_dummy_input())
-                print(f"Stream output shape is {infer_results[self.output_name].shape}")

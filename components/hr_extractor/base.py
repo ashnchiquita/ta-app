@@ -5,10 +5,11 @@ from scipy.signal import butter
 from scipy.sparse import spdiags
 
 class HRExtractor(ABC):
-    def __init__(self, fps: float=30.0, diff_flag=False, use_bandpass=False):
+    def __init__(self, fps: float=30.0, diff_flag=False, use_bandpass=False, use_detrend=False):
         self.fps = fps
         self.diff_flag = diff_flag
         self.use_bandpass = use_bandpass
+        self.use_detrend = use_detrend
 
     @staticmethod
     def _next_power_of_2(x):
@@ -42,13 +43,13 @@ class HRExtractor(ABC):
         raise NotImplementedError("This method should be overridden by subclasses.")
     
     def extract(self, pulse_signal):
-        return self.calculate_per_bvp(pulse_signal, fps=self.fps, diff_flag=self.diff_flag, use_bandpass=self.use_bandpass)
+        return self.calculate_per_bvp(pulse_signal, fps=self.fps, diff_flag=self.diff_flag, use_bandpass=self.use_bandpass, use_detrend=self.use_detrend)
 
-    def calculate_per_bvp(self, predictions, fps=30, diff_flag=True, use_bandpass=True):
+    def calculate_per_bvp(self, predictions, fps=30, diff_flag=True, use_bandpass=True, use_detrend=True):
         """Calculate video-level HR and SNR"""
         if diff_flag:  # if the predictions and labels are 1st derivative of PPG signal.
-            predictions = HRExtractor._detrend(np.cumsum(predictions), 100)
-        else:
+            predictions = np.cumsum(predictions)
+        if use_detrend:
             predictions = HRExtractor._detrend(predictions, 100)
         if use_bandpass:
             # bandpass filter between [0.75, 2.5] Hz, equals [45, 150] beats per min

@@ -2,7 +2,10 @@ from collections import deque
 import time
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from queue import Queue, Empty
+import threading
 from components.rppg_signal_extractor.deep_learning.base import DeepLearningRPPGSignalExtractor
+from components.rppg_signal_extractor.deep_learning.hef.base import HEFModel
 
 class Pipeline:
     def __init__(self, 
@@ -33,22 +36,9 @@ class Pipeline:
             self.face_data[face_id]['roi_data'].append(roi)
 
     def process_faces(self):
-        if isinstance(self.rppg_signal_extractor, DeepLearningRPPGSignalExtractor):
-            # If using multiple models, process in parallel
-            # return self.process_faces_batch() # Todo: batch processing slows down the system because of memory limitations. find out best batch size then try again
-            return self.process_faces_sequential()
-
-        return self.process_faces_parallel()
-        
-        # return self.process_faces_sequential()
-
-    def process_faces_batch(self):
         current_time = time.time()
-        results = {}
-        signal_extraction_time = 0
-        hr_extraction_time = 0
         
-        # filter to avoid unnecessary thread creation
+        # Identify faces ready for processing
         faces_to_process = []
         for face_id, data in self.face_data.items():
             if (len(data['roi_data']) >= self.window_size and 
@@ -57,25 +47,174 @@ class Pipeline:
                 listed_roi_data = list(data['roi_data'])
                 try:
                     roi_data = np.array(listed_roi_data)
-                except Exception as e: # Might happen if roi doesn't have static shape
+                except Exception as e:  # Might happen if roi doesn't have static shape
                     roi_data = listed_roi_data
                     
                 faces_to_process.append((face_id, roi_data, data))
         
         if not faces_to_process:
-            return results, signal_extraction_time, hr_extraction_time
+            return {}, 0
 
+        if len(faces_to_process) == 1:
+            return self.process_faces_sequential(faces_to_process, current_time)
+        
+        if isinstance(self.rppg_signal_extractor, DeepLearningRPPGSignalExtractor):
+            # Todo: batch processing slows down the system because of memory limitations. find out best batch size then try again
+            return self.process_faces_producer_consumer(faces_to_process, current_time)
+
+        # Conventional
+        return self.process_faces_parallel(self, faces_to_process, current_time)
+
+    def process_faces_producer_consumer(self, faces_to_process, current_time):
+        """
+        Async producer-consumer pattern:
+        - Producer thread: extracts pulse signals from ROI data
+        - Consumer thread: extracts heart rate from pulse signals
+        - Ensures all faces are processed while maintaining async behavior
+        """
+        # Queues for producer-consumer communication
+        pulse_queue = Queue()
+        result_queue = Queue()
+        
+        # Track completion
+        total_faces = len(faces_to_process)
+        completed_faces = 0
+        consumed_face_ids = set()
+        
+        def producer():
+            """Producer: Extract pulse signals from ROI data"""
+            for face_id, roi_data, data in faces_to_process:
+                try:
+                    pulse_signal, preprocess_time, inference_time = self.rppg_signal_extractor.extract(roi_data)
+                    pulse_queue.put((face_id, pulse_signal, data))
+                except Exception as e:
+                    print(f"Error extracting pulse signal for face {face_id}: {e}")
+                    pulse_queue.put((face_id, None, data))  # Signal error but continue
+        
+        def consumer():
+            """Consumer: Extract heart rates from pulse signals using multi-threading"""
+            nonlocal completed_faces
+            nonlocal consumed_face_ids
+            
+            # Adaptive worker count based on system and workload
+            import os
+            cpu_count = os.cpu_count() or 4
+            
+            if total_faces == 1:
+                max_workers = 1
+            elif isinstance(self.rppg_signal_extractor, DeepLearningRPPGSignalExtractor):
+                # Check for Hailo NPU accelerator
+                if isinstance(self.rppg_signal_extractor, HEFModel):
+                    # Hailo NPU: Preprocessing can be parallel, but NPU inference is serialized
+                    # Use more workers since preprocessing + postprocessing can be parallel
+                    max_workers = min(total_faces, max(4, cpu_count // 2))
+                else:
+                    # Other ML models (GPU/CPU)
+                    max_workers = min(total_faces, max(2, cpu_count // 3))
+            else:
+                # Traditional DSP (FFT, etc.) - good parallelism since they release GIL
+                max_workers = min(total_faces, max(3, cpu_count - 1))
+            
+            # Cap at reasonable maximum to prevent resource exhaustion
+            max_workers = min(max_workers, 10)  # Higher cap for NPU scenarios
+            
+            with ThreadPoolExecutor(max_workers=max_workers) as executor:
+                future_to_face = {}
+                
+                while completed_faces < total_faces:
+                    processed_any_work = False
+                    
+                    try:
+                        if not pulse_queue.empty():
+                            face_id, pulse_signal, data = pulse_queue.get_nowait()
+                            processed_any_work = True
+
+                            if pulse_signal is not None:
+                                future = executor.submit(self.hr_extractor.extract, pulse_signal)
+                                future_to_face[future] = (face_id, data)
+                            else:
+                                result_queue.put((face_id, None, data))
+                                completed_faces += 1
+                            pulse_queue.task_done()
+
+                        completed_futures = []
+                        for future in future_to_face:
+                            if future.done():
+                                completed_futures.append(future)
+                        
+                        for future in completed_futures:
+                            face_id, data = future_to_face.pop(future)
+                            processed_any_work = True
+                            try:
+                                heart_rate = future.result()
+                                result_queue.put((face_id, heart_rate, data))
+                            except Exception as e:
+                                print(f"Error extracting heart rate for face {face_id}: {e}")
+                                result_queue.put((face_id, None, data))
+                            
+                            completed_faces += 1
+                        
+                        # yield CPU to avoid tight loop
+                        if not processed_any_work:
+                            time.sleep(0.001)
+                            
+                    except Exception as e:
+                        print(f"Consumer error: {e}")
+                        break
+                
+                # Wait for any remaining futures to complete
+                for future in future_to_face:
+                    face_id, data = future_to_face[future]
+                    try:
+                        heart_rate = future.result()
+                        result_queue.put((face_id, heart_rate, data))
+                    except Exception as e:
+                        print(f"Error extracting heart rate for face {face_id}: {e}")
+                        result_queue.put((face_id, None, data))
+        
+        # Start producer and consumer threads
+        producer_thread = threading.Thread(target=producer)
+        consumer_thread = threading.Thread(target=consumer)
+        
+        producer_thread.start()
+        consumer_thread.start()
+        
+        # Wait for both threads to complete
+        producer_thread.join()
+        consumer_thread.join()
+
+        # Collect results
+        processed_faces = 0
+        results = {}
+        while processed_faces < total_faces and not result_queue.empty():
+            try:
+                face_id, heart_rate, data = result_queue.get_nowait()
+                
+                if heart_rate is not None:
+                    results[face_id] = heart_rate
+                    data['heart_rate'] = heart_rate
+                    data['last_processed'] = current_time
+                
+                processed_faces += 1
+                
+            except Exception as e:
+                print(f"Error collecting result: {e}")
+                break
+            except Empty:
+                # Queue became empty, yield CPU briefly
+                time.sleep(0.001)
+                break
+        
+        core_time = time.time() - current_time
+        return results, core_time
+        
+    def process_faces_batch_flattened(self, faces_to_process, current_time):
         # merge all ROIs into a single batch
         roi_batch = np.array([roi for _, roi, _ in faces_to_process])
         roi_batch = roi_batch.reshape(-1, *roi_batch.shape[2:])  # Flatten batch for processing
 
-        print(f"Processing {len(faces_to_process)} faces in batch with shape: {roi_batch.shape}")
-
-        t1 = time.time()
-        pulse_signal = self.rppg_signal_extractor.extract(roi_batch)
-        t2 = time.time()
-        signal_extraction_time += t2 - t1
-
+        pulse_signal, preprocess_time, inference_time = self.rppg_signal_extractor.extract(roi_batch)
+        results = {}
         for i, (face_id, _, data) in enumerate(faces_to_process):
             curr_signal = pulse_signal[180*i:180*(i+1)]
             heart_rate = self.hr_extractor.extract(curr_signal)
@@ -83,35 +222,12 @@ class Pipeline:
             data['heart_rate'] = heart_rate
             data['last_processed'] = current_time
 
-        t3 = time.time()
-        hr_extraction_time += t3 - t2
+        core_time = time.time() - current_time
+        return results, core_time
 
-        return results, signal_extraction_time, hr_extraction_time
-
-    def process_faces_parallel(self):
-        current_time = time.time()
+    def process_faces_parallel(self, faces_to_process, current_time):
         results = {}
-        signal_extraction_time = 0
-        hr_extraction_time = 0
-        
-        # filter to avoid unnecessary thread creation
-        faces_to_process = []
-        for face_id, data in self.face_data.items():
-            if (len(data['roi_data']) >= self.window_size and 
-                current_time - data['last_processed'] >= (self.step_size / self.fps)):
-                
-                listed_roi_data = list(data['roi_data'])
-                try:
-                    roi_data = np.array(listed_roi_data)
-                except Exception as e: # Might happen if roi doesn't have static shape
-                    roi_data = listed_roi_data
-                    
-                faces_to_process.append((face_id, roi_data, data))
-        
-        if not faces_to_process:
-            return results, signal_extraction_time, hr_extraction_time
-
-        max_workers = min(len(faces_to_process), 10)
+        max_workers = min(len(faces_to_process), 4)
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             future_face_map = {}
             
@@ -125,60 +241,39 @@ class Pipeline:
             for future in as_completed(future_face_map):
                 face_id, data = future_face_map[future]
                 try:
-                    heart_rate, sig_time, hr_time = future.result()
+                    heart_rate = future.result()
                     
                     results[face_id] = heart_rate
-                    signal_extraction_time += sig_time
-                    hr_extraction_time += hr_time
-                    
                     data['heart_rate'] = heart_rate
                     data['last_processed'] = current_time
                 except Exception as e:
                     print(f"Error processing face {face_id}: {e}")
-                    
-        return results, signal_extraction_time, hr_extraction_time
+
+        core_time = time.time() - current_time
+        return results, core_time
 
     def _thread_process_face(self, roi_data):
-        t1 = time.time()
-        pulse_signal = self.rppg_signal_extractor.extract(roi_data)
-        t2 = time.time()
-        signal_time = t2 - t1
-        
+        pulse_signal, preprocess_time, inference_time = self.rppg_signal_extractor.extract(roi_data)
         heart_rate = self.hr_extractor.extract(pulse_signal)
-        t3 = time.time()
-        hr_time = t3 - t2
         
-        return heart_rate, signal_time, hr_time
+        return heart_rate
 
-    def process_faces_sequential(self):
-        current_time = time.time()
+    def process_faces_sequential(self, faces_to_process, current_time):
+        
         results = {}
 
-        signal_extraction_time = 0
-        hr_extraction_time = 0
-        
-        for face_id, data in self.face_data.items():
-            if (len(data['roi_data']) >= self.window_size and 
-                current_time - data['last_processed'] >= (self.step_size / self.fps)):
-                
-                t1 = time.time()
-                
-                listed_roi_data = list(data['roi_data'])
-                try:
-                    roi_data = np.array(listed_roi_data)
-                except Exception as e: # Might happen if roi doesn't have static shape
-                    roi_data = listed_roi_data
-                
-                pulse_signal = self.rppg_signal_extractor.extract(roi_data)
-                t2 = time.time()
-                signal_extraction_time += (t2 - t1)
-                
+        for face_id, roi_data, data in faces_to_process:
+            try:
+                pulse_signal, preprocess_time, inference_time = self.rppg_signal_extractor.extract(roi_data)
                 heart_rate = self.hr_extractor.extract(pulse_signal)
-                t3 = time.time()
-                hr_extraction_time += (t3 - t2)
-                
-                data['heart_rate'] = heart_rate
-                data['last_processed'] = current_time
-                results[face_id] = heart_rate
+            except Exception as e:
+                print(f"Error processing face {face_id}: {e}")
+                continue
+            
+            data['heart_rate'] = heart_rate
+            data['last_processed'] = current_time
+            results[face_id] = heart_rate
         
-        return results, signal_extraction_time, hr_extraction_time
+        core_time = time.time() - current_time
+        
+        return results, core_time

@@ -6,7 +6,6 @@ class DeepLearningRPPGSignalExtractor(RPPGSignalExtractor):
     def __init__(self, model_path: str, fps: float = 30.0):
         super().__init__(fps)
         self.model_path = model_path
-        print(f"Initializing Deep Learning RPPG Signal Extractor with model: {model_path}")
         self.model_name = os.path.basename(model_path).split('.')[0]
 
         self._load_model()

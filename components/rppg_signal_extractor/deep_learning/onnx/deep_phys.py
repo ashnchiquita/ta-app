@@ -1,5 +1,6 @@
 import numpy as np
 from components.rppg_signal_extractor.deep_learning.onnx.base import ONNXModel
+import time
 
 class DeepPhys(ONNXModel):
     def __init__(self, model_path: str, fps: float=30.0):
@@ -42,10 +43,9 @@ class DeepPhys(ONNXModel):
     
     def extract(self, roi_data):
         try:
-            print("Starting rPPG signal extraction using DeepPhys...")
+            t1 = time.time()
             preprocessed_data = self.preprocess(roi_data)
-
-            print(f"Preprocessed data shape: {preprocessed_data.shape}")
+            t2 = time.time()
             
             input_name = self.model.get_inputs()[0].name
             outputs = self.model.run(None, {input_name: preprocessed_data})
@@ -57,9 +57,13 @@ class DeepPhys(ONNXModel):
             # Flatten
             if len(rppg_signal.shape) > 1:
                 rppg_signal = rppg_signal.flatten()
-            
-            return rppg_signal
-            
+
+            t3 = time.time()
+            preprocess_time = t2 - t1
+            inference_time = t3 - t2
+
+            return rppg_signal, preprocess_time, inference_time
+
         except Exception as e:
             raise RuntimeError(f"Failed to extract rPPG signal: {str(e)}")
 

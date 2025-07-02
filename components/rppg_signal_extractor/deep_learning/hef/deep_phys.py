@@ -1,8 +1,13 @@
 import numpy as np
+import threading
 from components.rppg_signal_extractor.deep_learning.hef.base import HEFModel
 from hailo_platform import (
     InferVStreams,
 )
+import time
+
+# Global NPU lock to serialize network activation across all instances
+_NPU_LOCK = threading.Lock()
 
 class DeepPhys(HEFModel):
     def __init__(self, model_path: str, fps: float=30.0):
@@ -19,13 +24,23 @@ class DeepPhys(HEFModel):
         if len(roi_data) % self.n_frames != 0:
             raise ValueError(f"ROI data must have {self.n_frames} frames")
 
-        # Convert to numpy array if not already
+        n_clips = len(roi_data) // self.n_frames
+
         roi_data = np.array(roi_data, dtype=np.float32)
+
+        if n_clips == 1:
+            diffnomz_clip = self.diff_normalize_data(roi_data)
+            stdz_clip = self.standardized_data(roi_data)
+            preprocessed_clip = np.concatenate([diffnomz_clip, stdz_clip], axis=-1)
+
+            return preprocessed_clip
+        
+        # Convert to numpy array if not already
         
         # Standardize each frame
         preprocessed_data = []
 
-        n_clips = len(roi_data) // self.n_frames
+        
 
         for i in range(n_clips):
             start_idx = i * self.n_frames
@@ -44,8 +59,28 @@ class DeepPhys(HEFModel):
     
     def extract(self, roi_data):
         try:
+            # Preprocessing can run in parallel - no NPU access needed
+            t0 = time.time()
             preprocessed_data = self.preprocess(roi_data)
 
+            t1 = time.time()
+            preprocess_time = t1 - t0
+            
+            result = self._npu_inference(preprocessed_data)
+            t2 = time.time()
+            inference_time = t2 - t1
+
+            return result, preprocess_time, inference_time
+            
+        except Exception as e:
+            raise RuntimeError(f"Failed to extract rPPG signal: {str(e)}")
+    
+    def _npu_inference(self, preprocessed_data):
+        """
+        NPU inference with global lock to handle hardware limitation.
+        Only one network can be active at a time across all instances.
+        """
+        with _NPU_LOCK:
             with InferVStreams(self.network_group, self.input_vstreams_params, self.output_vstreams_params) as infer_pipeline:
                 with self.network_group.activate(self.network_group_params):
                     outputs = infer_pipeline.infer({self.input_name: preprocessed_data})
@@ -58,14 +93,11 @@ class DeepPhys(HEFModel):
                 rppg_signal = rppg_signal.flatten()
             
             return rppg_signal
-            
-        except Exception as e:
-            raise RuntimeError(f"Failed to extract rPPG signal: {str(e)}")
 
-    def get_dummy_input(self):
+    def get_dummy_input(self, n_d=180):
         """
         Generate dummy input data for testing the model.
         This should match the expected input shape of the model.
         """
-        dummy_input = np.random.rand(180, 72, 72, 6).astype(np.float32)
+        dummy_input = np.random.rand(n_d, 72, 72, 6).astype(np.float32)
         return { self.input_name: dummy_input}

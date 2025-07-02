@@ -10,6 +10,7 @@ from scipy import linalg
 from scipy import signal
 from components.rppg_signal_extractor.conventional import utils
 from components.rppg_signal_extractor.base import RPPGSignalExtractor
+import time
 
 class ICA(RPPGSignalExtractor):
     def extract(self, roi_data):
@@ -18,10 +19,12 @@ class ICA(RPPGSignalExtractor):
     @staticmethod
     def ICA_POH(roi_data, fps):
         # Cut off frequency.
+        t0 = time.time()
         LPF = 0.7
         HPF = 2.5
         RGB = ICA.avg_roi_data(roi_data)
 
+        t1 = time.time()
         NyquistF = 1 / 2 * fps
         BGRNorm = np.zeros(RGB.shape)
         Lambda = 100
@@ -49,7 +52,11 @@ class ICA(RPPGSignalExtractor):
         BVP_F = signal.filtfilt(B, A, np.real(BVP_I).astype(np.double))
 
         BVP = BVP_F[0]
-        return BVP
+        t2 = time.time()
+
+        preprocessing_time = t1 - t0
+        inference_time = t2 - t1
+        return BVP, preprocessing_time, inference_time
 
     @staticmethod
     def avg_roi_data(roi_data):

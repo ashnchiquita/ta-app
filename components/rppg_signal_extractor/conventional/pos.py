@@ -11,6 +11,7 @@ from scipy.sparse import diags
 from scipy.sparse.linalg import spsolve
 from components.rppg_signal_extractor.base import RPPGSignalExtractor
 from components.rppg_signal_extractor.conventional import utils
+import time
 
 class POS(RPPGSignalExtractor):
     def extract(self, roi_data, method='simple'):
@@ -38,8 +39,11 @@ class POS(RPPGSignalExtractor):
 
     @staticmethod
     def POS_WANG(roi_data, fps):
+        t1 = time.time()
         WinSec = 1.6
         RGB = POS.avg_roi_data(roi_data)
+        t2 = time.time()
+        
         N = RGB.shape[0]
         H = np.zeros((1, N))
         l = math.ceil(WinSec * fps)
@@ -61,4 +65,8 @@ class POS(RPPGSignalExtractor):
         BVP = np.asarray(np.transpose(BVP))[0]
         b, a = signal.butter(1, [0.75 / fps * 2, 3 / fps * 2], btype='bandpass')
         BVP = signal.filtfilt(b, a, BVP.astype(np.double))
-        return BVP
+        t3 = time.time()
+
+        preprocessing_time = t2 - t1
+        inference_time = t3 - t2
+        return BVP, preprocessing_time, inference_time
