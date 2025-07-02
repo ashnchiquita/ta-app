@@ -1495,7 +1495,7 @@
         "kind": 6,
         "importPath": "components.rppg_signal_extractor.deep_learning.hef.deep_phys",
         "description": "components.rppg_signal_extractor.deep_learning.hef.deep_phys",
-        "peekOfCode": "class DeepPhys(HEFModel):\n    def __init__(self, model_path: str, fps: float=30.0):\n        super().__init__(model_path, fps)\n        self.n_frames = 180\n    def preprocess(self, roi_data):\n        \"\"\"\n        Preprocess the ROI data for DeepPhys model.\n        Supports both full window processing and incremental segment processing.\n        \"\"\"\n        if roi_data is None or len(roi_data) == 0:",
+        "peekOfCode": "class DeepPhys(HEFModel):\n    def __init__(self, model_path: str, fps: float=30.0):\n        super().__init__(model_path, fps)\n        self.n_frames = 180\n    def preprocess(self, roi_data):\n        \"\"\"\n        Preprocess the ROI data for DeepPhys model.\n        This method should be implemented based on the model's requirements.\n        \"\"\"\n        if roi_data is None or len(roi_data) == 0:",
         "detail": "components.rppg_signal_extractor.deep_learning.hef.deep_phys",
         "documentation": {}
     },
@@ -1504,7 +1504,7 @@
         "kind": 5,
         "importPath": "components.rppg_signal_extractor.deep_learning.hef.deep_phys",
         "description": "components.rppg_signal_extractor.deep_learning.hef.deep_phys",
-        "peekOfCode": "_NPU_LOCK = threading.Lock()\nclass DeepPhys(HEFModel):\n    def __init__(self, model_path: str, fps: float=30.0):\n        super().__init__(model_path, fps)\n        self.n_frames = 180\n    def preprocess(self, roi_data):\n        \"\"\"\n        Preprocess the ROI data for DeepPhys model.\n        Supports both full window processing and incremental segment processing.\n        \"\"\"",
+        "peekOfCode": "_NPU_LOCK = threading.Lock()\nclass DeepPhys(HEFModel):\n    def __init__(self, model_path: str, fps: float=30.0):\n        super().__init__(model_path, fps)\n        self.n_frames = 180\n    def preprocess(self, roi_data):\n        \"\"\"\n        Preprocess the ROI data for DeepPhys model.\n        This method should be implemented based on the model's requirements.\n        \"\"\"",
         "detail": "components.rppg_signal_extractor.deep_learning.hef.deep_phys",
         "documentation": {}
     },
