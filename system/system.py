@@ -261,7 +261,7 @@ class System:
 
                 # # CORE: BVP + HR Extraction
                 # new_results, core_time = self.pipeline.process_faces()
-                new_results, core_time = {}, 0
+                new_results, core_time = self.pipeline.process_faces()
 
                 self.processing_metrics.processing_time['core_time'] += core_time
 

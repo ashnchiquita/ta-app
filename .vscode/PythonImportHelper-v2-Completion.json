@@ -1,82 +1,333 @@
 [
     {
-        "label": "ABC",
-        "importPath": "abc",
-        "description": "abc",
+        "label": "numpy",
+        "kind": 6,
         "isExtraImport": true,
-        "detail": "abc",
+        "importPath": "numpy",
+        "description": "numpy",
+        "detail": "numpy",
         "documentation": {}
     },
     {
-        "label": "abstractmethod",
-        "importPath": "abc",
-        "description": "abc",
+        "label": "json",
+        "kind": 6,
         "isExtraImport": true,
-        "detail": "abc",
+        "importPath": "json",
+        "description": "json",
+        "detail": "json",
         "documentation": {}
     },
     {
-        "label": "ABC",
-        "importPath": "abc",
-        "description": "abc",
+        "label": "os",
+        "kind": 6,
         "isExtraImport": true,
-        "detail": "abc",
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
         "documentation": {}
     },
     {
-        "label": "abstractmethod",
-        "importPath": "abc",
-        "description": "abc",
+        "label": "Preprocessor",
+        "importPath": "components.face_detector.hef.preprocess",
+        "description": "components.face_detector.hef.preprocess",
         "isExtraImport": true,
-        "detail": "abc",
+        "detail": "components.face_detector.hef.preprocess",
         "documentation": {}
     },
     {
-        "label": "ABC",
-        "importPath": "abc",
-        "description": "abc",
+        "label": "Preprocessor",
+        "importPath": "components.face_detector.hef.preprocess",
+        "description": "components.face_detector.hef.preprocess",
         "isExtraImport": true,
-        "detail": "abc",
+        "detail": "components.face_detector.hef.preprocess",
         "documentation": {}
     },
     {
-        "label": "abstractmethod",
-        "importPath": "abc",
-        "description": "abc",
+        "label": "PostProcessor",
+        "importPath": "components.face_detector.hef.retina_face.post_process",
+        "description": "components.face_detector.hef.retina_face.post_process",
         "isExtraImport": true,
-        "detail": "abc",
+        "detail": "components.face_detector.hef.retina_face.post_process",
         "documentation": {}
     },
     {
-        "label": "ABC",
-        "importPath": "abc",
-        "description": "abc",
+        "label": "HEFModel",
+        "importPath": "components.face_detector.hef.base",
+        "description": "components.face_detector.hef.base",
         "isExtraImport": true,
-        "detail": "abc",
+        "detail": "components.face_detector.hef.base",
         "documentation": {}
     },
     {
-        "label": "abstractmethod",
-        "importPath": "abc",
-        "description": "abc",
+        "label": "HEFModel",
+        "importPath": "components.face_detector.hef.base",
+        "description": "components.face_detector.hef.base",
         "isExtraImport": true,
-        "detail": "abc",
+        "detail": "components.face_detector.hef.base",
         "documentation": {}
     },
     {
-        "label": "ABC",
-        "importPath": "abc",
-        "description": "abc",
+        "label": "DEGIRUM_ZOO_DIR",
+        "importPath": "constants",
+        "description": "constants",
         "isExtraImport": true,
-        "detail": "abc",
+        "detail": "constants",
         "documentation": {}
     },
     {
-        "label": "abstractmethod",
-        "importPath": "abc",
-        "description": "abc",
+        "label": "DEGIRUM_ZOO_DIR",
+        "importPath": "constants",
+        "description": "constants",
         "isExtraImport": true,
-        "detail": "abc",
+        "detail": "constants",
+        "documentation": {}
+    },
+    {
+        "label": "DEGIRUM_ZOO_DIR",
+        "importPath": "constants",
+        "description": "constants",
+        "isExtraImport": true,
+        "detail": "constants",
+        "documentation": {}
+    },
+    {
+        "label": "ONNX_DIR",
+        "importPath": "constants",
+        "description": "constants",
+        "isExtraImport": true,
+        "detail": "constants",
+        "documentation": {}
+    },
+    {
+        "label": "HEF_DIR",
+        "importPath": "constants",
+        "description": "constants",
+        "isExtraImport": true,
+        "detail": "constants",
+        "documentation": {}
+    },
+    {
+        "label": "ONNX_DIR",
+        "importPath": "constants",
+        "description": "constants",
+        "isExtraImport": true,
+        "detail": "constants",
+        "documentation": {}
+    },
+    {
+        "label": "HEF_DIR",
+        "importPath": "constants",
+        "description": "constants",
+        "isExtraImport": true,
+        "detail": "constants",
+        "documentation": {}
+    },
+    {
+        "label": "InferVStreams",
+        "importPath": "hailo_platform",
+        "description": "hailo_platform",
+        "isExtraImport": true,
+        "detail": "hailo_platform",
+        "documentation": {}
+    },
+    {
+        "label": "InferVStreams",
+        "importPath": "hailo_platform",
+        "description": "hailo_platform",
+        "isExtraImport": true,
+        "detail": "hailo_platform",
+        "documentation": {}
+    },
+    {
+        "label": "HEF",
+        "importPath": "hailo_platform",
+        "description": "hailo_platform",
+        "isExtraImport": true,
+        "detail": "hailo_platform",
+        "documentation": {}
+    },
+    {
+        "label": "ConfigureParams",
+        "importPath": "hailo_platform",
+        "description": "hailo_platform",
+        "isExtraImport": true,
+        "detail": "hailo_platform",
+        "documentation": {}
+    },
+    {
+        "label": "FormatType",
+        "importPath": "hailo_platform",
+        "description": "hailo_platform",
+        "isExtraImport": true,
+        "detail": "hailo_platform",
+        "documentation": {}
+    },
+    {
+        "label": "HailoStreamInterface",
+        "importPath": "hailo_platform",
+        "description": "hailo_platform",
+        "isExtraImport": true,
+        "detail": "hailo_platform",
+        "documentation": {}
+    },
+    {
+        "label": "InputVStreamParams",
+        "importPath": "hailo_platform",
+        "description": "hailo_platform",
+        "isExtraImport": true,
+        "detail": "hailo_platform",
+        "documentation": {}
+    },
+    {
+        "label": "OutputVStreamParams",
+        "importPath": "hailo_platform",
+        "description": "hailo_platform",
+        "isExtraImport": true,
+        "detail": "hailo_platform",
+        "documentation": {}
+    },
+    {
+        "label": "VDevice",
+        "importPath": "hailo_platform",
+        "description": "hailo_platform",
+        "isExtraImport": true,
+        "detail": "hailo_platform",
+        "documentation": {}
+    },
+    {
+        "label": "HailoSchedulingAlgorithm",
+        "importPath": "hailo_platform",
+        "description": "hailo_platform",
+        "isExtraImport": true,
+        "detail": "hailo_platform",
+        "documentation": {}
+    },
+    {
+        "label": "HEF",
+        "importPath": "hailo_platform",
+        "description": "hailo_platform",
+        "isExtraImport": true,
+        "detail": "hailo_platform",
+        "documentation": {}
+    },
+    {
+        "label": "ConfigureParams",
+        "importPath": "hailo_platform",
+        "description": "hailo_platform",
+        "isExtraImport": true,
+        "detail": "hailo_platform",
+        "documentation": {}
+    },
+    {
+        "label": "FormatType",
+        "importPath": "hailo_platform",
+        "description": "hailo_platform",
+        "isExtraImport": true,
+        "detail": "hailo_platform",
+        "documentation": {}
+    },
+    {
+        "label": "HailoStreamInterface",
+        "importPath": "hailo_platform",
+        "description": "hailo_platform",
+        "isExtraImport": true,
+        "detail": "hailo_platform",
+        "documentation": {}
+    },
+    {
+        "label": "InputVStreamParams",
+        "importPath": "hailo_platform",
+        "description": "hailo_platform",
+        "isExtraImport": true,
+        "detail": "hailo_platform",
+        "documentation": {}
+    },
+    {
+        "label": "OutputVStreamParams",
+        "importPath": "hailo_platform",
+        "description": "hailo_platform",
+        "isExtraImport": true,
+        "detail": "hailo_platform",
+        "documentation": {}
+    },
+    {
+        "label": "InferVStreams",
+        "importPath": "hailo_platform",
+        "description": "hailo_platform",
+        "isExtraImport": true,
+        "detail": "hailo_platform",
+        "documentation": {}
+    },
+    {
+        "label": "PostProcessor",
+        "importPath": "components.face_detector.hef.scrfd.post_process",
+        "description": "components.face_detector.hef.scrfd.post_process",
+        "isExtraImport": true,
+        "detail": "components.face_detector.hef.scrfd.post_process",
+        "documentation": {}
+    },
+    {
+        "label": "FaceDetector",
+        "importPath": "components.face_detector.base",
+        "description": "components.face_detector.base",
+        "isExtraImport": true,
+        "detail": "components.face_detector.base",
+        "documentation": {}
+    },
+    {
+        "label": "FaceDetector",
+        "importPath": "components.face_detector.base",
+        "description": "components.face_detector.base",
+        "isExtraImport": true,
+        "detail": "components.face_detector.base",
+        "documentation": {}
+    },
+    {
+        "label": "FaceDetector",
+        "importPath": "components.face_detector.base",
+        "description": "components.face_detector.base",
+        "isExtraImport": true,
+        "detail": "components.face_detector.base",
+        "documentation": {}
+    },
+    {
+        "label": "FaceDetector",
+        "importPath": "components.face_detector.base",
+        "description": "components.face_detector.base",
+        "isExtraImport": true,
+        "detail": "components.face_detector.base",
+        "documentation": {}
+    },
+    {
+        "label": "FaceDetector",
+        "importPath": "components.face_detector.base",
+        "description": "components.face_detector.base",
+        "isExtraImport": true,
+        "detail": "components.face_detector.base",
+        "documentation": {}
+    },
+    {
+        "label": "HailoTargetManager",
+        "importPath": "components.manager.hailo_target_manager",
+        "description": "components.manager.hailo_target_manager",
+        "isExtraImport": true,
+        "detail": "components.manager.hailo_target_manager",
+        "documentation": {}
+    },
+    {
+        "label": "HailoTargetManager",
+        "importPath": "components.manager.hailo_target_manager",
+        "description": "components.manager.hailo_target_manager",
+        "isExtraImport": true,
+        "detail": "components.manager.hailo_target_manager",
+        "documentation": {}
+    },
+    {
+        "label": "HailoTargetManager",
+        "importPath": "components.manager.hailo_target_manager",
+        "description": "components.manager.hailo_target_manager",
+        "isExtraImport": true,
+        "detail": "components.manager.hailo_target_manager",
         "documentation": {}
     },
     {
@@ -89,27 +340,83 @@
         "documentation": {}
     },
     {
-        "label": "FaceDetector",
-        "importPath": "components.face_detector.base",
-        "description": "components.face_detector.base",
+        "label": "ABC",
+        "importPath": "abc",
+        "description": "abc",
         "isExtraImport": true,
-        "detail": "components.face_detector.base",
+        "detail": "abc",
         "documentation": {}
     },
     {
-        "label": "FaceDetector",
-        "importPath": "components.face_detector.base",
-        "description": "components.face_detector.base",
+        "label": "abstractmethod",
+        "importPath": "abc",
+        "description": "abc",
         "isExtraImport": true,
-        "detail": "components.face_detector.base",
+        "detail": "abc",
         "documentation": {}
     },
     {
-        "label": "FaceDetector",
-        "importPath": "components.face_detector.base",
-        "description": "components.face_detector.base",
+        "label": "ABC",
+        "importPath": "abc",
+        "description": "abc",
         "isExtraImport": true,
-        "detail": "components.face_detector.base",
+        "detail": "abc",
+        "documentation": {}
+    },
+    {
+        "label": "abstractmethod",
+        "importPath": "abc",
+        "description": "abc",
+        "isExtraImport": true,
+        "detail": "abc",
+        "documentation": {}
+    },
+    {
+        "label": "ABC",
+        "importPath": "abc",
+        "description": "abc",
+        "isExtraImport": true,
+        "detail": "abc",
+        "documentation": {}
+    },
+    {
+        "label": "abstractmethod",
+        "importPath": "abc",
+        "description": "abc",
+        "isExtraImport": true,
+        "detail": "abc",
+        "documentation": {}
+    },
+    {
+        "label": "ABC",
+        "importPath": "abc",
+        "description": "abc",
+        "isExtraImport": true,
+        "detail": "abc",
+        "documentation": {}
+    },
+    {
+        "label": "abstractmethod",
+        "importPath": "abc",
+        "description": "abc",
+        "isExtraImport": true,
+        "detail": "abc",
+        "documentation": {}
+    },
+    {
+        "label": "ABC",
+        "importPath": "abc",
+        "description": "abc",
+        "isExtraImport": true,
+        "detail": "abc",
+        "documentation": {}
+    },
+    {
+        "label": "abstractmethod",
+        "importPath": "abc",
+        "description": "abc",
+        "isExtraImport": true,
+        "detail": "abc",
         "documentation": {}
     },
     {
@@ -122,21 +429,20 @@
         "documentation": {}
     },
     {
-        "label": "numpy",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "numpy",
-        "description": "numpy",
-        "detail": "numpy",
-        "documentation": {}
-    },
-    {
         "label": "mediapipe",
         "kind": 6,
         "isExtraImport": true,
         "importPath": "mediapipe",
         "description": "mediapipe",
         "detail": "mediapipe",
+        "documentation": {}
+    },
+    {
+        "label": "MTCNN",
+        "importPath": "mtcnn",
+        "description": "mtcnn",
+        "isExtraImport": true,
+        "detail": "mtcnn",
         "documentation": {}
     },
     {
@@ -148,6 +454,104 @@
         "documentation": {}
     },
     {
+        "label": "scipy",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "scipy",
+        "description": "scipy",
+        "detail": "scipy",
+        "documentation": {}
+    },
+    {
+        "label": "signal",
+        "importPath": "scipy",
+        "description": "scipy",
+        "isExtraImport": true,
+        "detail": "scipy",
+        "documentation": {}
+    },
+    {
+        "label": "linalg",
+        "importPath": "scipy",
+        "description": "scipy",
+        "isExtraImport": true,
+        "detail": "scipy",
+        "documentation": {}
+    },
+    {
+        "label": "signal",
+        "importPath": "scipy",
+        "description": "scipy",
+        "isExtraImport": true,
+        "detail": "scipy",
+        "documentation": {}
+    },
+    {
+        "label": "linalg",
+        "importPath": "scipy",
+        "description": "scipy",
+        "isExtraImport": true,
+        "detail": "scipy",
+        "documentation": {}
+    },
+    {
+        "label": "signal",
+        "importPath": "scipy",
+        "description": "scipy",
+        "isExtraImport": true,
+        "detail": "scipy",
+        "documentation": {}
+    },
+    {
+        "label": "signal",
+        "importPath": "scipy",
+        "description": "scipy",
+        "isExtraImport": true,
+        "detail": "scipy",
+        "documentation": {}
+    },
+    {
+        "label": "sparse",
+        "importPath": "scipy",
+        "description": "scipy",
+        "isExtraImport": true,
+        "detail": "scipy",
+        "documentation": {}
+    },
+    {
+        "label": "scipy.signal",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "scipy.signal",
+        "description": "scipy.signal",
+        "detail": "scipy.signal",
+        "documentation": {}
+    },
+    {
+        "label": "butter",
+        "importPath": "scipy.signal",
+        "description": "scipy.signal",
+        "isExtraImport": true,
+        "detail": "scipy.signal",
+        "documentation": {}
+    },
+    {
+        "label": "spdiags",
+        "importPath": "scipy.sparse",
+        "description": "scipy.sparse",
+        "isExtraImport": true,
+        "detail": "scipy.sparse",
+        "documentation": {}
+    },
+    {
+        "label": "diags",
+        "importPath": "scipy.sparse",
+        "description": "scipy.sparse",
+        "isExtraImport": true,
+        "detail": "scipy.sparse",
+        "documentation": {}
+    },
+    {
         "label": "HRExtractor",
         "importPath": "components.hr_extractor.base",
         "description": "components.hr_extractor.base",
@@ -164,27 +568,108 @@
         "documentation": {}
     },
     {
-        "label": "signal",
-        "importPath": "scipy",
-        "description": "scipy",
+        "label": "atexit",
+        "kind": 6,
         "isExtraImport": true,
-        "detail": "scipy",
+        "importPath": "atexit",
+        "description": "atexit",
+        "detail": "atexit",
         "documentation": {}
     },
     {
-        "label": "signal",
-        "importPath": "scipy",
-        "description": "scipy",
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
         "isExtraImport": true,
-        "detail": "scipy",
+        "detail": "typing",
         "documentation": {}
     },
     {
-        "label": "signal",
-        "importPath": "scipy",
-        "description": "scipy",
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
         "isExtraImport": true,
-        "detail": "scipy",
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Tuple",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
         "documentation": {}
     },
     {
@@ -204,11 +689,12 @@
         "documentation": {}
     },
     {
-        "label": "ROISelector",
-        "importPath": "components.roi_selector.base",
-        "description": "components.roi_selector.base",
+        "label": "math",
+        "kind": 6,
         "isExtraImport": true,
-        "detail": "components.roi_selector.base",
+        "importPath": "math",
+        "description": "math",
+        "detail": "math",
         "documentation": {}
     },
     {
@@ -236,11 +722,19 @@
         "documentation": {}
     },
     {
-        "label": "deque",
-        "importPath": "collections",
-        "description": "collections",
+        "label": "RPPGSignalExtractor",
+        "importPath": "components.rppg_signal_extractor.base",
+        "description": "components.rppg_signal_extractor.base",
         "isExtraImport": true,
-        "detail": "collections",
+        "detail": "components.rppg_signal_extractor.base",
+        "documentation": {}
+    },
+    {
+        "label": "RPPGSignalExtractor",
+        "importPath": "components.rppg_signal_extractor.base",
+        "description": "components.rppg_signal_extractor.base",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.base",
         "documentation": {}
     },
     {
@@ -253,12 +747,240 @@
         "documentation": {}
     },
     {
+        "label": "utils",
+        "importPath": "components.rppg_signal_extractor.conventional",
+        "description": "components.rppg_signal_extractor.conventional",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.conventional",
+        "documentation": {}
+    },
+    {
+        "label": "utils",
+        "importPath": "components.rppg_signal_extractor.conventional",
+        "description": "components.rppg_signal_extractor.conventional",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.conventional",
+        "documentation": {}
+    },
+    {
+        "label": "utils",
+        "importPath": "components.rppg_signal_extractor.conventional",
+        "description": "components.rppg_signal_extractor.conventional",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.conventional",
+        "documentation": {}
+    },
+    {
+        "label": "EMD",
+        "importPath": "PyEMD",
+        "description": "PyEMD",
+        "isExtraImport": true,
+        "detail": "PyEMD",
+        "documentation": {}
+    },
+    {
+        "label": "spsolve",
+        "importPath": "scipy.sparse.linalg",
+        "description": "scipy.sparse.linalg",
+        "isExtraImport": true,
+        "detail": "scipy.sparse.linalg",
+        "documentation": {}
+    },
+    {
+        "label": "DeepLearningRPPGSignalExtractor",
+        "importPath": "components.rppg_signal_extractor.deep_learning.base",
+        "description": "components.rppg_signal_extractor.deep_learning.base",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.deep_learning.base",
+        "documentation": {}
+    },
+    {
+        "label": "DeepLearningRPPGSignalExtractor",
+        "importPath": "components.rppg_signal_extractor.deep_learning.base",
+        "description": "components.rppg_signal_extractor.deep_learning.base",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.deep_learning.base",
+        "documentation": {}
+    },
+    {
+        "label": "DeepLearningRPPGSignalExtractor",
+        "importPath": "components.rppg_signal_extractor.deep_learning.base",
+        "description": "components.rppg_signal_extractor.deep_learning.base",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.deep_learning.base",
+        "documentation": {}
+    },
+    {
+        "label": "DeepLearningRPPGSignalExtractor",
+        "importPath": "components.rppg_signal_extractor.deep_learning.base",
+        "description": "components.rppg_signal_extractor.deep_learning.base",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.deep_learning.base",
+        "documentation": {}
+    },
+    {
+        "label": "DeepLearningRPPGSignalExtractor",
+        "importPath": "components.rppg_signal_extractor.deep_learning.base",
+        "description": "components.rppg_signal_extractor.deep_learning.base",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.deep_learning.base",
+        "documentation": {}
+    },
+    {
         "label": "threading",
         "kind": 6,
         "isExtraImport": true,
         "importPath": "threading",
         "description": "threading",
         "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "HEFModel",
+        "importPath": "components.rppg_signal_extractor.deep_learning.hef.base",
+        "description": "components.rppg_signal_extractor.deep_learning.hef.base",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.deep_learning.hef.base",
+        "documentation": {}
+    },
+    {
+        "label": "HEFModel",
+        "importPath": "components.rppg_signal_extractor.deep_learning.hef.base",
+        "description": "components.rppg_signal_extractor.deep_learning.hef.base",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.deep_learning.hef.base",
+        "documentation": {}
+    },
+    {
+        "label": "onnxruntime",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "onnxruntime",
+        "description": "onnxruntime",
+        "detail": "onnxruntime",
+        "documentation": {}
+    },
+    {
+        "label": "ONNXModel",
+        "importPath": "components.rppg_signal_extractor.deep_learning.onnx.base",
+        "description": "components.rppg_signal_extractor.deep_learning.onnx.base",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.deep_learning.onnx.base",
+        "documentation": {}
+    },
+    {
+        "label": "ONNXModel",
+        "importPath": "components.rppg_signal_extractor.deep_learning.onnx.base",
+        "description": "components.rppg_signal_extractor.deep_learning.onnx.base",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.deep_learning.onnx.base",
+        "documentation": {}
+    },
+    {
+        "label": "ONNXModel",
+        "importPath": "components.rppg_signal_extractor.deep_learning.onnx.base",
+        "description": "components.rppg_signal_extractor.deep_learning.onnx.base",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.deep_learning.onnx.base",
+        "documentation": {}
+    },
+    {
+        "label": "deque",
+        "importPath": "collections",
+        "description": "collections",
+        "isExtraImport": true,
+        "detail": "collections",
+        "documentation": {}
+    },
+    {
+        "label": "deque",
+        "importPath": "collections",
+        "description": "collections",
+        "isExtraImport": true,
+        "detail": "collections",
+        "documentation": {}
+    },
+    {
+        "label": "defaultdict",
+        "importPath": "collections",
+        "description": "collections",
+        "isExtraImport": true,
+        "detail": "collections",
+        "documentation": {}
+    },
+    {
+        "label": "deque",
+        "importPath": "collections",
+        "description": "collections",
+        "isExtraImport": true,
+        "detail": "collections",
+        "documentation": {}
+    },
+    {
+        "label": "deque",
+        "importPath": "collections",
+        "description": "collections",
+        "isExtraImport": true,
+        "detail": "collections",
+        "documentation": {}
+    },
+    {
+        "label": "get_memory_manager",
+        "importPath": "system.optimization_utils",
+        "description": "system.optimization_utils",
+        "isExtraImport": true,
+        "detail": "system.optimization_utils",
+        "documentation": {}
+    },
+    {
+        "label": "get_resource_pool",
+        "importPath": "system.optimization_utils",
+        "description": "system.optimization_utils",
+        "isExtraImport": true,
+        "detail": "system.optimization_utils",
+        "documentation": {}
+    },
+    {
+        "label": "gc",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "gc",
+        "description": "gc",
+        "detail": "gc",
+        "documentation": {}
+    },
+    {
+        "label": "psutil",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "psutil",
+        "description": "psutil",
+        "detail": "psutil",
+        "documentation": {}
+    },
+    {
+        "label": "statistics",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "statistics",
+        "description": "statistics",
+        "detail": "statistics",
+        "documentation": {}
+    },
+    {
+        "label": "ThreadPoolExecutor",
+        "importPath": "concurrent.futures",
+        "description": "concurrent.futures",
+        "isExtraImport": true,
+        "detail": "concurrent.futures",
+        "documentation": {}
+    },
+    {
+        "label": "as_completed",
+        "importPath": "concurrent.futures",
+        "description": "concurrent.futures",
+        "isExtraImport": true,
+        "detail": "concurrent.futures",
         "documentation": {}
     },
     {
@@ -271,6 +993,55 @@
         "documentation": {}
     },
     {
+        "label": "Queue",
+        "importPath": "queue",
+        "description": "queue",
+        "isExtraImport": true,
+        "detail": "queue",
+        "documentation": {}
+    },
+    {
+        "label": "Empty",
+        "importPath": "queue",
+        "description": "queue",
+        "isExtraImport": true,
+        "detail": "queue",
+        "documentation": {}
+    },
+    {
+        "label": "IncrementalRPPGProcessor",
+        "importPath": "system.incremental_processor",
+        "description": "system.incremental_processor",
+        "isExtraImport": true,
+        "detail": "system.incremental_processor",
+        "documentation": {}
+    },
+    {
+        "label": "PerformanceMonitor",
+        "importPath": "system.performance_monitor",
+        "description": "system.performance_monitor",
+        "isExtraImport": true,
+        "detail": "system.performance_monitor",
+        "documentation": {}
+    },
+    {
+        "label": "pandas",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "pandas",
+        "description": "pandas",
+        "detail": "pandas",
+        "documentation": {}
+    },
+    {
+        "label": "HaarCascade",
+        "importPath": "components.face_detector.haar_cascade",
+        "description": "components.face_detector.haar_cascade",
+        "isExtraImport": true,
+        "detail": "components.face_detector.haar_cascade",
+        "documentation": {}
+    },
+    {
         "label": "HaarCascade",
         "importPath": "components.face_detector.haar_cascade",
         "description": "components.face_detector.haar_cascade",
@@ -287,11 +1058,51 @@
         "documentation": {}
     },
     {
-        "label": "HailoFaceDetector",
-        "importPath": "components.face_detector.hailo",
-        "description": "components.face_detector.hailo",
+        "label": "MediaPipe",
+        "importPath": "components.face_detector.mediapipe",
+        "description": "components.face_detector.mediapipe",
         "isExtraImport": true,
-        "detail": "components.face_detector.hailo",
+        "detail": "components.face_detector.mediapipe",
+        "documentation": {}
+    },
+    {
+        "label": "MediaPipe",
+        "importPath": "components.face_detector.mediapipe",
+        "description": "components.face_detector.mediapipe",
+        "isExtraImport": true,
+        "detail": "components.face_detector.mediapipe",
+        "documentation": {}
+    },
+    {
+        "label": "MT_CNN",
+        "importPath": "components.face_detector.mt_cnn",
+        "description": "components.face_detector.mt_cnn",
+        "isExtraImport": true,
+        "detail": "components.face_detector.mt_cnn",
+        "documentation": {}
+    },
+    {
+        "label": "MT_CNN",
+        "importPath": "components.face_detector.mt_cnn",
+        "description": "components.face_detector.mt_cnn",
+        "isExtraImport": true,
+        "detail": "components.face_detector.mt_cnn",
+        "documentation": {}
+    },
+    {
+        "label": "MT_CNN",
+        "importPath": "components.face_detector.mt_cnn",
+        "description": "components.face_detector.mt_cnn",
+        "isExtraImport": true,
+        "detail": "components.face_detector.mt_cnn",
+        "documentation": {}
+    },
+    {
+        "label": "Centroid",
+        "importPath": "components.face_tracker.centroid",
+        "description": "components.face_tracker.centroid",
+        "isExtraImport": true,
+        "detail": "components.face_tracker.centroid",
         "documentation": {}
     },
     {
@@ -319,11 +1130,115 @@
         "documentation": {}
     },
     {
+        "label": "FullFace",
+        "importPath": "components.roi_selector.fullface",
+        "description": "components.roi_selector.fullface",
+        "isExtraImport": true,
+        "detail": "components.roi_selector.fullface",
+        "documentation": {}
+    },
+    {
+        "label": "FullFace",
+        "importPath": "components.roi_selector.fullface",
+        "description": "components.roi_selector.fullface",
+        "isExtraImport": true,
+        "detail": "components.roi_selector.fullface",
+        "documentation": {}
+    },
+    {
+        "label": "FullFaceSquare",
+        "importPath": "components.roi_selector.fullface_square",
+        "description": "components.roi_selector.fullface_square",
+        "isExtraImport": true,
+        "detail": "components.roi_selector.fullface_square",
+        "documentation": {}
+    },
+    {
+        "label": "FullFaceSquare",
+        "importPath": "components.roi_selector.fullface_square",
+        "description": "components.roi_selector.fullface_square",
+        "isExtraImport": true,
+        "detail": "components.roi_selector.fullface_square",
+        "documentation": {}
+    },
+    {
         "label": "POS",
         "importPath": "components.rppg_signal_extractor.conventional.pos",
         "description": "components.rppg_signal_extractor.conventional.pos",
         "isExtraImport": true,
         "detail": "components.rppg_signal_extractor.conventional.pos",
+        "documentation": {}
+    },
+    {
+        "label": "POS",
+        "importPath": "components.rppg_signal_extractor.conventional.pos",
+        "description": "components.rppg_signal_extractor.conventional.pos",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.conventional.pos",
+        "documentation": {}
+    },
+    {
+        "label": "POS",
+        "importPath": "components.rppg_signal_extractor.conventional.pos",
+        "description": "components.rppg_signal_extractor.conventional.pos",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.conventional.pos",
+        "documentation": {}
+    },
+    {
+        "label": "CHROM",
+        "importPath": "components.rppg_signal_extractor.conventional.chrom",
+        "description": "components.rppg_signal_extractor.conventional.chrom",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.conventional.chrom",
+        "documentation": {}
+    },
+    {
+        "label": "CHROM",
+        "importPath": "components.rppg_signal_extractor.conventional.chrom",
+        "description": "components.rppg_signal_extractor.conventional.chrom",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.conventional.chrom",
+        "documentation": {}
+    },
+    {
+        "label": "CHROM",
+        "importPath": "components.rppg_signal_extractor.conventional.chrom",
+        "description": "components.rppg_signal_extractor.conventional.chrom",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.conventional.chrom",
+        "documentation": {}
+    },
+    {
+        "label": "ICA",
+        "importPath": "components.rppg_signal_extractor.conventional.ica",
+        "description": "components.rppg_signal_extractor.conventional.ica",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.conventional.ica",
+        "documentation": {}
+    },
+    {
+        "label": "ICA",
+        "importPath": "components.rppg_signal_extractor.conventional.ica",
+        "description": "components.rppg_signal_extractor.conventional.ica",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.conventional.ica",
+        "documentation": {}
+    },
+    {
+        "label": "FFT",
+        "importPath": "components.hr_extractor.fft",
+        "description": "components.hr_extractor.fft",
+        "isExtraImport": true,
+        "detail": "components.hr_extractor.fft",
+        "documentation": {}
+    },
+    {
+        "label": "FFT",
+        "importPath": "components.hr_extractor.fft",
+        "description": "components.hr_extractor.fft",
+        "isExtraImport": true,
+        "detail": "components.hr_extractor.fft",
         "documentation": {}
     },
     {
@@ -351,35 +1266,124 @@
         "documentation": {}
     },
     {
-        "label": "Cheeks",
-        "importPath": "components.roi_selector.cheeks",
-        "description": "components.roi_selector.cheeks",
-        "isExtraImport": true,
-        "detail": "components.roi_selector.cheeks",
-        "documentation": {}
-    },
-    {
-        "label": "Cheeks",
-        "importPath": "components.roi_selector.cheeks",
-        "description": "components.roi_selector.cheeks",
-        "isExtraImport": true,
-        "detail": "components.roi_selector.cheeks",
-        "documentation": {}
-    },
-    {
-        "label": "Forehead",
-        "importPath": "components.roi_selector.forehead",
-        "description": "components.roi_selector.forehead",
-        "isExtraImport": true,
-        "detail": "components.roi_selector.forehead",
-        "documentation": {}
-    },
-    {
         "label": "Metrics",
         "importPath": "system.metrics",
         "description": "system.metrics",
         "isExtraImport": true,
         "detail": "system.metrics",
+        "documentation": {}
+    },
+    {
+        "label": "system.colors",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "system.colors",
+        "description": "system.colors",
+        "detail": "system.colors",
+        "documentation": {}
+    },
+    {
+        "label": "EfficientPhys",
+        "importPath": "components.rppg_signal_extractor.deep_learning.onnx.efficient_phys",
+        "description": "components.rppg_signal_extractor.deep_learning.onnx.efficient_phys",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.deep_learning.onnx.efficient_phys",
+        "documentation": {}
+    },
+    {
+        "label": "EfficientPhys",
+        "importPath": "components.rppg_signal_extractor.deep_learning.onnx.efficient_phys",
+        "description": "components.rppg_signal_extractor.deep_learning.onnx.efficient_phys",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.deep_learning.onnx.efficient_phys",
+        "documentation": {}
+    },
+    {
+        "label": "DeepPhys",
+        "importPath": "components.rppg_signal_extractor.deep_learning.onnx.deep_phys",
+        "description": "components.rppg_signal_extractor.deep_learning.onnx.deep_phys",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.deep_learning.onnx.deep_phys",
+        "documentation": {}
+    },
+    {
+        "label": "DeepPhys",
+        "importPath": "components.rppg_signal_extractor.deep_learning.onnx.deep_phys",
+        "description": "components.rppg_signal_extractor.deep_learning.onnx.deep_phys",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.deep_learning.onnx.deep_phys",
+        "documentation": {}
+    },
+    {
+        "label": "DeepPhys",
+        "importPath": "components.rppg_signal_extractor.deep_learning.hef.deep_phys",
+        "description": "components.rppg_signal_extractor.deep_learning.hef.deep_phys",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.deep_learning.hef.deep_phys",
+        "documentation": {}
+    },
+    {
+        "label": "DeepPhys",
+        "importPath": "components.rppg_signal_extractor.deep_learning.hef.deep_phys",
+        "description": "components.rppg_signal_extractor.deep_learning.hef.deep_phys",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.deep_learning.hef.deep_phys",
+        "documentation": {}
+    },
+    {
+        "label": "TSCAN",
+        "importPath": "components.rppg_signal_extractor.deep_learning.onnx.tscan",
+        "description": "components.rppg_signal_extractor.deep_learning.onnx.tscan",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.deep_learning.onnx.tscan",
+        "documentation": {}
+    },
+    {
+        "label": "TSCAN",
+        "importPath": "components.rppg_signal_extractor.deep_learning.onnx.tscan",
+        "description": "components.rppg_signal_extractor.deep_learning.onnx.tscan",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.deep_learning.onnx.tscan",
+        "documentation": {}
+    },
+    {
+        "label": "RetinaFace",
+        "importPath": "components.face_detector.hef.retina_face.retina_face",
+        "description": "components.face_detector.hef.retina_face.retina_face",
+        "isExtraImport": true,
+        "detail": "components.face_detector.hef.retina_face.retina_face",
+        "documentation": {}
+    },
+    {
+        "label": "SCRFD",
+        "importPath": "components.face_detector.hef.scrfd.scrfd",
+        "description": "components.face_detector.hef.scrfd.scrfd",
+        "isExtraImport": true,
+        "detail": "components.face_detector.hef.scrfd.scrfd",
+        "documentation": {}
+    },
+    {
+        "label": "SCRFD",
+        "importPath": "components.face_detector.hef.scrfd.scrfd",
+        "description": "components.face_detector.hef.scrfd.scrfd",
+        "isExtraImport": true,
+        "detail": "components.face_detector.hef.scrfd.scrfd",
+        "documentation": {}
+    },
+    {
+        "label": "Pipeline",
+        "importPath": "test_system.pipeline",
+        "description": "test_system.pipeline",
+        "isExtraImport": true,
+        "detail": "test_system.pipeline",
+        "documentation": {}
+    },
+    {
+        "label": "Metrics",
+        "importPath": "test_system.metrics",
+        "description": "test_system.metrics",
+        "isExtraImport": true,
+        "detail": "test_system.metrics",
         "documentation": {}
     },
     {
@@ -391,11 +1395,90 @@
         "documentation": {}
     },
     {
-        "label": "CHROM",
-        "importPath": "components.rppg_signal_extractor.conventional.chrom",
-        "description": "components.rppg_signal_extractor.conventional.chrom",
+        "label": "csv",
+        "kind": 6,
         "isExtraImport": true,
-        "detail": "components.rppg_signal_extractor.conventional.chrom",
+        "importPath": "csv",
+        "description": "csv",
+        "detail": "csv",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "System",
+        "importPath": "test_system.system",
+        "description": "test_system.system",
+        "isExtraImport": true,
+        "detail": "test_system.system",
+        "documentation": {}
+    },
+    {
+        "label": "ICA2019",
+        "importPath": "components.rppg_signal_extractor.conventional.ica_2019",
+        "description": "components.rppg_signal_extractor.conventional.ica_2019",
+        "isExtraImport": true,
+        "detail": "components.rppg_signal_extractor.conventional.ica_2019",
+        "documentation": {}
+    },
+    {
+        "label": "PostProcessor",
+        "kind": 6,
+        "importPath": "components.face_detector.hef.retina_face.post_process",
+        "description": "components.face_detector.hef.retina_face.post_process",
+        "peekOfCode": "class PostProcessor:\n    def __init__(self, json_config, zoo_path):\n        \"\"\"\n        Initialize RetinaFace postprocessor from a JSON configuration.\n        Args:\n            json_config (dict): JSON configuration dictionary.\n        \"\"\"\n        config = json.loads(json_config)\n        # Parse configuration\n        post_process_config = config[\"POST_PROCESS\"][0]",
+        "detail": "components.face_detector.hef.retina_face.post_process",
+        "documentation": {}
+    },
+    {
+        "label": "RetinaFace",
+        "kind": 6,
+        "importPath": "components.face_detector.hef.retina_face.retina_face",
+        "description": "components.face_detector.hef.retina_face.retina_face",
+        "peekOfCode": "class RetinaFace(HEFModel):\n    def __init__(self):\n        model_name = \"retinaface_mobilenet--736x1280_quant_hailort_hailo8l_1\"\n        zoo_path = os.path.join(DEGIRUM_ZOO_DIR, model_name)\n        hef_path = os.path.join(zoo_path, f\"{model_name}.hef\")\n        json_config_path = os.path.join(zoo_path, f\"{model_name}.json\")\n        with open(json_config_path, 'r') as f:\n            json_config = json.dumps(json.load(f))\n        self.preprocessor = Preprocessor(input_shape_nhwc=(1, 736, 1280, 3))\n        self.postprocessor = PostProcessor(json_config, zoo_path)",
+        "detail": "components.face_detector.hef.retina_face.retina_face",
+        "documentation": {}
+    },
+    {
+        "label": "PostProcessor",
+        "kind": 6,
+        "importPath": "components.face_detector.hef.scrfd.post_process",
+        "description": "components.face_detector.hef.scrfd.post_process",
+        "peekOfCode": "class PostProcessor:\n    \"\"\"SCRFD Postprocessor for DeGirum PySDK.\"\"\"\n    def __init__(self, json_config, zoo_path):\n        \"\"\"\n        Initialize the post-processor with configuration settings.\n        Parameters:\n            json_config (str): JSON string containing post-processing configuration.\n        \"\"\"\n        config = json.loads(json_config)\n        # Extract input image dimensions",
+        "detail": "components.face_detector.hef.scrfd.post_process",
+        "documentation": {}
+    },
+    {
+        "label": "SCRFD",
+        "kind": 6,
+        "importPath": "components.face_detector.hef.scrfd.scrfd",
+        "description": "components.face_detector.hef.scrfd.scrfd",
+        "peekOfCode": "class SCRFD(HEFModel):\n    def __init__(self, variant):\n        variants = ['2.5g', '500m', '10g']\n        if variant not in variants:\n            raise ValueError(f\"Invalid variant '{variant}'. Supported variants: {variants}\")\n        model_name = f\"scrfd_{variant}--640x640_quant_hailort_hailo8l_1\"\n        zoo_path = os.path.join(DEGIRUM_ZOO_DIR, model_name)\n        hef_path = os.path.join(zoo_path, f\"{model_name}.hef\")\n        json_config_path = os.path.join(zoo_path, f\"{model_name}.json\")\n        with open(json_config_path, 'r') as f:",
+        "detail": "components.face_detector.hef.scrfd.scrfd",
+        "documentation": {}
+    },
+    {
+        "label": "HEFModel",
+        "kind": 6,
+        "importPath": "components.face_detector.hef.base",
+        "description": "components.face_detector.hef.base",
+        "peekOfCode": "class HEFModel(FaceDetector):\n    def __init__(self, model_path: str):\n        if not model_path.endswith('.hef'):\n            raise ValueError(\"Model path must point to an HEF file.\")\n        self.target = HailoTargetManager().target\n        self.model_path = model_path\n        self._load_model()\n    def _load_model(self):\n        \"\"\"Load the HEF model.\"\"\"\n        hef = HEF(self.model_path)",
+        "detail": "components.face_detector.hef.base",
+        "documentation": {}
+    },
+    {
+        "label": "Preprocessor",
+        "kind": 6,
+        "importPath": "components.face_detector.hef.preprocess",
+        "description": "components.face_detector.hef.preprocess",
+        "peekOfCode": "class Preprocessor:\n    \"\"\"\n    Image preprocessor for Hailo face detection models. Assume color space is RGB.\n    \"\"\"\n    def __init__(self, input_shape_nhwc):\n        self.fill_color = (0, 0, 0)\n        self.input_shape_nhwc = input_shape_nhwc\n    def _apply_pad_method(self, image):\n        \"\"\"Applies pad method to the image.\n        Returns a tuple containing modified image and coordinate conversion function",
+        "detail": "components.face_detector.hef.preprocess",
         "documentation": {}
     },
     {
@@ -408,21 +1491,21 @@
         "documentation": {}
     },
     {
+        "label": "DegirumFaceDetector",
+        "kind": 6,
+        "importPath": "components.face_detector.degirum",
+        "description": "components.face_detector.degirum",
+        "peekOfCode": "class DegirumFaceDetector(FaceDetector):\n    def __init__(self, model_name=\"yolov8n_relu6_face--640x640_quant_tflite_multidevice_1\", \n                    confidence_threshold=0.5):\n        self.face_model = dg.load_model(\n            model_name=model_name,\n            inference_host_address=\"@local\",\n            zoo_url=DEGIRUM_ZOO_DIR,\n            token=\"\",\n            overlay_color=(0, 255, 0)\n        )",
+        "detail": "components.face_detector.degirum",
+        "documentation": {}
+    },
+    {
         "label": "HaarCascade",
         "kind": 6,
         "importPath": "components.face_detector.haar_cascade",
         "description": "components.face_detector.haar_cascade",
-        "peekOfCode": "class HaarCascade(FaceDetector):\n    def __init__(self, scale_factor: float=1.1, min_neighbors: int=7):\n        self.scale_factor = scale_factor\n        self.min_neighbors = min_neighbors\n        self.detector = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')\n    def detect(self, frame):\n        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)\n        faces = self.detector.detectMultiScale(gray, scaleFactor=self.scale_factor, minNeighbors=self.min_neighbors)\n        return [(x, y, x + w, y + h) for (x, y, w, h) in faces]",
+        "peekOfCode": "class HaarCascade(FaceDetector):\n    def __init__(self, scale_factor: float=1.1, min_neighbors: int=7):\n        self.scale_factor = scale_factor\n        self.min_neighbors = min_neighbors\n        self.detector = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')\n    def detect(self, frame):\n        gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)\n        faces = self.detector.detectMultiScale(gray, scaleFactor=self.scale_factor, minNeighbors=self.min_neighbors)\n        return [(int(x), int(y), int(x + w), int(y + h)) for (x, y, w, h) in faces]",
         "detail": "components.face_detector.haar_cascade",
-        "documentation": {}
-    },
-    {
-        "label": "HailoFaceDetector",
-        "kind": 6,
-        "importPath": "components.face_detector.hailo",
-        "description": "components.face_detector.hailo",
-        "peekOfCode": "class HailoFaceDetector(FaceDetector):\n        def __init__(self, model_name=\"scrfd_10g--640x640_quant_hailort_hailo8l_1\", \n                                 confidence_threshold=0.5):\n                self.face_model = dg.load_model(\n                        model_name=model_name,\n                        inference_host_address=\"@local\",\n                        # zoo_url=\"degirum/models_hailort\",\n                        zoo_url=\"/home/pme/ta/ta-app/resources/zoo\",\n                        token=\"\",\n                        overlay_color=(0, 255, 0)",
-        "detail": "components.face_detector.hailo",
         "documentation": {}
     },
     {
@@ -430,8 +1513,17 @@
         "kind": 6,
         "importPath": "components.face_detector.mediapipe",
         "description": "components.face_detector.mediapipe",
-        "peekOfCode": "class MediaPipe(FaceDetector):\n    def __init__(self, min_confidence: float=0.5):\n        self.detector = mp.solutions.face_detection.FaceDetection(min_detection_confidence=min_confidence)\n    def detect(self, frame):\n        rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)\n        results = self.detector.process(rgb_image)\n        # [TODO] possibility to parallelize this\n        faces = []\n        for detection in results.detections:\n            bbox = detection.location_data.relative_bounding_box",
+        "peekOfCode": "class MediaPipe(FaceDetector):\n    def __init__(self, min_confidence: float=0.5):\n        self.detector = mp.solutions.face_detection.FaceDetection(min_detection_confidence=min_confidence)\n    def detect(self, frame):\n        results = self.detector.process(frame)\n        faces = []\n        if results.detections is not None:\n            for detection in results.detections:\n                bbox = detection.location_data.relative_bounding_box\n                frame_h, frame_w, _ = frame.shape",
         "detail": "components.face_detector.mediapipe",
+        "documentation": {}
+    },
+    {
+        "label": "MT_CNN",
+        "kind": 6,
+        "importPath": "components.face_detector.mt_cnn",
+        "description": "components.face_detector.mt_cnn",
+        "peekOfCode": "class MT_CNN(FaceDetector):\n    def __init__(self, min_confidence=0.5):\n        self.detector = MTCNN(device=\"CPU:0\", stages=\"face_detection_only\")\n        self.min_confidence = min_confidence\n    def detect(self, frame):\n        results = self.detector.detect_faces(frame, box_format=\"xyxy\")\n        if not results:\n            return []\n        faces = [\n            tuple(face['box']) for face in results if face is not None and face['confidence'] >= self.min_confidence",
+        "detail": "components.face_detector.mt_cnn",
         "documentation": {}
     },
     {
@@ -448,7 +1540,7 @@
         "kind": 6,
         "importPath": "components.face_tracker.centroid",
         "description": "components.face_tracker.centroid",
-        "peekOfCode": "class Centroid(FaceTracker):\n    def __init__(self, max_disappeared=50):\n        self.next_object_id = 0\n        self.objects = {}\n        self.disappeared = {}\n        self.max_disappeared = max_disappeared\n    def register(self, centroid):\n        self.objects[self.next_object_id] = centroid\n        self.disappeared[self.next_object_id] = 0\n        self.next_object_id += 1",
+        "peekOfCode": "class Centroid(FaceTracker):\n    def __init__(self, max_disappeared=50):\n        self.next_object_id = 0\n        self.objects = {}  # Stores: {object_id: {'rect': (x, y, x_end, y_end), 'centroid': [c_x, c_y]}}\n        self.disappeared = {}\n        self.max_disappeared = max_disappeared\n    def register(self, rect):\n        x, y, x_end, y_end = rect\n        centroid = np.array([int((x + x_end) / 2), int((y + y_end) / 2)], dtype=\"int\")\n        self.objects[self.next_object_id] = {",
         "detail": "components.face_tracker.centroid",
         "documentation": {}
     },
@@ -457,7 +1549,7 @@
         "kind": 6,
         "importPath": "components.hr_extractor.base",
         "description": "components.hr_extractor.base",
-        "peekOfCode": "class HRExtractor(ABC):\n    def __init__(self, fps: float=30.0):\n        self.fps = fps\n    @abstractmethod\n    def extract(self, pulse_signal):\n        pass",
+        "peekOfCode": "class HRExtractor(ABC):\n    def __init__(self, fps: float=30.0, diff_flag=False, use_bandpass=False, use_detrend=False):\n        self.fps = fps\n        self.diff_flag = diff_flag\n        self.use_bandpass = use_bandpass\n        self.use_detrend = use_detrend\n    @staticmethod\n    def _next_power_of_2(x):\n        \"\"\"Calculate the nearest power of 2.\"\"\"\n        return 1 if x == 0 else 2 ** (x - 1).bit_length()",
         "detail": "components.hr_extractor.base",
         "documentation": {}
     },
@@ -466,7 +1558,7 @@
         "kind": 6,
         "importPath": "components.hr_extractor.fft",
         "description": "components.hr_extractor.fft",
-        "peekOfCode": "class FFT(HRExtractor):\n    def extract(self, pulse_signal):\n        fft_size = len(pulse_signal)\n        fft_data = np.abs(np.fft.rfft(pulse_signal, fft_size))\n        freqs = np.fft.rfftfreq(fft_size, d=1.0/self.fps)\n        # Expected heart rate range: 40-240 BPM\n        valid_range = np.where((freqs >= 0.7) & (freqs <= 4.0))\n        max_idx = np.argmax(fft_data[valid_range])\n        hr_freq = freqs[valid_range][max_idx]\n        heart_rate = hr_freq * 60    # Hz -> BPM",
+        "peekOfCode": "class FFT(HRExtractor):\n    @staticmethod\n    def _calculate_fft_hr(ppg_signal, fps=60, low_pass=0.75, high_pass=2.5):\n        # Note: to more closely match results in the NeurIPS 2023 toolbox paper,\n        # we recommend low_pass=0.75 and high_pass=2.5 instead of the defaults above.\n        \"\"\"Calculate heart rate based on PPG using Fast Fourier transform (FFT).\"\"\"\n        ppg_signal = np.expand_dims(ppg_signal, 0)\n        N = HRExtractor._next_power_of_2(ppg_signal.shape[1])\n        f_ppg, pxx_ppg = scipy.signal.periodogram(ppg_signal, fs=fps, nfft=N, detrend=False)\n        fmask_ppg = np.argwhere((f_ppg >= low_pass) & (f_ppg <= high_pass))",
         "detail": "components.hr_extractor.fft",
         "documentation": {}
     },
@@ -475,8 +1567,17 @@
         "kind": 6,
         "importPath": "components.hr_extractor.peak_detection",
         "description": "components.hr_extractor.peak_detection",
-        "peekOfCode": "class PeakDetection(HRExtractor):\n    def extract(self, pulse_signal):\n        peaks, _ = signal.find_peaks(pulse_signal, distance=self.fps/4)\n        if len(peaks) < 2:\n            return 0\n        peak_times = peaks / self.fps\n        intervals = np.diff(peak_times)\n        avg_interval = np.mean(intervals)\n        heart_rate = 60 / avg_interval\n        return heart_rate",
+        "peekOfCode": "class PeakDetection(HRExtractor):\n    @staticmethod\n    def _calculate_peak_hr(ppg_signal, fps):\n        \"\"\"Calculate heart rate based on PPG using peak detection.\"\"\"\n        ppg_peaks, _ = scipy.signal.find_peaks(ppg_signal)\n        hr_peak = 60 / (np.mean(np.diff(ppg_peaks)) / fps)\n        return hr_peak\n    def calculate_hr(self, predictions, fps=30):\n        return PeakDetection._calculate_peak_hr(predictions, fps=fps)",
         "detail": "components.hr_extractor.peak_detection",
+        "documentation": {}
+    },
+    {
+        "label": "HailoTargetManager",
+        "kind": 6,
+        "importPath": "components.manager.hailo_target_manager",
+        "description": "components.manager.hailo_target_manager",
+        "peekOfCode": "class HailoTargetManager:\n    \"\"\"Singleton class for managing Hailo target devices.\"\"\"\n    _instance: Optional['HailoTargetManager'] = None\n    _target: Optional[VDevice] = None\n    def __new__(cls) -> 'HailoTargetManager':\n        if cls._instance is None:\n            cls._instance = super().__new__(cls)\n        return cls._instance\n    def __init__(self):\n        # Only initialize once",
+        "detail": "components.manager.hailo_target_manager",
         "documentation": {}
     },
     {
@@ -484,26 +1585,8 @@
         "kind": 6,
         "importPath": "components.roi_selector.base",
         "description": "components.roi_selector.base",
-        "peekOfCode": "class ROISelector(ABC):\n    def __init__(self, target_size=(64, 64)):\n        self.target_size = target_size\n    @abstractmethod\n    def select(self, frame, face_rect):\n        pass",
+        "peekOfCode": "class ROISelector(ABC):\n    def __init__(self):\n        pass\n    @abstractmethod\n    def select(self, frame, face_rect):\n        pass",
         "detail": "components.roi_selector.base",
-        "documentation": {}
-    },
-    {
-        "label": "Cheeks",
-        "kind": 6,
-        "importPath": "components.roi_selector.cheeks",
-        "description": "components.roi_selector.cheeks",
-        "peekOfCode": "class Cheeks(ROISelector):\n    def select(self, frame, face_rect):\n        x, y, x_end, y_end = face_rect\n        face_width = x_end - x\n        face_height = y_end - y\n        # [TODO] Adjust these values\n        left_cheek_x = x + int(face_width * 0.1)\n        right_cheek_x = x + int(face_width * 0.6)\n        cheek_y = y + int(face_height * 0.4)\n        cheek_width = int(face_width * 0.3)",
-        "detail": "components.roi_selector.cheeks",
-        "documentation": {}
-    },
-    {
-        "label": "Forehead",
-        "kind": 6,
-        "importPath": "components.roi_selector.forehead",
-        "description": "components.roi_selector.forehead",
-        "peekOfCode": "class Forehead(ROISelector):\n    def select(self, frame, face_rect):\n        x, y, x_end, y_end = face_rect\n        face_width = x_end - x\n        face_height = y_end - y\n        # TODO: Adjust these values\n        forehead_x = x + int(face_width * 0.2)\n        forehead_width = int(face_width * 0.6)\n        forehead_y = y + int(face_height * 0.05)\n        forehead_height = int(face_height * 0.25)",
-        "detail": "components.roi_selector.forehead",
         "documentation": {}
     },
     {
@@ -511,8 +1594,17 @@
         "kind": 6,
         "importPath": "components.roi_selector.fullface",
         "description": "components.roi_selector.fullface",
-        "peekOfCode": "class FullFace(ROISelector):\n    def select(self, frame, face_rect):\n        x, y, x_end, y_end = face_rect\n        roi = frame[y:y_end, x:x_end]\n        if roi.size == 0:\n            return None\n        return cv2.resize(roi, self.target_size)",
+        "peekOfCode": "class FullFace(ROISelector):\n    def select(self, frame, face_rect):\n        x, y, x_end, y_end = face_rect\n        roi = frame[y:y_end, x:x_end]\n        if roi.size == 0:\n            return None, None\n        return roi, (x, y, x_end, y_end)",
         "detail": "components.roi_selector.fullface",
+        "documentation": {}
+    },
+    {
+        "label": "FullFaceSquare",
+        "kind": 6,
+        "importPath": "components.roi_selector.fullface_square",
+        "description": "components.roi_selector.fullface_square",
+        "peekOfCode": "class FullFaceSquare(ROISelector):\n    def __init__(self, target_size=(72, 72), larger_box_coef=1.0):\n        self.target_size = target_size\n        self.larger_box_coef = larger_box_coef\n    def select(self, frame, face_rect):\n        x, y, x_end, y_end = face_rect\n        w, h = x_end - x, y_end - y\n        # Calculate center of original face rectangle\n        center_x = x + w // 2\n        center_y = y + h // 2",
+        "detail": "components.roi_selector.fullface_square",
         "documentation": {}
     },
     {
@@ -520,8 +1612,26 @@
         "kind": 6,
         "importPath": "components.rppg_signal_extractor.conventional.chrom",
         "description": "components.rppg_signal_extractor.conventional.chrom",
-        "peekOfCode": "class CHROM(RPPGSignalExtractor):\n    def extract(self, roi_data):\n        rgb_signals = np.mean(roi_data, axis=(1, 2))\n        rgb_norm = rgb_signals / np.mean(rgb_signals, axis=0)\n        X_chrom = 3 * rgb_norm[:, 0] - 2 * rgb_norm[:, 1]\n        Y_chrom = 1.5 * rgb_norm[:, 0] + rgb_norm[:, 1] - 1.5 * rgb_norm[:, 2]\n        std_X = np.std(X_chrom)\n        std_Y = np.std(Y_chrom)\n        alpha = std_X / std_Y\n        pulse = X_chrom - alpha * Y_chrom",
+        "peekOfCode": "class CHROM(RPPGSignalExtractor):\n    def extract(self, roi_data):\n        \"\"\"\n        Extract rPPG signal using CHROME-DEHAAN method.\n        Args:\n            roi_data: List of frame ROIs or numpy array of shape (frames, height, width, channels)\n        Returns:\n            BVP signal (Blood Volume Pulse)\n        \"\"\"\n        # Use the original CHROME_DEHAAN algorithm with self.fps",
         "detail": "components.rppg_signal_extractor.conventional.chrom",
+        "documentation": {}
+    },
+    {
+        "label": "ICA",
+        "kind": 6,
+        "importPath": "components.rppg_signal_extractor.conventional.ica",
+        "description": "components.rppg_signal_extractor.conventional.ica",
+        "peekOfCode": "class ICA(RPPGSignalExtractor):\n    def extract(self, roi_data):\n        return ICA.ICA_POH(roi_data, self.fps)\n    @staticmethod\n    def ICA_POH(roi_data, fps):\n        # Cut off frequency.\n        t0 = time.time()\n        LPF = 0.7\n        HPF = 2.5\n        RGB = ICA.avg_roi_data(roi_data)",
+        "detail": "components.rppg_signal_extractor.conventional.ica",
+        "documentation": {}
+    },
+    {
+        "label": "ICA2019",
+        "kind": 6,
+        "importPath": "components.rppg_signal_extractor.conventional.ica_2019",
+        "description": "components.rppg_signal_extractor.conventional.ica_2019",
+        "peekOfCode": "class ICA2019(RPPGSignalExtractor):\n    def extract(self, roi_data):\n        return ICA2019.ICA_Modified(roi_data, self.fps)\n    @staticmethod\n    def ICA_Modified(roi_data, fps):\n        # Cut off frequency\n        t0 = time.time()\n        LPF = 0.7\n        HPF = 2.5\n        # RGB decomposition",
+        "detail": "components.rppg_signal_extractor.conventional.ica_2019",
         "documentation": {}
     },
     {
@@ -529,17 +1639,89 @@
         "kind": 6,
         "importPath": "components.rppg_signal_extractor.conventional.pos",
         "description": "components.rppg_signal_extractor.conventional.pos",
-        "peekOfCode": "class POS(RPPGSignalExtractor):\n    def extract(self, roi_data):\n        rgb_signals = np.mean(roi_data, axis=(1, 2))\n        rgb_norm = rgb_signals / np.mean(rgb_signals, axis=0)\n        X = rgb_norm[:, 0] - rgb_norm[:, 1]    # R-G\n        Y = rgb_norm[:, 0] + rgb_norm[:, 1] - 2 * rgb_norm[:, 2]    # R+G-2B\n        alpha = np.std(X) / np.std(Y)\n        pulse = X - alpha * Y\n        # Bandpass filtering (0.7-4Hz, typical heart rate range 42-240 BPM)\n        b, a = signal.butter(3, [0.7/self.fps*2, 4/self.fps*2], btype='bandpass')",
+        "peekOfCode": "class POS(RPPGSignalExtractor):\n    def extract(self, roi_data, method='simple'):\n        \"\"\"\n        Extract pulse signal using POS algorithm.\n        Args:\n            roi_data: ROI data (list of arrays or numpy array)\n            method: 'simple' (fastest), 'optimized' (balanced), 'original' (slowest but most accurate)\n        \"\"\"\n        return POS.POS_WANG(roi_data, self.fps)\n    @staticmethod",
         "detail": "components.rppg_signal_extractor.conventional.pos",
+        "documentation": {}
+    },
+    {
+        "label": "detrend",
+        "kind": 2,
+        "importPath": "components.rppg_signal_extractor.conventional.utils",
+        "description": "components.rppg_signal_extractor.conventional.utils",
+        "peekOfCode": "def detrend(input_signal, lambda_value):\n    signal_length = input_signal.shape[0]\n    # observation matrix\n    H = np.identity(signal_length)\n    ones = np.ones(signal_length)\n    minus_twos = -2 * np.ones(signal_length)\n    diags_data = np.array([ones, minus_twos, ones])\n    diags_index = np.array([0, 1, 2])\n    D = sparse.spdiags(diags_data, diags_index,\n                (signal_length - 2), signal_length).toarray()",
+        "detail": "components.rppg_signal_extractor.conventional.utils",
+        "documentation": {}
+    },
+    {
+        "label": "HEFModel",
+        "kind": 6,
+        "importPath": "components.rppg_signal_extractor.deep_learning.hef.base",
+        "description": "components.rppg_signal_extractor.deep_learning.hef.base",
+        "peekOfCode": "class HEFModel(DeepLearningRPPGSignalExtractor):\n    def __init__(self, model_path: str, fps: float=30.0):\n        if not model_path.endswith('.hef'):\n            raise ValueError(\"Model path must point to an HEF file.\")\n        self.target = HailoTargetManager().target\n        super().__init__(model_path, fps)\n    def _load_model(self):\n        \"\"\"Load the HEF model.\"\"\"\n        hef = HEF(self.model_path)\n        configure_params = ConfigureParams.create_from_hef(hef=hef, interface=HailoStreamInterface.PCIe)",
+        "detail": "components.rppg_signal_extractor.deep_learning.hef.base",
         "documentation": {}
     },
     {
         "label": "DeepPhys",
         "kind": 6,
-        "importPath": "components.rppg_signal_extractor.deep_learning.deep_phys",
-        "description": "components.rppg_signal_extractor.deep_learning.deep_phys",
-        "peekOfCode": "class DeepPhys(RPPGSignalExtractor):\n    def __init__(self, model_path: str, fps: float=30.0):\n        super().__init__(fps)\n        self.model_path = model_path\n        # TODO: Load the model\n        self.model = None    \n    # TODO: Implement the extraction method\n    def extract(self, roi_data):\n        raise NotImplementedError(\"DeepPhys extraction is not implemented yet.\")",
-        "detail": "components.rppg_signal_extractor.deep_learning.deep_phys",
+        "importPath": "components.rppg_signal_extractor.deep_learning.hef.deep_phys",
+        "description": "components.rppg_signal_extractor.deep_learning.hef.deep_phys",
+        "peekOfCode": "class DeepPhys(HEFModel):\n    def __init__(self, model_path: str, fps: float=30.0):\n        super().__init__(model_path, fps)\n        self.n_frames = 180\n    def preprocess(self, roi_data):\n        \"\"\"\n        Preprocess the ROI data for DeepPhys model.\n        This method should be implemented based on the model's requirements.\n        \"\"\"\n        if roi_data is None or len(roi_data) == 0:",
+        "detail": "components.rppg_signal_extractor.deep_learning.hef.deep_phys",
+        "documentation": {}
+    },
+    {
+        "label": "_NPU_LOCK",
+        "kind": 5,
+        "importPath": "components.rppg_signal_extractor.deep_learning.hef.deep_phys",
+        "description": "components.rppg_signal_extractor.deep_learning.hef.deep_phys",
+        "peekOfCode": "_NPU_LOCK = threading.Lock()\nclass DeepPhys(HEFModel):\n    def __init__(self, model_path: str, fps: float=30.0):\n        super().__init__(model_path, fps)\n        self.n_frames = 180\n    def preprocess(self, roi_data):\n        \"\"\"\n        Preprocess the ROI data for DeepPhys model.\n        This method should be implemented based on the model's requirements.\n        \"\"\"",
+        "detail": "components.rppg_signal_extractor.deep_learning.hef.deep_phys",
+        "documentation": {}
+    },
+    {
+        "label": "ONNXModel",
+        "kind": 6,
+        "importPath": "components.rppg_signal_extractor.deep_learning.onnx.base",
+        "description": "components.rppg_signal_extractor.deep_learning.onnx.base",
+        "peekOfCode": "class ONNXModel(DeepLearningRPPGSignalExtractor):\n    def __init__(self, model_path: str, fps: float=30.0):\n        if not model_path.endswith('.onnx'):\n            raise ValueError(\"Model path must point to an ONNX file.\")\n        super().__init__(model_path, fps)\n    def _load_model(self):\n        \"\"\"Load the ONNX model.\"\"\"\n        try:\n            self.model = ort.InferenceSession(self.model_path)\n            print(f\"ONNX model loaded successfully from {self.model_path}\")",
+        "detail": "components.rppg_signal_extractor.deep_learning.onnx.base",
+        "documentation": {}
+    },
+    {
+        "label": "DeepPhys",
+        "kind": 6,
+        "importPath": "components.rppg_signal_extractor.deep_learning.onnx.deep_phys",
+        "description": "components.rppg_signal_extractor.deep_learning.onnx.deep_phys",
+        "peekOfCode": "class DeepPhys(ONNXModel):\n    def __init__(self, model_path: str, fps: float=30.0):\n        super().__init__(model_path, fps)\n        self.n_frames = 180\n    def preprocess(self, roi_data):\n        \"\"\"\n        Preprocess the ROI data for EfficientPhys model.\n        This method should be implemented based on the model's requirements.\n        \"\"\"\n        if roi_data is None or len(roi_data) == 0:",
+        "detail": "components.rppg_signal_extractor.deep_learning.onnx.deep_phys",
+        "documentation": {}
+    },
+    {
+        "label": "EfficientPhys",
+        "kind": 6,
+        "importPath": "components.rppg_signal_extractor.deep_learning.onnx.efficient_phys",
+        "description": "components.rppg_signal_extractor.deep_learning.onnx.efficient_phys",
+        "peekOfCode": "class EfficientPhys(ONNXModel):\n    def __init__(self, model_path: str, fps: float=30.0):\n        super().__init__(model_path, fps)\n        self.n_frames = 180\n    def preprocess(self, roi_data):\n        \"\"\"\n        Preprocess the ROI data for EfficientPhys model.\n        This method should be implemented based on the model's requirements.\n        \"\"\"\n        if roi_data is None or len(roi_data) == 0:",
+        "detail": "components.rppg_signal_extractor.deep_learning.onnx.efficient_phys",
+        "documentation": {}
+    },
+    {
+        "label": "TSCAN",
+        "kind": 6,
+        "importPath": "components.rppg_signal_extractor.deep_learning.onnx.tscan",
+        "description": "components.rppg_signal_extractor.deep_learning.onnx.tscan",
+        "peekOfCode": "class TSCAN(ONNXModel):\n    def __init__(self, model_path: str, fps: float=30.0):\n        super().__init__(model_path, fps)\n        self.n_frames = 180\n    def preprocess(self, roi_data):\n        \"\"\"\n        Preprocess the ROI data for EfficientPhys model.\n        This method should be implemented based on the model's requirements.\n        \"\"\"\n        if roi_data is None or len(roi_data) == 0:",
+        "detail": "components.rppg_signal_extractor.deep_learning.onnx.tscan",
+        "documentation": {}
+    },
+    {
+        "label": "DeepLearningRPPGSignalExtractor",
+        "kind": 6,
+        "importPath": "components.rppg_signal_extractor.deep_learning.base",
+        "description": "components.rppg_signal_extractor.deep_learning.base",
+        "peekOfCode": "class DeepLearningRPPGSignalExtractor(RPPGSignalExtractor):\n    def __init__(self, model_path: str, fps: float = 30.0):\n        super().__init__(fps)\n        self.model_path = model_path\n        self.model_name = os.path.basename(model_path).split('.')[0]\n        self._load_model()\n    def _load_model(self):\n        \"\"\"Load the deep learning model.\"\"\"\n        raise NotImplementedError(\"This method should be implemented in subclasses.\")\n    def preprocess(self, roi_data):",
+        "detail": "components.rppg_signal_extractor.deep_learning.base",
         "documentation": {}
     },
     {
@@ -547,8 +1729,107 @@
         "kind": 6,
         "importPath": "components.rppg_signal_extractor.base",
         "description": "components.rppg_signal_extractor.base",
-        "peekOfCode": "class RPPGSignalExtractor(ABC):\n    def __init__(self, fps: float=30.0):\n        self.fps = fps\n    @abstractmethod\n    def extract(self, roi_data):\n        pass",
+        "peekOfCode": "class RPPGSignalExtractor(ABC):\n    def __init__(self, fps: float=30.0):\n        self.fps = fps\n    @abstractmethod\n    def extract(self, roi_data):\n        pass\n    def cleanup(self):\n        \"\"\"Cleanup resources if needed.\"\"\"\n        pass",
         "detail": "components.rppg_signal_extractor.base",
+        "documentation": {}
+    },
+    {
+        "label": "PostProcessor",
+        "kind": 6,
+        "importPath": "resources.zoo.retinaface_mobilenet--736x1280_quant_hailort_hailo8l_1.HailoDetectionRetinafaceMobilenet",
+        "description": "resources.zoo.retinaface_mobilenet--736x1280_quant_hailort_hailo8l_1.HailoDetectionRetinafaceMobilenet",
+        "peekOfCode": "class PostProcessor:\n    def __init__(self, json_config):\n        \"\"\"\n        Initialize RetinaFace postprocessor from a JSON configuration.\n        Args:\n            json_config (dict): JSON configuration dictionary.\n        \"\"\"\n        config = json.loads(json_config)\n        # Parse configuration\n        post_process_config = config[\"POST_PROCESS\"][0]",
+        "detail": "resources.zoo.retinaface_mobilenet--736x1280_quant_hailort_hailo8l_1.HailoDetectionRetinafaceMobilenet",
+        "documentation": {}
+    },
+    {
+        "label": "PostProcessor",
+        "kind": 6,
+        "importPath": "resources.zoo.scrfd_10g--640x640_quant_hailort_hailo8l_1.HailoDetectionScrfd",
+        "description": "resources.zoo.scrfd_10g--640x640_quant_hailort_hailo8l_1.HailoDetectionScrfd",
+        "peekOfCode": "class PostProcessor:\n    \"\"\"SCRFD Postprocessor for DeGirum PySDK.\"\"\"\n    def __init__(self, json_config):\n        \"\"\"\n        Initialize the post-processor with configuration settings.\n        Parameters:\n            json_config (str): JSON string containing post-processing configuration.\n        \"\"\"\n        config = json.loads(json_config)\n        # Extract input image dimensions",
+        "detail": "resources.zoo.scrfd_10g--640x640_quant_hailort_hailo8l_1.HailoDetectionScrfd",
+        "documentation": {}
+    },
+    {
+        "label": "PostProcessor",
+        "kind": 6,
+        "importPath": "resources.zoo.scrfd_2.5g--640x640_quant_hailort_hailo8l_1.HailoDetectionScrfd",
+        "description": "resources.zoo.scrfd_2.5g--640x640_quant_hailort_hailo8l_1.HailoDetectionScrfd",
+        "peekOfCode": "class PostProcessor:\n    \"\"\"SCRFD Postprocessor for DeGirum PySDK.\"\"\"\n    def __init__(self, json_config):\n        \"\"\"\n        Initialize the post-processor with configuration settings.\n        Parameters:\n            json_config (str): JSON string containing post-processing configuration.\n        \"\"\"\n        config = json.loads(json_config)\n        # Extract input image dimensions",
+        "detail": "resources.zoo.scrfd_2.5g--640x640_quant_hailort_hailo8l_1.HailoDetectionScrfd",
+        "documentation": {}
+    },
+    {
+        "label": "PostProcessor",
+        "kind": 6,
+        "importPath": "resources.zoo.scrfd_500m--640x640_quant_hailort_hailo8l_1.HailoDetectionScrfd",
+        "description": "resources.zoo.scrfd_500m--640x640_quant_hailort_hailo8l_1.HailoDetectionScrfd",
+        "peekOfCode": "class PostProcessor:\n    \"\"\"SCRFD Postprocessor for DeGirum PySDK.\"\"\"\n    def __init__(self, json_config):\n        \"\"\"\n        Initialize the post-processor with configuration settings.\n        Parameters:\n            json_config (str): JSON string containing post-processing configuration.\n        \"\"\"\n        config = json.loads(json_config)\n        # Extract input image dimensions",
+        "detail": "resources.zoo.scrfd_500m--640x640_quant_hailort_hailo8l_1.HailoDetectionScrfd",
+        "documentation": {}
+    },
+    {
+        "label": "get_annotation_color",
+        "kind": 2,
+        "importPath": "system.colors",
+        "description": "system.colors",
+        "peekOfCode": "def get_annotation_color(index):\n    return ANNOTATION_COLORS[index % LEN_ANNOTATION_COLORS]\ndef get_random_annotation_color():\n    import random\n    return ANNOTATION_COLORS[random.randint(0, LEN_ANNOTATION_COLORS - 1)]",
+        "detail": "system.colors",
+        "documentation": {}
+    },
+    {
+        "label": "get_random_annotation_color",
+        "kind": 2,
+        "importPath": "system.colors",
+        "description": "system.colors",
+        "peekOfCode": "def get_random_annotation_color():\n    import random\n    return ANNOTATION_COLORS[random.randint(0, LEN_ANNOTATION_COLORS - 1)]",
+        "detail": "system.colors",
+        "documentation": {}
+    },
+    {
+        "label": "ANNOTATION_COLORS",
+        "kind": 5,
+        "importPath": "system.colors",
+        "description": "system.colors",
+        "peekOfCode": "ANNOTATION_COLORS = [\n    (0, 255, 0),      # Green\n    (0, 0, 255),      # Red\n    (255, 0, 0),      # Blue\n    (0, 255, 255),    # Yellow\n    (255, 0, 255),    # Magenta\n    (255, 255, 0),    # Cyan\n    (0, 165, 255),    # Orange\n    (128, 0, 128),    # Purple\n    (203, 192, 255),  # Pink",
+        "detail": "system.colors",
+        "documentation": {}
+    },
+    {
+        "label": "LEN_ANNOTATION_COLORS",
+        "kind": 5,
+        "importPath": "system.colors",
+        "description": "system.colors",
+        "peekOfCode": "LEN_ANNOTATION_COLORS = len(ANNOTATION_COLORS)\ndef get_annotation_color(index):\n    return ANNOTATION_COLORS[index % LEN_ANNOTATION_COLORS]\ndef get_random_annotation_color():\n    import random\n    return ANNOTATION_COLORS[random.randint(0, LEN_ANNOTATION_COLORS - 1)]",
+        "detail": "system.colors",
+        "documentation": {}
+    },
+    {
+        "label": "RollingStatistics",
+        "kind": 6,
+        "importPath": "system.incremental_processor",
+        "description": "system.incremental_processor",
+        "peekOfCode": "class RollingStatistics:\n    \"\"\"Maintains rolling statistics for a sliding window.\"\"\"\n    def __init__(self, window_size: int):\n        self.window_size = window_size\n        self.frames = deque(maxlen=window_size)\n        self.sum = None\n        self.sum_sq = None\n        self.count = 0\n    def add_frame(self, frame: np.ndarray):\n        \"\"\"Add a new frame and update statistics.\"\"\"",
+        "detail": "system.incremental_processor",
+        "documentation": {}
+    },
+    {
+        "label": "IncrementalChunk",
+        "kind": 6,
+        "importPath": "system.incremental_processor",
+        "description": "system.incremental_processor",
+        "peekOfCode": "class IncrementalChunk:\n    \"\"\"Represents a chunk of processed data.\"\"\"\n    def __init__(self, chunk_id: int, frames: List[np.ndarray], \n                 bvp_signal: Optional[np.ndarray] = None, \n                 timestamp: float = None):\n        self.chunk_id = chunk_id\n        self.frames = frames\n        self.bvp_signal = bvp_signal\n        self.timestamp = timestamp or time.time()\n        self.processed = bvp_signal is not None",
+        "detail": "system.incremental_processor",
+        "documentation": {}
+    },
+    {
+        "label": "IncrementalRPPGProcessor",
+        "kind": 6,
+        "importPath": "system.incremental_processor",
+        "description": "system.incremental_processor",
+        "peekOfCode": "class IncrementalRPPGProcessor:\n    \"\"\"\n    Incremental processor for rPPG signal extraction.\n    Breaks down large windows into smaller chunks to distribute computation.\n    \"\"\"\n    def __init__(self, rppg_extractor, hr_extractor, \n                 window_size: int = 180, chunk_size: int = 30):\n        self.rppg_extractor = rppg_extractor\n        self.hr_extractor = hr_extractor\n        self.window_size = window_size",
+        "detail": "system.incremental_processor",
         "documentation": {}
     },
     {
@@ -556,8 +1837,107 @@
         "kind": 6,
         "importPath": "system.metrics",
         "description": "system.metrics",
-        "peekOfCode": "class Metrics:\n    def __init__(self):\n        self.processing_count = 0\n        self.total_processing_time = 0\n        self.processing_time = {\n            'face_detection': 0,\n            'face_tracking': 0,\n            'roi_selection': 0,\n            'signal_extraction': 0,\n            'hr_extraction': 0",
+        "peekOfCode": "class Metrics:\n    def __init__(self):\n        self.processing_count = 0\n        self.total_processing_time = 0\n        self.processing_time = {\n            'face_detection': 0,\n            'face_tracking': 0,\n            'roi_selection': 0,\n            'core_time': 0,\n        }",
         "detail": "system.metrics",
+        "documentation": {}
+    },
+    {
+        "label": "MemoryManager",
+        "kind": 6,
+        "importPath": "system.optimization_utils",
+        "description": "system.optimization_utils",
+        "peekOfCode": "class MemoryManager:\n    \"\"\"Manages memory usage and garbage collection for optimal performance.\"\"\"\n    def __init__(self, max_memory_percent: float = 80.0):\n        self.max_memory_percent = max_memory_percent\n        self.last_gc_time = time.time()\n        self.gc_interval = 5.0  # Force GC every 5 seconds if needed\n        self.memory_alerts = 0\n    def check_memory_usage(self) -> Dict[str, float]:\n        \"\"\"Check current memory usage.\"\"\"\n        process = psutil.Process(os.getpid())",
+        "detail": "system.optimization_utils",
+        "documentation": {}
+    },
+    {
+        "label": "ResourcePool",
+        "kind": 6,
+        "importPath": "system.optimization_utils",
+        "description": "system.optimization_utils",
+        "peekOfCode": "class ResourcePool:\n    \"\"\"Pool of reusable resources to reduce allocation overhead.\"\"\"\n    def __init__(self):\n        self.array_pool = {}\n        self.lock = threading.Lock()\n        self.max_pool_size = 50  # Maximum number of arrays per shape\n    def get_array(self, shape: tuple, dtype=np.float32) -> np.ndarray:\n        \"\"\"Get a reusable array from the pool or create new one.\"\"\"\n        key = (shape, dtype)\n        with self.lock:",
+        "detail": "system.optimization_utils",
+        "documentation": {}
+    },
+    {
+        "label": "AdaptiveOptimizer",
+        "kind": 6,
+        "importPath": "system.optimization_utils",
+        "description": "system.optimization_utils",
+        "peekOfCode": "class AdaptiveOptimizer:\n    \"\"\"Adaptive optimization that adjusts parameters based on system performance.\"\"\"\n    def __init__(self, target_fps: float = 30.0):\n        self.target_fps = target_fps\n        self.performance_history = []\n        self.adjustment_cooldown = 10.0  # Seconds between adjustments\n        self.last_adjustment = 0\n    def should_adjust_parameters(self, current_fps: float, \n                                cpu_usage: float, memory_usage: float) -> Dict[str, Any]:\n        \"\"\"Determine if and how to adjust parameters.\"\"\"",
+        "detail": "system.optimization_utils",
+        "documentation": {}
+    },
+    {
+        "label": "get_memory_manager",
+        "kind": 2,
+        "importPath": "system.optimization_utils",
+        "description": "system.optimization_utils",
+        "peekOfCode": "def get_memory_manager() -> MemoryManager:\n    \"\"\"Get the global memory manager instance.\"\"\"\n    return _MEMORY_MANAGER\ndef get_resource_pool() -> ResourcePool:\n    \"\"\"Get the global resource pool instance.\"\"\"\n    return _RESOURCE_POOL\ndef get_adaptive_optimizer() -> AdaptiveOptimizer:\n    \"\"\"Get the global adaptive optimizer instance.\"\"\"\n    return _ADAPTIVE_OPTIMIZER",
+        "detail": "system.optimization_utils",
+        "documentation": {}
+    },
+    {
+        "label": "get_resource_pool",
+        "kind": 2,
+        "importPath": "system.optimization_utils",
+        "description": "system.optimization_utils",
+        "peekOfCode": "def get_resource_pool() -> ResourcePool:\n    \"\"\"Get the global resource pool instance.\"\"\"\n    return _RESOURCE_POOL\ndef get_adaptive_optimizer() -> AdaptiveOptimizer:\n    \"\"\"Get the global adaptive optimizer instance.\"\"\"\n    return _ADAPTIVE_OPTIMIZER",
+        "detail": "system.optimization_utils",
+        "documentation": {}
+    },
+    {
+        "label": "get_adaptive_optimizer",
+        "kind": 2,
+        "importPath": "system.optimization_utils",
+        "description": "system.optimization_utils",
+        "peekOfCode": "def get_adaptive_optimizer() -> AdaptiveOptimizer:\n    \"\"\"Get the global adaptive optimizer instance.\"\"\"\n    return _ADAPTIVE_OPTIMIZER",
+        "detail": "system.optimization_utils",
+        "documentation": {}
+    },
+    {
+        "label": "_MEMORY_MANAGER",
+        "kind": 5,
+        "importPath": "system.optimization_utils",
+        "description": "system.optimization_utils",
+        "peekOfCode": "_MEMORY_MANAGER = MemoryManager()\n_RESOURCE_POOL = ResourcePool()\n_ADAPTIVE_OPTIMIZER = AdaptiveOptimizer()\ndef get_memory_manager() -> MemoryManager:\n    \"\"\"Get the global memory manager instance.\"\"\"\n    return _MEMORY_MANAGER\ndef get_resource_pool() -> ResourcePool:\n    \"\"\"Get the global resource pool instance.\"\"\"\n    return _RESOURCE_POOL\ndef get_adaptive_optimizer() -> AdaptiveOptimizer:",
+        "detail": "system.optimization_utils",
+        "documentation": {}
+    },
+    {
+        "label": "_RESOURCE_POOL",
+        "kind": 5,
+        "importPath": "system.optimization_utils",
+        "description": "system.optimization_utils",
+        "peekOfCode": "_RESOURCE_POOL = ResourcePool()\n_ADAPTIVE_OPTIMIZER = AdaptiveOptimizer()\ndef get_memory_manager() -> MemoryManager:\n    \"\"\"Get the global memory manager instance.\"\"\"\n    return _MEMORY_MANAGER\ndef get_resource_pool() -> ResourcePool:\n    \"\"\"Get the global resource pool instance.\"\"\"\n    return _RESOURCE_POOL\ndef get_adaptive_optimizer() -> AdaptiveOptimizer:\n    \"\"\"Get the global adaptive optimizer instance.\"\"\"",
+        "detail": "system.optimization_utils",
+        "documentation": {}
+    },
+    {
+        "label": "_ADAPTIVE_OPTIMIZER",
+        "kind": 5,
+        "importPath": "system.optimization_utils",
+        "description": "system.optimization_utils",
+        "peekOfCode": "_ADAPTIVE_OPTIMIZER = AdaptiveOptimizer()\ndef get_memory_manager() -> MemoryManager:\n    \"\"\"Get the global memory manager instance.\"\"\"\n    return _MEMORY_MANAGER\ndef get_resource_pool() -> ResourcePool:\n    \"\"\"Get the global resource pool instance.\"\"\"\n    return _RESOURCE_POOL\ndef get_adaptive_optimizer() -> AdaptiveOptimizer:\n    \"\"\"Get the global adaptive optimizer instance.\"\"\"\n    return _ADAPTIVE_OPTIMIZER",
+        "detail": "system.optimization_utils",
+        "documentation": {}
+    },
+    {
+        "label": "PerformanceMonitor",
+        "kind": 6,
+        "importPath": "system.performance_monitor",
+        "description": "system.performance_monitor",
+        "peekOfCode": "class PerformanceMonitor:\n    \"\"\"Monitor and track performance metrics for the rPPG pipeline.\"\"\"\n    def __init__(self, history_size: int = 100):\n        self.history_size = history_size\n        self.lock = threading.Lock()\n        # Timing metrics\n        self.frame_times = deque(maxlen=history_size)\n        self.processing_times = deque(maxlen=history_size)\n        self.inference_times = deque(maxlen=history_size)\n        self.hr_extraction_times = deque(maxlen=history_size)",
+        "detail": "system.performance_monitor",
+        "documentation": {}
+    },
+    {
+        "label": "PerformanceOptimizer",
+        "kind": 6,
+        "importPath": "system.performance_monitor",
+        "description": "system.performance_monitor",
+        "peekOfCode": "class PerformanceOptimizer:\n    \"\"\"Adaptive performance optimization for the rPPG pipeline.\"\"\"\n    def __init__(self, monitor: PerformanceMonitor):\n        self.monitor = monitor\n        self.target_fps = 30.0\n        self.adjustment_history = deque(maxlen=10)\n    def should_adjust_chunk_size(self) -> Optional[int]:\n        \"\"\"Determine if chunk size should be adjusted based on performance.\"\"\"\n        current_fps = self.monitor.get_fps()\n        if current_fps < self.target_fps * 0.8:  # FPS too low",
+        "detail": "system.performance_monitor",
         "documentation": {}
     },
     {
@@ -565,7 +1945,7 @@
         "kind": 6,
         "importPath": "system.pipeline",
         "description": "system.pipeline",
-        "peekOfCode": "class Pipeline:\n    def __init__(self, \n                            rppg_signal_extractor, \n                            hr_extractor,\n                            window_size=300,\n                            fps=30,\n                            step_size=30):\n        self.rppg_signal_extractor = rppg_signal_extractor\n        self.hr_extractor = hr_extractor\n        self.window_size = window_size",
+        "peekOfCode": "class Pipeline:\n    def __init__(self, \n                    rppg_signal_extractor, \n                    hr_extractor,\n                    window_size=180,\n                    fps=30,\n                    step_size=30):\n        self.rppg_signal_extractor = rppg_signal_extractor\n        self.hr_extractor = hr_extractor\n        self.window_size = window_size",
         "detail": "system.pipeline",
         "documentation": {}
     },
@@ -574,8 +1954,71 @@
         "kind": 6,
         "importPath": "system.system",
         "description": "system.system",
-        "peekOfCode": "class System:\n    def __init__(self, \n                                camera_id=0,\n                                face_detector=None,\n                                face_tracker=None,\n                                roi_selector=None,\n                                rppg_signal_extractor=None,\n                                hr_extractor=None,\n                                window_size=300,\n                                fps=30,",
+        "peekOfCode": "class System:\n    def __init__(self, \n                    camera_id=None,\n                    video_file=None,\n                    timestamp_file=None,\n                    face_detector=None,\n                    face_tracker=None,\n                    roi_selector=None,\n                    rppg_signal_extractor=None,\n                    hr_extractor=None,",
         "detail": "system.system",
+        "documentation": {}
+    },
+    {
+        "label": "Metrics",
+        "kind": 6,
+        "importPath": "test_system.metrics",
+        "description": "test_system.metrics",
+        "peekOfCode": "class Metrics:\n    def __init__(self):\n        self.processing_count = 0\n        self.total_processing_time = 0\n        self.total_processed_faces = 0\n        self.processing_time = {\n            'face_detection': 0,\n            'face_tracking': 0,\n            'roi_selection': 0,\n            'signal_extraction': 0,",
+        "detail": "test_system.metrics",
+        "documentation": {}
+    },
+    {
+        "label": "Pipeline",
+        "kind": 6,
+        "importPath": "test_system.pipeline",
+        "description": "test_system.pipeline",
+        "peekOfCode": "class Pipeline:\n    def __init__(self, \n                    rppg_signal_extractor, \n                    hr_extractor,\n                    window_size=180,\n                    fps=30,\n                    step_size=30):\n        self.rppg_signal_extractor = rppg_signal_extractor\n        self.hr_extractor = hr_extractor\n        self.window_size = window_size",
+        "detail": "test_system.pipeline",
+        "documentation": {}
+    },
+    {
+        "label": "System",
+        "kind": 6,
+        "importPath": "test_system.system",
+        "description": "test_system.system",
+        "peekOfCode": "class System:\n    def __init__(self, \n                    video_file=None,\n                    timestamp_file=None,\n                    face_detector=None,\n                    face_tracker=None,\n                    roi_selector=None,\n                    rppg_signal_extractor=None,\n                    hr_extractor=None,\n                    window_size=180,",
+        "detail": "test_system.system",
+        "documentation": {}
+    },
+    {
+        "label": "RESOURCES_DIR",
+        "kind": 5,
+        "importPath": "constants",
+        "description": "constants",
+        "peekOfCode": "RESOURCES_DIR = \"resources\"\nONNX_DIR = os.path.join(RESOURCES_DIR, \"onnx\")\nHEF_DIR = os.path.join(RESOURCES_DIR, \"hef\")\nDEGIRUM_ZOO_DIR = os.path.join(RESOURCES_DIR, \"zoo\")",
+        "detail": "constants",
+        "documentation": {}
+    },
+    {
+        "label": "ONNX_DIR",
+        "kind": 5,
+        "importPath": "constants",
+        "description": "constants",
+        "peekOfCode": "ONNX_DIR = os.path.join(RESOURCES_DIR, \"onnx\")\nHEF_DIR = os.path.join(RESOURCES_DIR, \"hef\")\nDEGIRUM_ZOO_DIR = os.path.join(RESOURCES_DIR, \"zoo\")",
+        "detail": "constants",
+        "documentation": {}
+    },
+    {
+        "label": "HEF_DIR",
+        "kind": 5,
+        "importPath": "constants",
+        "description": "constants",
+        "peekOfCode": "HEF_DIR = os.path.join(RESOURCES_DIR, \"hef\")\nDEGIRUM_ZOO_DIR = os.path.join(RESOURCES_DIR, \"zoo\")",
+        "detail": "constants",
+        "documentation": {}
+    },
+    {
+        "label": "DEGIRUM_ZOO_DIR",
+        "kind": 5,
+        "importPath": "constants",
+        "description": "constants",
+        "peekOfCode": "DEGIRUM_ZOO_DIR = os.path.join(RESOURCES_DIR, \"zoo\")",
+        "detail": "constants",
         "documentation": {}
     },
     {
@@ -588,12 +2031,111 @@
         "documentation": {}
     },
     {
-        "label": "run_custom_system",
+        "label": "run_default_system_npy",
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def run_custom_system():\n        face_detector = HaarCascade(scale_factor=1.2, min_neighbors=6)\n        face_tracker = Centroid(max_disappeared=20)\n        roi_selector = Cheeks(target_size=(64, 64))\n        rppg_signal_extractor = CHROM()\n        hr_extractor = FFT()\n        rppg_system = System(\n            camera_id=0,\n            face_detector=face_detector,\n            face_tracker=face_tracker,",
+        "peekOfCode": "def run_default_system_npy():\n    rppg_system = System(\n        video_file=VIDEOS[26],\n        # video_file='C:\\\\Users\\\\dyogggeming\\\\TA\\\\tes\\\\rppg-data\\\\fix\\\\camera\\\\29\\\\video_29_20250503_171818.npy',\n    )\n    try:\n        rppg_system.start()\n        while rppg_system.running:\n            time.sleep(0.1)\n    except KeyboardInterrupt:",
         "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "run_default_system_npy_timestamp",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def run_default_system_npy_timestamp():\n    rppg_system = System(\n        video_file='/home/pme/ta/data/camera/00/video_00_20250503_152120.npy',\n        timestamp_file='/home/pme/ta/data/camera/00/timestamps_00_20250503_152120.csv',\n        # video_file='C:\\\\Users\\\\dyogggeming\\\\TA\\\\tes\\\\rppg-data\\\\fix\\\\camera\\\\29\\\\video_29_20250503_171818.npy',\n        # timestamps='C:\\\\Users\\\\dyogggeming\\\\TA\\\\tes\\\\rppg-data\\\\fix\\\\camera\\\\29\\\\timestamps_29_20250503_171818.csv'\n    )\n    try:\n        rppg_system.start()\n        while rppg_system.running:",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "VIDEOS",
+        "kind": 5,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "VIDEOS = [\n    '/home/pme/ta/data/camera/00/video_00_20250503_152120.npy',\n    '/home/pme/ta/data/camera/01/video_01_20250503_152345.npy',\n    '/home/pme/ta/data/camera/02/video_02_20250503_152754.npy',\n    '/home/pme/ta/data/camera/03/video_03_20250503_153102.npy',\n    '/home/pme/ta/data/camera/04/video_04_20250503_153508.npy',\n    '/home/pme/ta/data/camera/05/video_05_20250503_153825.npy',\n    '/home/pme/ta/data/camera/06/video_06_20250503_154102.npy',\n    '/home/pme/ta/data/camera/07/video_07_20250503_154629.npy',\n    '/home/pme/ta/data/camera/08/video_08_20250503_155339.npy',",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "make_json_csv_safe",
+        "kind": 2,
+        "importPath": "run_batch_test",
+        "description": "run_batch_test",
+        "peekOfCode": "def make_json_csv_safe(data):\n    \"\"\"Convert data to JSON string that's safe for CSV storage\"\"\"\n    if data is None:\n        return None\n    json_str = json.dumps(data, separators=(',', ':'))\n    # Replace commas with semicolons to avoid CSV issues\n    return json_str.replace(',', ';')\ndef restore_json_from_csv(csv_safe_str):\n    \"\"\"\n    Convert CSV-safe JSON string back to original data",
+        "detail": "run_batch_test",
+        "documentation": {}
+    },
+    {
+        "label": "restore_json_from_csv",
+        "kind": 2,
+        "importPath": "run_batch_test",
+        "description": "run_batch_test",
+        "peekOfCode": "def restore_json_from_csv(csv_safe_str):\n    \"\"\"\n    Convert CSV-safe JSON string back to original data\n    Example usage:\n    # When reading from CSV:\n    heart_rates = restore_json_from_csv(row['heart_rates'])\n    heart_rates_frame_idx = restore_json_from_csv(row['heart_rates_frame_idx'])\n    \"\"\"\n    if csv_safe_str is None:\n        return None",
+        "detail": "run_batch_test",
+        "documentation": {}
+    },
+    {
+        "label": "get_a_system",
+        "kind": 2,
+        "importPath": "run_batch_test",
+        "description": "run_batch_test",
+        "peekOfCode": "def get_a_system(video_path):\n    rppg_system = System(\n            video_file=video_path,\n            face_detector=None, # scrfd 500m\n            face_tracker=None, # centroid\n            roi_selector=None, # full face square\n            rppg_signal_extractor=None, # pure quantized\n            hr_extractor=None, # fft\n            window_size=180,\n            fps=30,",
+        "detail": "run_batch_test",
+        "documentation": {}
+    },
+    {
+        "label": "get_b_system",
+        "kind": 2,
+        "importPath": "run_batch_test",
+        "description": "run_batch_test",
+        "peekOfCode": "def get_b_system(video_path):\n    rppg_system = System(\n            video_file=video_path,\n            face_detector=None, # scrfd 500m\n            face_tracker=None, # centroid\n            roi_selector=None, # full face square\n            rppg_signal_extractor=POS(fps=30),\n            hr_extractor=None, # fft\n            window_size=180,\n            fps=30,",
+        "detail": "run_batch_test",
+        "documentation": {}
+    },
+    {
+        "label": "get_baseline_system",
+        "kind": 2,
+        "importPath": "run_batch_test",
+        "description": "run_batch_test",
+        "peekOfCode": "def get_baseline_system(video_path):\n    rppg_system = System(\n            video_file=video_path,\n            face_detector=MT_CNN(), # mtcnn\n            face_tracker=None, # centroid\n            roi_selector=FullFace(), # full face\n            rppg_signal_extractor=ICA2019(fps=30),\n            hr_extractor=FFT(fps=30, diff_flag=False, use_bandpass=False, use_detrend=False), # fft\n            window_size=180,\n            fps=30,",
+        "detail": "run_batch_test",
+        "documentation": {}
+    },
+    {
+        "label": "run_single_video_test",
+        "kind": 2,
+        "importPath": "run_batch_test",
+        "description": "run_batch_test",
+        "peekOfCode": "def run_single_video_test(video_path, video_index):\n    \"\"\"\n    Run test for a single video and return metrics data\n    Args:\n        video_path (str): Path to the video file\n        video_index (int): Index of the video (0-26)\n    Returns:\n        dict: Metrics data for this video\n    \"\"\"\n    print(f\"\\n{'='*60}\")",
+        "detail": "run_batch_test",
+        "documentation": {}
+    },
+    {
+        "label": "save_metrics_to_csv",
+        "kind": 2,
+        "importPath": "run_batch_test",
+        "description": "run_batch_test",
+        "peekOfCode": "def save_metrics_to_csv(all_metrics, output_file):\n    \"\"\"\n    Save all metrics data to CSV file\n    Args:\n        all_metrics (list): List of metrics dictionaries\n        output_file (str): Path to output CSV file\n    \"\"\"\n    if not all_metrics:\n        print(\"No metrics data to save\")\n        return",
+        "detail": "run_batch_test",
+        "documentation": {}
+    },
+    {
+        "label": "run_batch_tests",
+        "kind": 2,
+        "importPath": "run_batch_test",
+        "description": "run_batch_test",
+        "peekOfCode": "def run_batch_tests(start_index=0, end_index=None, output_file=None):\n    \"\"\"\n    Run batch tests on all videos\n    Args:\n        start_index (int): Starting video index (default: 0)\n        end_index (int): Ending video index (default: None, processes all)\n        output_file (str): Output CSV file path (default: auto-generated)\n    \"\"\"\n    if end_index is None:\n        end_index = len(VIDEOS) - 1",
+        "detail": "run_batch_test",
+        "documentation": {}
+    },
+    {
+        "label": "VIDEOS",
+        "kind": 5,
+        "importPath": "run_batch_test",
+        "description": "run_batch_test",
+        "peekOfCode": "VIDEOS = [\n    '/home/pme/ta/data/camera/00/video_00_20250503_152120.npy',\n    '/home/pme/ta/data/camera/01/video_01_20250503_152345.npy',\n    '/home/pme/ta/data/camera/02/video_02_20250503_152754.npy',\n    '/home/pme/ta/data/camera/03/video_03_20250503_153102.npy',\n    '/home/pme/ta/data/camera/04/video_04_20250503_153508.npy',\n    '/home/pme/ta/data/camera/05/video_05_20250503_153825.npy',\n    '/home/pme/ta/data/camera/06/video_06_20250503_154102.npy',\n    '/home/pme/ta/data/camera/07/video_07_20250503_154629.npy',\n    '/home/pme/ta/data/camera/08/video_08_20250503_155339.npy',",
+        "detail": "run_batch_test",
         "documentation": {}
     }
 ]

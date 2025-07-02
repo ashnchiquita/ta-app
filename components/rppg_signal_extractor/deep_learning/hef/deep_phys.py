@@ -75,6 +75,17 @@ class DeepPhys(HEFModel):
         except Exception as e:
             raise RuntimeError(f"Failed to extract rPPG signal: {str(e)}")
     
+    def extract_chunk(self, preprocessed_chunk):
+        """
+        Extract rPPG signal from a preprocessed chunk.
+        This method is used by the incremental processor.
+        """
+        try:
+            result = self._npu_inference(preprocessed_chunk)
+            return result
+        except Exception as e:
+            raise RuntimeError(f"Failed to extract rPPG signal from chunk: {str(e)}")
+    
     def _npu_inference(self, preprocessed_data):
         """
         NPU inference with global lock to handle hardware limitation.
