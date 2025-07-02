@@ -259,9 +259,9 @@ class System:
                         roi_coords[object_id] = roi_coord
                         self.pipeline.add_face_data(object_id, roi, t0)
 
-                # # CORE: BVP + HR Extraction
-                # new_results, core_time = self.pipeline.process_faces()
-                new_results, core_time = {}, 0
+                # CORE: BVP + HR Extraction
+                new_results, core_time = self.pipeline.process_faces()
+                # new_results, core_time = {}, 0
 
                 self.processing_metrics.processing_time['core_time'] += core_time
 
