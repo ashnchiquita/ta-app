@@ -1,0 +1,31 @@
+{
+    "ConfigVersion": 1,
+    "Checksum": "b4d9f8e3ddbe2c5d8ac61aa32d84783bcdbeb142af1587076b8d00bf34486969",
+    "DEVICE": [
+        {
+            "DeviceType": "HAILO8L",
+            "RuntimeAgent": "HAILORT",
+            "SupportedDeviceTypes": "HAILORT/HAILO8L"
+        }
+    ],
+    "PRE_PROCESS": [
+        {
+            "InputType": "Tensor",
+            "InputN": 1,
+            "InputH": 72,
+            "InputW": 72,
+            "InputC": 6,
+            "InputTensorLayout": "NHWC"
+        }
+    ],
+    "MODEL_PARAMETERS": [
+        {
+            "ModelPath": "PURE_DeepPhys_quantized_20250629-180552.hef"
+        }
+    ],
+    "POST_PROCESS": [
+        {
+            "OutputPostprocessType": "None"
+        }
+    ]
+}
