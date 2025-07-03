@@ -7,7 +7,7 @@ import numpy as np
 from collections import deque
 import time
 from typing import Dict, List, Tuple, Optional, Any
-from system.optimization_utils import get_memory_manager, get_resource_pool
+# from system.optimization_utils import get_memory_manager, get_resource_pool
 
 
 class RollingStatistics:
@@ -39,6 +39,8 @@ class RollingStatistics:
         self.sum += frame_f64
         self.sum_sq += frame_f64 ** 2
         self.count += 1
+
+        print(len(self.frames))
     
     def get_mean(self) -> np.ndarray:
         """Get current mean."""
@@ -93,8 +95,8 @@ class IncrementalRPPGProcessor:
         self.face_data: Dict[int, Dict[str, Any]] = {}
         
         # Optimization utilities
-        self.memory_manager = get_memory_manager()
-        self.resource_pool = get_resource_pool()
+        # self.memory_manager = get_memory_manager()
+        # self.resource_pool = get_resource_pool()
         
     def add_face_frame(self, face_id: int, roi_frame: np.ndarray, timestamp: float):
         """Add a new ROI frame for a face."""
@@ -119,6 +121,10 @@ class IncrementalRPPGProcessor:
         # Check if chunk is ready for processing
         if len(face_data['current_chunk_frames']) >= self.chunk_size:
             self._process_chunk(face_id, timestamp)
+
+        print(f"Added frame for face {face_id} at {timestamp}. "
+              f"Current chunk size: {len(face_data['current_chunk_frames'])}. "
+              f"Statistics ready: {face_data['statistics'].is_ready()}.")
     
     def _process_chunk(self, face_id: int, timestamp: float):
         """Process a complete chunk for a face."""
@@ -126,6 +132,7 @@ class IncrementalRPPGProcessor:
         
         if not face_data['statistics'].is_ready():
             # Not enough data for stable statistics, skip this chunk
+            print(f"current chunk cleared")
             face_data['current_chunk_frames'] = []
             return
         
@@ -229,6 +236,7 @@ class IncrementalRPPGProcessor:
         try:
             # Concatenate BVP signals from all chunks
             bvp_signals = [chunk.bvp_signal for chunk in processed_chunks[-self.chunks_per_window:]]
+            print(f"Extracting HR for face {face_id} with {len(bvp_signals)} chunks")
             combined_bvp = np.concatenate(bvp_signals, axis=0)
             
             # Extract heart rate
@@ -275,5 +283,5 @@ class IncrementalRPPGProcessor:
             del self.face_data[face_id]
         
         # Perform memory optimization if needed
-        if faces_to_remove:
-            self.memory_manager.optimize_memory()
+        # if faces_to_remove:
+        #     self.memory_manager.optimize_memory()

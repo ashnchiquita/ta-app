@@ -7,7 +7,7 @@ import threading
 from components.rppg_signal_extractor.deep_learning.base import DeepLearningRPPGSignalExtractor
 from components.rppg_signal_extractor.deep_learning.hef.base import HEFModel
 from system.incremental_processor import IncrementalRPPGProcessor
-from system.performance_monitor import PerformanceMonitor
+# from system.performance_monitor import PerformanceMonitor
 
 class Pipeline:
     def __init__(self, 
@@ -24,7 +24,7 @@ class Pipeline:
         self.fps = fps
         
         # Performance monitoring
-        self.performance_monitor = PerformanceMonitor()
+        # self.performance_monitor = PerformanceMonitor()
         
         # Check if we should use incremental processing
         self.use_incremental = isinstance(rppg_signal_extractor, DeepLearningRPPGSignalExtractor)
@@ -79,18 +79,18 @@ class Pipeline:
             heart_rate = self.incremental_processor.get_heart_rate(face_id)
             if heart_rate is not None:
                 results[face_id] = heart_rate
-                self.performance_monitor.record_hr_update(face_id)
+                # self.performance_monitor.record_hr_update(face_id)
             face_count += 1
         
         # Record performance metrics
-        self.performance_monitor.record_faces_processed(face_count)
+        # self.performance_monitor.record_faces_processed(face_count)
         
         # Cleanup old faces
         self.incremental_processor.cleanup_old_faces(current_time)
         
         # Minimal processing time since computation is distributed
         core_time = time.time() - start_time
-        self.performance_monitor.record_processing_time(core_time)
+        # self.performance_monitor.record_processing_time(core_time)
         return results, core_time
     
     def process_faces_traditional(self, current_time):
@@ -120,7 +120,7 @@ class Pipeline:
             return self.process_faces_producer_consumer(faces_to_process, current_time)
 
         # Conventional
-        return self.process_faces_parallel(self, faces_to_process, current_time)
+        return self.process_faces_parallel( faces_to_process, current_time)
 
     def process_faces_producer_consumer(self, faces_to_process, current_time):
         """
@@ -337,11 +337,12 @@ class Pipeline:
     
     def get_performance_report(self):
         """Get performance report from the pipeline."""
-        return self.performance_monitor.get_performance_summary()
+        return ""
+        # return self.performance_monitor.get_performance_summary()
     
     def print_performance_report(self):
         """Print detailed performance report."""
-        self.performance_monitor.print_performance_report()
+        # self.performance_monitor.print_performance_report()
         
         if self.use_incremental:
             print("\nINCREMENTAL PROCESSOR STATUS:")

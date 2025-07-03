@@ -48,7 +48,7 @@ VIDEOS = [
 ]
 def run_default_system_npy():
     rppg_system = System(
-        video_file=VIDEOS[26],
+        video_file=VIDEOS[0],
         # video_file='C:\\Users\\dyogggeming\\TA\\tes\\rppg-data\\fix\\camera\\29\\video_29_20250503_171818.npy',
     )
     try:

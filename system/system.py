@@ -53,6 +53,7 @@ class System:
         if video_file is not None:
             print(f'Using video file: {video_file}')
             self.video_frames = np.load(video_file)
+            self.video_frames = self.video_frames[:31] # Limit to first 180 frames for test [Todo: remove this line]
             self.video_frames = np.flip(self.video_frames, axis=3)  # Convert BGR to RGB by flipping the last axis
             
             print(f'Video frames loaded: {len(self.video_frames)} frames')
@@ -143,6 +144,7 @@ class System:
 
         print(f"Skipped frames: {self.skipped_frames}")
         print(self.processing_metrics)
+        print(self.pipeline.print_performance_report())
             
     def capture_frames(self):
         if self.video_frames is not None:
@@ -262,7 +264,6 @@ class System:
                 # # CORE: BVP + HR Extraction
                 # new_results, core_time = self.pipeline.process_faces()
                 new_results, core_time = self.pipeline.process_faces()
-
                 self.processing_metrics.processing_time['core_time'] += core_time
 
                 for face_id, hr in new_results.items():

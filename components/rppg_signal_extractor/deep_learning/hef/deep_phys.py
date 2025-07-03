@@ -80,6 +80,7 @@ class DeepPhys(HEFModel):
         Extract rPPG signal from a preprocessed chunk.
         This method is used by the incremental processor.
         """
+        print("[extract_chunk] called")
         try:
             result = self._npu_inference(preprocessed_chunk)
             return result
