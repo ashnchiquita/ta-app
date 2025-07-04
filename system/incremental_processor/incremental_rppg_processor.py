@@ -8,73 +8,8 @@ from collections import deque
 import time
 from typing import Dict, List, Tuple, Optional, Any
 # from system.optimization_utils import get_memory_manager, get_resource_pool
-
-
-class RollingStatistics:
-    """Maintains rolling statistics for a sliding window."""
-    
-    def __init__(self, window_size: int):
-        self.window_size = window_size
-        self.frames = deque(maxlen=window_size)
-        self.sum = None
-        self.sum_sq = None
-        self.count = 0
-        
-    def add_frame(self, frame: np.ndarray):
-        """Add a new frame and update statistics."""
-        if self.sum is None:
-            self.sum = np.zeros_like(frame, dtype=np.float64)
-            self.sum_sq = np.zeros_like(frame, dtype=np.float64)
-        
-        # If we're at capacity, subtract the oldest frame
-        if len(self.frames) == self.window_size:
-            old_frame = self.frames[0]
-            self.sum -= old_frame.astype(np.float64)
-            self.sum_sq -= (old_frame.astype(np.float64) ** 2)
-            self.count -= 1
-        
-        # Add the new frame
-        frame_f64 = frame.astype(np.float64)
-        self.frames.append(frame)
-        self.sum += frame_f64
-        self.sum_sq += frame_f64 ** 2
-        self.count += 1
-
-        print(len(self.frames))
-    
-    def get_mean(self) -> np.ndarray:
-        """Get current mean."""
-        if self.count == 0:
-            return np.zeros_like(self.sum)
-        return self.sum / self.count
-    
-    def get_std(self) -> np.ndarray:
-        """Get current standard deviation."""
-        if self.count <= 1:
-            return np.ones_like(self.sum)
-        
-        mean = self.get_mean()
-        variance = (self.sum_sq / self.count) - (mean ** 2)
-        # Avoid negative variance due to floating point errors
-        variance = np.maximum(variance, 1e-8)
-        return np.sqrt(variance)
-    
-    def is_ready(self) -> bool:
-        """Check if we have enough frames for stable statistics."""
-        return self.count >= min(30, self.window_size // 2)
-
-
-class IncrementalChunk:
-    """Represents a chunk of processed data."""
-    
-    def __init__(self, chunk_id: int, frames: List[np.ndarray], 
-                 bvp_signal: Optional[np.ndarray] = None, 
-                 timestamp: float = None):
-        self.chunk_id = chunk_id
-        self.frames = frames
-        self.bvp_signal = bvp_signal
-        self.timestamp = timestamp or time.time()
-        self.processed = bvp_signal is not None
+from system.incremental_processor.rolling_statistics import RollingStatistics
+from system.incremental_processor.incremental_chunk import IncrementalChunk
 
 
 class IncrementalRPPGProcessor:
@@ -84,12 +19,14 @@ class IncrementalRPPGProcessor:
     """
     
     def __init__(self, rppg_extractor, hr_extractor, 
-                 window_size: int = 180, chunk_size: int = 30):
+                 window_size: int = 180, chunk_size: int = 30, step_size=180):
         self.rppg_extractor = rppg_extractor
         self.hr_extractor = hr_extractor
         self.window_size = window_size
         self.chunk_size = chunk_size
         self.chunks_per_window = window_size // chunk_size
+        self.step_size = step_size
+        self.reset_chunk_step = self.step_size // chunk_size
         
         # Per-face data
         self.face_data: Dict[int, Dict[str, Any]] = {}
@@ -122,10 +59,6 @@ class IncrementalRPPGProcessor:
         if len(face_data['current_chunk_frames']) >= self.chunk_size:
             self._process_chunk(face_id, timestamp)
 
-        print(f"Added frame for face {face_id} at {timestamp}. "
-              f"Current chunk size: {len(face_data['current_chunk_frames'])}. "
-              f"Statistics ready: {face_data['statistics'].is_ready()}.")
-    
     def _process_chunk(self, face_id: int, timestamp: float):
         """Process a complete chunk for a face."""
         face_data = self.face_data[face_id]
@@ -236,16 +169,22 @@ class IncrementalRPPGProcessor:
         try:
             # Concatenate BVP signals from all chunks
             bvp_signals = [chunk.bvp_signal for chunk in processed_chunks[-self.chunks_per_window:]]
-            print(f"Extracting HR for face {face_id} with {len(bvp_signals)} chunks")
             combined_bvp = np.concatenate(bvp_signals, axis=0)
             
             # Extract heart rate
             heart_rate = self.hr_extractor.extract(combined_bvp)
+
+            print(f"Extracted heart rate for face {face_id}: {heart_rate} bpm")
             
             # Update last heart rate
             face_data['last_hr'] = heart_rate
             face_data['last_hr_timestamp'] = time.time()
-            
+
+            # Reset chunk by self.reset_chunk_step
+            for i in range(self.reset_chunk_step):
+                if len(face_data['processed_chunks']) > 0:
+                    face_data['processed_chunks'].popleft()
+        
             return heart_rate
             
         except Exception as e:
@@ -276,7 +215,7 @@ class IncrementalRPPGProcessor:
         faces_to_remove = []
         
         for face_id, face_data in self.face_data.items():
-            if (current_time - face_data['last_hr_timestamp']) > timeout:
+            if face_data['last_hr_timestamp'] != 0 and (current_time - face_data['last_hr_timestamp']) > timeout:
                 faces_to_remove.append(face_id)
         
         for face_id in faces_to_remove:

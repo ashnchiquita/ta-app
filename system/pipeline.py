@@ -6,7 +6,7 @@ from queue import Queue, Empty
 import threading
 from components.rppg_signal_extractor.deep_learning.base import DeepLearningRPPGSignalExtractor
 from components.rppg_signal_extractor.deep_learning.hef.base import HEFModel
-from system.incremental_processor import IncrementalRPPGProcessor
+from system.incremental_processor.incremental_rppg_processor import IncrementalRPPGProcessor
 # from system.performance_monitor import PerformanceMonitor
 
 class Pipeline:
@@ -33,7 +33,7 @@ class Pipeline:
             # Use smaller chunk size for better load distribution
             chunk_size = max(1, min(30, window_size // 6))  # 6 chunks per window
             self.incremental_processor = IncrementalRPPGProcessor(
-                rppg_signal_extractor, hr_extractor, window_size, chunk_size
+                rppg_signal_extractor, hr_extractor, window_size, chunk_size, step_size
             )
             print(f"Using incremental processing with chunk_size={chunk_size}")
         else:
