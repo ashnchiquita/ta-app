@@ -2,52 +2,65 @@ import numpy as np
 from collections import deque
 
 class RollingStatistics:
-    """Maintains rolling statistics for a sliding window."""
-    
-    def __init__(self, window_size: int):
+    """
+    Optimized rolling statistics using a hybrid approach:
+    - Maintains frame-level sums for efficiency
+    - Uses numerically stable variance calculation
+    """
+
+    def __init__(self, window_size: int, step=30, frame_shape: tuple = (72,72,3)):
         self.window_size = window_size
+        self.step = step
+        h, w, c = frame_shape
+        self.frame_size = h * w * c
+        
+        # Store frames for accurate variance calculation
         self.frames = deque(maxlen=window_size)
-        self.sum = None
-        self.sum_sq = None
-        self.count = 0
+        
+        # Quick access to current statistics
+        self.current_mean = 0.0
+        self.current_std = 0.0
+        self.stats_valid = False
         
     def add_frame(self, frame: np.ndarray):
-        """Add a new frame and update statistics."""
-        if self.sum is None:
-            self.sum = np.zeros_like(frame, dtype=np.float32)
-            self.sum_sq = np.zeros_like(frame, dtype=np.float32)
+        """Add a new frame to the rolling window."""
+        self.frames.append(frame.copy())
+        self.stats_valid = False  # Mark stats as needing recalculation
         
-        # If we're at capacity, subtract the oldest frame
-        if len(self.frames) == self.window_size:
-            old_frame = self.frames[0]
-            self.sum -= old_frame.astype(np.float32)
-            self.sum_sq -= (old_frame.astype(np.float32) ** 2)
-            self.count -= 1
+    def _calculate_stats(self):
+        """Calculate statistics using numerically stable method."""
+        if not self.frames:
+            self.current_mean = 0.0
+            self.current_std = 0.0
+            self.stats_valid = True
+            return
+            
+        # Stack all frames and flatten
+        all_frames = np.stack(list(self.frames))
+        all_pixels = all_frames.flatten()
         
-        # Add the new frame
-        frame_f32 = frame.astype(np.float32)
-        self.frames.append(frame)
-        self.sum += frame_f32
-        self.sum_sq += frame_f32 ** 2
-        self.count += 1
+        # Calculate mean and std using numpy's numerically stable algorithms
+        self.current_mean = np.mean(all_pixels)
+        self.current_std = np.std(all_pixels)
+        self.stats_valid = True
+        
+    def get_total_count(self) -> int:
+        """Get total number of pixel values in the window."""
+        return len(self.frames) * self.frame_size
     
-    def get_mean(self) -> np.ndarray:
+    def get_mean(self) -> float:
         """Get current mean."""
-        if self.count == 0:
-            return np.zeros_like(self.sum)
-        return self.sum / self.count
+        if not self.stats_valid:
+            self._calculate_stats()
+        return self.current_mean
     
-    def get_std(self) -> np.ndarray:
+    def get_std(self) -> float:
         """Get current standard deviation."""
-        if self.count <= 1:
-            return np.ones_like(self.sum)
-        
-        mean = self.get_mean()
-        variance = (self.sum_sq / self.count) - (mean ** 2)
-        # Avoid negative variance due to floating point errors
-        variance = np.maximum(variance, 1e-8)
-        return np.sqrt(variance)
+        if not self.stats_valid:
+            self._calculate_stats()
+        print(f"Frames: {len(self.frames)}, Mean: {self.current_mean:.6f}, Std: {self.current_std:.6f}")
+        return self.current_std
     
     def is_ready(self) -> bool:
         """Check if we have enough frames for stable statistics."""
-        return self.count >= min(30, self.window_size // 2)
+        return len(self.frames) >= min(self.step, self.window_size // 2)

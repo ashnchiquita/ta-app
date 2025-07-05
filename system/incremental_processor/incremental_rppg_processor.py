@@ -8,7 +8,10 @@ from collections import deque
 import time
 from typing import Dict, List, Tuple, Optional, Any
 # from system.optimization_utils import get_memory_manager, get_resource_pool
-from system.incremental_processor.rolling_statistics import RollingStatistics
+# from system.incremental_processor.rolling_statistics import RollingStatistics
+# from system.incremental_processor.rolling_statistics import RollingStatistics
+# from system.incremental_processor.rolling_statistics_original import RollingStatisticsOriginal as RollingStatistics
+from system.incremental_processor.rolling_statistics_optimized import RollingStatisticsLightweight as RollingStatistics
 from system.incremental_processor.incremental_chunk import IncrementalChunk
 
 
@@ -113,6 +116,8 @@ class IncrementalRPPGProcessor:
         # Get global statistics for the entire window
         global_mean = statistics.get_mean()
         global_std = statistics.get_std()
+
+        print(f"Global mean: {global_mean}, Global std: {global_std}")
         
         # Apply preprocessing similar to the original method
         # but using global window statistics
