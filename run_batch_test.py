@@ -15,6 +15,8 @@ from components.rppg_signal_extractor.conventional.ica_2019 import ICA2019
 from components.hr_extractor.fft import FFT
 from components.roi_selector.fullface import FullFace
 from components.face_detector.mt_cnn import MT_CNN
+from components.rppg_signal_extractor.deep_learning.onnx.deep_phys import DeepPhys as ONNXDeepPhys
+from constants import ONNX_DIR, HEF_DIR
 
 def make_json_csv_safe(data):
     """Convert data to JSON string that's safe for CSV storage"""
@@ -87,6 +89,22 @@ def get_a_system(video_path):
         )
     return rppg_system
 
+def get_a_unquant_system(video_path):
+    rppg_system = System(
+            video_file=video_path,
+            
+            face_detector=None, # scrfd 500m
+            face_tracker=None, # centroid
+            roi_selector=None, # full face square
+            rppg_signal_extractor=ONNXDeepPhys(fps=30, model_path=os.path.join(ONNX_DIR, "PURE_DeepPhys.onnx")), # pure quantized
+            hr_extractor=None, # fft
+            
+            window_size=180,
+            fps=30,
+            step_size=180,
+        )
+    return rppg_system
+
 def get_b_system(video_path):
     rppg_system = System(
             video_file=video_path,
@@ -119,6 +137,22 @@ def get_baseline_system(video_path):
         )
     return rppg_system
 
+def get_baseline_system_faster(video_path):
+    rppg_system = System(
+            video_file=video_path,
+            
+            face_detector=None, # SCRFD 500m
+            face_tracker=None, # centroid
+            roi_selector=FullFace(), # full face
+            rppg_signal_extractor=ICA2019(fps=30),
+            hr_extractor=FFT(fps=30, diff_flag=False, use_bandpass=False, use_detrend=False), # fft
+
+            window_size=180,
+            fps=30,
+            step_size=180
+        )
+    return rppg_system
+
 def run_single_video_test(video_path, video_index):
     """
     Run test for a single video and return metrics data
@@ -136,7 +170,7 @@ def run_single_video_test(video_path, video_index):
     
     try:
         # Create system with default configuration
-        rppg_system = get_baseline_system(video_path)
+        rppg_system = get_a_unquant_system(video_path)
         
         # Run the system
         start_time = time.time()
