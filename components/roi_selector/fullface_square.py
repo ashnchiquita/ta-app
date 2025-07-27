@@ -1,5 +1,4 @@
 import cv2
-import numpy as np
 from components.roi_selector.base import ROISelector
 
 class FullFaceSquare(ROISelector):

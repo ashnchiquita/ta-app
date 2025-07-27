@@ -80,7 +80,6 @@ class DeepPhys(HEFModel):
         Extract rPPG signal from a preprocessed chunk.
         This method is used by the incremental processor.
         """
-        print("[extract_chunk] called")
         try:
             result = self._npu_inference(preprocessed_chunk)
             return result
@@ -105,6 +104,35 @@ class DeepPhys(HEFModel):
                 rppg_signal = rppg_signal.flatten()
             
             return rppg_signal
+
+    def extract_chunks(self, processed_roi_dict: dict):
+        """
+        Extract rPPG signal from multiple preprocessed chunks.
+        This method is used by the incremental processor.
+        """
+
+        processed_data = []
+        preprocess_data_len = None
+        
+        for face_id, preprocessed_chunk in processed_roi_dict.items():
+            processed_data.append(preprocessed_chunk)
+            preprocess_data_len = preprocessed_chunk.shape[0]
+            
+        # Concatenate all chunks
+        preprocessed_data = np.concatenate(processed_data, axis=0)
+
+        result_dict = {}
+        try:
+            result = self._npu_inference(preprocessed_data)
+            # Split the result back into chunks
+            for i in range(len(processed_data)):
+                start_idx = i * preprocess_data_len
+                end_idx = start_idx + preprocess_data_len
+                result_dict[i] = result[start_idx:end_idx]
+        except Exception as e:
+            raise RuntimeError(f"Failed to extract rPPG signal from chunks: {str(e)}")
+
+        return result_dict
 
     def get_dummy_input(self, n_d=180):
         """

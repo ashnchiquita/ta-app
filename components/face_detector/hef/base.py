@@ -33,3 +33,22 @@ class HEFModel(FaceDetector):
 
         self.input_names = [info.name for info in hef.get_input_vstream_infos()]
         self.output_names = [info.name for info in hef.get_output_vstream_infos()]
+
+    def cleanup(self):
+        """Cleanup HEF face detector resources."""
+        try:
+            # Clean up network group resources
+            if hasattr(self, 'network_group') and self.network_group is not None:
+                # Note: Network groups are automatically cleaned up when target is released
+                self.network_group = None
+                
+            self.input_vstreams_params = None
+            self.output_vstreams_params = None
+            self.network_group_params = None
+            
+        except Exception as e:
+            print(f"Warning: Error during HEF face detector cleanup: {e}")
+
+    def __del__(self):
+        """Destructor to ensure cleanup."""
+        self.cleanup()

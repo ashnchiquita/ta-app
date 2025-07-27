@@ -15,7 +15,8 @@ class Pipeline:
                     hr_extractor,
                     window_size=180,
                     fps=30,
-                    step_size=30):
+                    step_size=30,
+                    use_incremental=None):
         self.rppg_signal_extractor = rppg_signal_extractor
         self.hr_extractor = hr_extractor
         self.window_size = window_size
@@ -27,7 +28,7 @@ class Pipeline:
         # self.performance_monitor = PerformanceMonitor()
         
         # Check if we should use incremental processing
-        self.use_incremental = isinstance(rppg_signal_extractor, DeepLearningRPPGSignalExtractor)
+        self.use_incremental = use_incremental or isinstance(rppg_signal_extractor, DeepLearningRPPGSignalExtractor)
         
         if self.use_incremental:
             # Use smaller chunk size for better load distribution
@@ -72,6 +73,9 @@ class Pipeline:
         """Process faces using incremental approach - no burst computation."""
         start_time = time.time()
         results = {}
+        
+        # Process any pending chunks using batch inference
+        self.incremental_processor.process_pending_chunks()
         
         # Check each face for available heart rate
         face_count = 0
@@ -354,3 +358,23 @@ class Pipeline:
                 print(f"  Processed Chunks: {processing_info.get('processed_chunks', 0)}")
                 print(f"  Ready for HR: {processing_info.get('ready_for_hr', False)}")
                 print(f"  Last HR: {processing_info.get('last_hr', 'N/A')}")
+
+    def cleanup(self):
+        """Cleanup pipeline resources."""
+        try:
+            # Cleanup incremental processor
+            if hasattr(self, 'incremental_processor') and self.incremental_processor is not None:
+                if hasattr(self.incremental_processor, 'cleanup'):
+                    self.incremental_processor.cleanup()
+                self.incremental_processor = None
+            
+            # Clear face data
+            if hasattr(self, 'face_data'):
+                self.face_data.clear()
+                
+        except Exception as e:
+            print(f"Warning: Error during pipeline cleanup: {e}")
+
+    def __del__(self):
+        """Destructor to ensure cleanup."""
+        self.cleanup()

@@ -21,3 +21,20 @@ class ONNXModel(DeepLearningRPPGSignalExtractor):
         dummy_input = self.get_dummy_input()
         self.model.run(None, dummy_input)
     
+    def cleanup(self):
+        """Cleanup ONNX model resources."""
+        try:
+            # Call parent cleanup
+            super().cleanup()
+            
+            # Clean up ONNX session
+            if hasattr(self, 'model') and self.model is not None:
+                # ONNX sessions are automatically cleaned up when the object is deleted
+                self.model = None
+                
+        except Exception as e:
+            print(f"Warning: Error during ONNX model cleanup: {e}")
+
+    def __del__(self):
+        """Destructor to ensure cleanup."""
+        self.cleanup()

@@ -43,17 +43,24 @@ class System:
                     
                     window_size=180,
                     fps=30,
-                    step_size=180):
+                    step_size=180,
+                    use_incremental=None):
         
         self.camera_id = camera_id
         self.video_file = video_file
         self.timestamp_file = timestamp_file
         self.fps = fps
 
+        # catetan
+        self.fpss = []
+        
+        self.heart_rates_timestamps = []
+        self.heart_rates_arr = []
+
         if video_file is not None:
             print(f'Using video file: {video_file}')
             self.video_frames = np.load(video_file)
-            self.video_frames = self.video_frames[:31] # Limit to first 180 frames for test [Todo: remove this line]
+            # self.video_frames = self.video_frames[:31] # Limit to first 180 frames for test [Todo: remove this line]
             self.video_frames = np.flip(self.video_frames, axis=3)  # Convert BGR to RGB by flipping the last axis
             
             print(f'Video frames loaded: {len(self.video_frames)} frames')
@@ -83,14 +90,14 @@ class System:
 
         # self.face_detector = face_detector or HaarCascade()
         # self.face_detector = face_detector or MediaPipe()
-        self.face_detector = face_detector or SCRFD(variant='500m')
+        self.face_detector = face_detector or SCRFD(variant='2.5g')
         # self.face_detector = face_detector or MT_CNN()
         # self.face_detector = face_detector or DegirumFaceDetector()
         self.face_tracker = face_tracker or Centroid()
         # self.roi_selector = roi_selector or FullFace()
         self.roi_selector = roi_selector or FullFaceSquare(target_size=(72,72), larger_box_coef=1.5)
         # self.rppg_signal_extractor = rppg_signal_extractor or POS(fps=fps)
-        self.rppg_signal_extractor = rppg_signal_extractor or HEFDeepPhys(fps=fps, model_path=os.path.join(HEF_DIR, "PURE_DeepPhys_quantized_20250619-220734.hef"))
+        self.rppg_signal_extractor = rppg_signal_extractor or HEFDeepPhys(fps=fps, model_path=os.path.join(HEF_DIR, "PURE_DeepPhys_quantized_20250706-000109.hef"))
         # self.rppg_signal_extractor = rppg_signal_extractor or ONNXDeepPhys(fps=fps, model_path=os.path.join(ONNX_DIR, "PURE_DeepPhys.onnx"))
         # self.rppg_signal_extractor = rppg_signal_extractor or EfficientPhys(fps=fps, model_path=os.path.join(ONNX_DIR, "PURE_EfficientPhys.onnx"))
         # self.rppg_signal_extractor = rppg_signal_extractor or TSCAN(fps=fps, model_path=os.path.join(ONNX_DIR, "PURE_TSCAN.onnx"))
@@ -104,7 +111,8 @@ class System:
             self.hr_extractor,
             window_size=window_size,
             fps=fps,
-            step_size=step_size
+            step_size=step_size,
+            use_incremental=use_incremental
         )
 
         self.frame_queue = queue.Queue(maxsize=30)
@@ -115,7 +123,13 @@ class System:
 
         self.processing_metrics = Metrics()
         self.skipped_frames = 0
-        
+        # Debug info
+        print(f"Initialized System with:")
+        print(f"  Face Detector: {type(self.face_detector).__name__}")
+        print(f"  rPPG Extractor: {type(self.rppg_signal_extractor).__name__}")
+        print(f"  Window Size: {window_size}")
+        print(f"  Use Incremental: {use_incremental}")
+            
     def start(self):
         self.running = True
         
@@ -128,9 +142,12 @@ class System:
         self.display_thread.start()
 
         print("System started. Press 'q' to exit.")
+
+        self.processing_metrics.start_time = time.time()
             
     def stop(self):
         self.running = False
+        self.processing_metrics.end_time = time.time()
         
         self.capture_thread.join()
         self.processing_thread.join()
@@ -140,11 +157,16 @@ class System:
             self.cap.release()
         cv2.destroyAllWindows()
 
+        # Cleanup all components
+        self._cleanup_components()
+
         print("System stopped.")
 
         print(f"Skipped frames: {self.skipped_frames}")
+        self.processing_metrics.skipped_frames = self.skipped_frames
         print(self.processing_metrics)
-        print(self.pipeline.print_performance_report())
+
+        self.store_all_csv()
             
     def capture_frames(self):
         if self.video_frames is not None:
@@ -266,7 +288,10 @@ class System:
                 new_results, core_time = self.pipeline.process_faces()
                 self.processing_metrics.processing_time['core_time'] += core_time
 
+                currtime = time.time()
+
                 for face_id, hr in new_results.items():
+                    self.heart_rates_arr.append((currtime, face_id, hr))
                     self.heart_rates[face_id] = hr
                 
                 self.result_queue.put((frame, objects, self.heart_rates.copy(), roi_coords))
@@ -297,8 +322,11 @@ class System:
                     fps = frame_count / elapsed_time
                     frame_count = 0
                     prev_time = current_time
+                    self.fpss.append((time.time(), fps))
 
                 for object_id in objects.keys():
+                    if object_id not in roi_coords:
+                        continue
                     roi_x, roi_y, roi_x_end, roi_y_end = roi_coords[object_id]
 
                     color = colors.get_annotation_color(object_id)
@@ -314,7 +342,7 @@ class System:
                     
                 fps_text = f"FPS: {fps:.2f}"
                 cv2.putText(frame, fps_text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-                
+
                 cv2.imshow("Multi-Person rPPG [Press 'q' to exit]", frame)
                 
                 if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -324,3 +352,79 @@ class System:
                 # Yield CPU when no display data available
                 time.sleep(0.001)
                 continue
+
+    def _cleanup_components(self):
+        """Cleanup all components and release resources."""
+        try:
+            # Cleanup rPPG signal extractor
+            if hasattr(self.rppg_signal_extractor, 'cleanup'):
+                self.rppg_signal_extractor.cleanup()
+            
+            # Cleanup face detector
+            if hasattr(self.face_detector, 'cleanup'):
+                self.face_detector.cleanup()
+            
+            # Cleanup pipeline
+            if hasattr(self.pipeline, 'cleanup'):
+                self.pipeline.cleanup()
+                
+            # Clear queues
+            while not self.frame_queue.empty():
+                try:
+                    self.frame_queue.get_nowait()
+                except:
+                    break
+            while not self.result_queue.empty():
+                try:
+                    self.result_queue.get_nowait()
+                except:
+                    break
+            
+            # Force garbage collection
+            import gc
+            gc.collect()
+            
+        except Exception as e:
+            print(f"Warning: Error during cleanup: {e}")
+
+    def __del__(self):
+        """Destructor to ensure cleanup."""
+        if hasattr(self, 'running') and self.running:
+            self.stop()
+
+    def store_csv(self, output_file_prefix):
+        """Store FPS timestamps and values to a CSV file."""
+        
+        df = pd.DataFrame({
+            'timestamp': [item[0] for item in self.fpss],
+            'fps': [item[1] for item in self.fpss]
+        })
+        
+        df.to_csv(f"{output_file_prefix}fps.csv", index=False)
+        print(f"FPS data stored to {output_file_prefix}fps.csv")
+
+    def store_heart_rate_csv(self, output_file_prefix):
+        """Store heart rate timestamps and values to a CSV file."""
+        if not self.heart_rates_arr:
+            print("No heart rate data to store.")
+            return
+
+        df = pd.DataFrame(self.heart_rates_arr, columns=['timestamp', 'face_id', 'heart_rate'])
+        df.to_csv(f"{output_file_prefix}heart_rate.csv", index=False)
+        print(f"Heart rate data stored to {output_file_prefix}heart_rate.csv")
+
+    def store_all_csv(self, ):
+        """Store all relevant data to CSV files."""
+        base_video_name = os.path.basename(self.video_file).split("_")[1] if self.video_file else f"camera_{self.camera_id}"
+
+        output_folder = "output"
+        output_folder = os.path.join(output_folder, base_video_name)
+        if not os.path.exists(output_folder):
+            os.makedirs(output_folder)
+        self.store_csv(f"{output_folder}/")
+        self.store_heart_rate_csv(f"{output_folder}/")
+
+        # Store processing metrics
+        metrics_str = str(self.processing_metrics)
+        with open(f"{output_folder}/processing_metrics.txt", 'w') as f:
+            f.write(metrics_str)

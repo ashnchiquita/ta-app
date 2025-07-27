@@ -31,3 +31,25 @@ class HEFModel(DeepLearningRPPGSignalExtractor):
 
         self.input_name = hef.get_input_vstream_infos()[0].name
         self.output_name = hef.get_output_vstream_infos()[0].name
+
+    def cleanup(self):
+        """Cleanup HEF model resources."""
+        try:
+            # Call parent cleanup
+            super().cleanup()
+            
+            # Clean up network group resources
+            if hasattr(self, 'network_group') and self.network_group is not None:
+                # Note: Network groups are automatically cleaned up when target is released
+                self.network_group = None
+                
+            self.input_vstreams_params = None
+            self.output_vstreams_params = None
+            self.network_group_params = None
+            
+        except Exception as e:
+            print(f"Warning: Error during HEF model cleanup: {e}")
+
+    def __del__(self):
+        """Destructor to ensure cleanup."""
+        self.cleanup()

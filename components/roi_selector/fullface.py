@@ -1,4 +1,3 @@
-import cv2
 from components.roi_selector.base import ROISelector
 
 class FullFace(ROISelector):
