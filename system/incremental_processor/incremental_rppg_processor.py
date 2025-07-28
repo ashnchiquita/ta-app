@@ -54,7 +54,7 @@ class IncrementalRPPGProcessor:
         face_data['statistics'].add_frame(roi_frame)
         
         # Check if chunk is ready for processing
-        if face_data['statistics'].get_current_chunk_size() >= self.chunk_size:
+        if face_data['statistics'].is_preprocessing_ready():
             self._prepare_chunk_for_batch(face_id, timestamp)
 
     def _prepare_chunk_for_batch(self, face_id: int, timestamp: float):

@@ -9,10 +9,10 @@ class RollingStatistics:
         self.frame_size = h * w * c
         
         # Store frame-level statistics computed with NumPy (stable)
-        self.frame_data = deque(maxlen=window_size)  # Store (mean, var, count) tuples
+        self.frame_data = deque(maxlen=window_size + 1)  # Store (mean, var, count) tuples
         
         # Store differential statistics
-        self.diff_frame_data = deque(maxlen=window_size-1)  # Store diff statistics (mean, var, count)
+        self.diff_frame_data = deque(maxlen=window_size)  # Store diff statistics (mean, var, count)
         
         # Running totals for efficient global calculation
         self.total_count = 0
@@ -30,6 +30,14 @@ class RollingStatistics:
         
         # Track current chunk frames for preprocessing
         self.current_chunk_frames = []
+
+        self.passed_frame = None
+
+    def get_internal_step(self) -> int:
+        if self.passed_frame is not None:
+            return self.step
+        else:
+            return self.step + 1
 
     def get_prev_frame(self):
         """Get the previous frame used for differential calculation."""
@@ -53,7 +61,7 @@ class RollingStatistics:
         frame_sum_squares = frame_var * frame_count + frame_mean * frame_mean * frame_count
         
         # Remove old frame if at capacity
-        if len(self.frame_data) == self.window_size:
+        if len(self.frame_data) == self.frame_data.maxlen:
             old_mean, old_var, old_count = self.frame_data.popleft()
             old_sum = old_mean * old_count
             old_sum_squares = old_var * old_count + old_mean * old_mean * old_count
@@ -94,7 +102,7 @@ class RollingStatistics:
         diff_sum_squares = diff_var * diff_count + diff_mean * diff_mean * diff_count
         
         # Remove old diff frame if at capacity
-        if len(self.diff_frame_data) == self.window_size - 1:
+        if len(self.diff_frame_data) == self.diff_frame_data.maxlen:
             old_diff_mean, old_diff_var, old_diff_count = self.diff_frame_data.popleft()
             old_diff_sum = old_diff_mean * old_diff_count
             old_diff_sum_squares = old_diff_var * old_diff_count + old_diff_mean * old_diff_mean * old_diff_count
@@ -161,14 +169,17 @@ class RollingStatistics:
     
     def is_ready(self) -> bool:
         """Check if we have enough frames for stable statistics."""
-        return len(self.frame_data) >= min(self.step, self.window_size // 2)
+        return len(self.frame_data) >= self.get_internal_step()
+
+    def is_preprocessing_ready(self) -> bool:
+        return self.get_current_chunk_size() >= self.get_internal_step()
 
     def get_diff_chunk(self) -> np.ndarray:
         """Get latest self.step chunk of differential frames."""
         # if len(self.diff_frame_data) < self.step - 1:
         #     raise ValueError("Not enough differential frames to return a chunk.")
 
-        diff_len = min(len(self.diff_frame_data), self.step - 1)
+        diff_len = min(len(self.diff_frame_data), self.step)
 
         latest_frames = list(self.diff_frames)[-diff_len:]
 
@@ -185,7 +196,13 @@ class RollingStatistics:
         """
         if not self.current_chunk_frames:
             raise ValueError("No current chunk frames available for preprocessing")
-        
+
+        if self.passed_frame is not None:
+            self.current_chunk_frames.insert(0, self.passed_frame)  # Ensure last passed frame is included
+
+        self.passed_frame = self.current_chunk_frames[-1]
+        self.current_chunk_frames = self.current_chunk_frames[:-1]
+
         # Convert current chunk frames to numpy array
         chunk_array = np.array(self.current_chunk_frames, dtype=np.float32)
         
@@ -194,7 +211,7 @@ class RollingStatistics:
         
         # Get standardization
         standardized_chunk = self._get_standardized_chunk(chunk_array)
-        
+
         # Concatenate along channel dimension
         preprocessed_chunk = np.concatenate([diffnormalized_chunk, standardized_chunk], axis=-1)
         
@@ -226,10 +243,6 @@ class RollingStatistics:
         
         # Normalize using the global differential std from rolling statistics
         diffnormalized_data = global_diff_chunk / global_diff_std
-        
-        # Add padding for the last frame (to maintain same length as input)
-        diffnormalized_data_padding = np.zeros((1, h, w, c), dtype=np.float32)
-        diffnormalized_data = np.append(diffnormalized_data, diffnormalized_data_padding, axis=0)
         diffnormalized_data[np.isnan(diffnormalized_data)] = 0
         
         return diffnormalized_data
