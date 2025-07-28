@@ -27,6 +27,9 @@ class RollingStatistics:
         
         # Store previous frame for differential calculation
         self.prev_frame = None
+        
+        # Track current chunk frames for preprocessing
+        self.current_chunk_frames = []
 
     def get_prev_frame(self):
         """Get the previous frame used for differential calculation."""
@@ -36,6 +39,9 @@ class RollingStatistics:
         """Add a new frame using stable per-frame calculation."""
         frame = frame.astype(np.float32)  # Ensure frame is in float32 for stability
         frame_flat = frame.flatten()
+        
+        # Add to current chunk frames
+        self.current_chunk_frames.append(frame)
         
         # Use NumPy's stable algorithms for this frame
         frame_mean = np.mean(frame_flat)
@@ -167,3 +173,63 @@ class RollingStatistics:
         latest_frames = list(self.diff_frames)[-diff_len:]
 
         return np.array(latest_frames)
+    
+    def get_preprocessed_chunk(self) -> np.ndarray:
+        """
+        Get preprocessed chunk data ready for rPPG extraction.
+        Uses the current chunk frames stored internally.
+        Combines standardization and differential normalization.
+            
+        Returns:
+            Preprocessed chunk data with standardized and diff-normalized channels concatenated
+        """
+        if not self.current_chunk_frames:
+            raise ValueError("No current chunk frames available for preprocessing")
+        
+        # Convert current chunk frames to numpy array
+        chunk_array = np.array(self.current_chunk_frames, dtype=np.float32)
+        
+        # Get differential normalization
+        diffnormalized_chunk = self._get_diff_normalized_chunk()
+        
+        # Get standardization
+        standardized_chunk = self._get_standardized_chunk(chunk_array)
+        
+        # Concatenate along channel dimension
+        preprocessed_chunk = np.concatenate([diffnormalized_chunk, standardized_chunk], axis=-1)
+        
+        return preprocessed_chunk
+    
+    def clear_current_chunk(self):
+        """Clear the current chunk frames after processing."""
+        self.current_chunk_frames = []
+    
+    def get_current_chunk_size(self) -> int:
+        """Get the number of frames in the current chunk."""
+        return len(self.current_chunk_frames)
+    
+    def _get_standardized_chunk(self, chunk: np.ndarray) -> np.ndarray:
+        """Standardize chunk using global rolling statistics."""
+        global_mean = self.get_mean()
+        global_std = self.get_std()
+        
+        standardized = (chunk - global_mean) / (global_std + 1e-7)
+        standardized[np.isnan(standardized)] = 0
+        return standardized
+    
+    def _get_diff_normalized_chunk(self) -> np.ndarray:
+        """Apply differential normalization using rolling statistics."""
+        global_diff_std = self.get_diff_std()
+        global_diff_chunk = self.get_diff_chunk()
+        
+        n, h, w, c = global_diff_chunk.shape
+        
+        # Normalize using the global differential std from rolling statistics
+        diffnormalized_data = global_diff_chunk / global_diff_std
+        
+        # Add padding for the last frame (to maintain same length as input)
+        diffnormalized_data_padding = np.zeros((1, h, w, c), dtype=np.float32)
+        diffnormalized_data = np.append(diffnormalized_data, diffnormalized_data_padding, axis=0)
+        diffnormalized_data[np.isnan(diffnormalized_data)] = 0
+        
+        return diffnormalized_data

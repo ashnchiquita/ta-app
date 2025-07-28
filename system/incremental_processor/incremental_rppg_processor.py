@@ -6,7 +6,7 @@ Breaks down large windows into smaller chunks to distribute computation load.
 import numpy as np
 from collections import deque
 import time
-from typing import Dict, List, Optional, Any
+from typing import Dict, Optional, Any
 from system.incremental_processor.rolling_statistics import RollingStatistics
 from system.incremental_processor.incremental_chunk import IncrementalChunk
 
@@ -42,7 +42,6 @@ class IncrementalRPPGProcessor:
         if face_id not in self.face_data:
             self.face_data[face_id] = {
                 'statistics': RollingStatistics(self.window_size),
-                'current_chunk_frames': [],
                 'processed_chunks': deque(maxlen=self.chunks_per_window),
                 'chunk_counter': 0,
                 'last_hr': None,
@@ -51,14 +50,11 @@ class IncrementalRPPGProcessor:
         
         face_data = self.face_data[face_id]
         
-        # Add frame to rolling statistics
+        # Add frame to rolling statistics (which also tracks current chunk)
         face_data['statistics'].add_frame(roi_frame)
         
-        # Add frame to current chunk
-        face_data['current_chunk_frames'].append(roi_frame)
-        
         # Check if chunk is ready for processing
-        if len(face_data['current_chunk_frames']) >= self.chunk_size:
+        if face_data['statistics'].get_current_chunk_size() >= self.chunk_size:
             self._prepare_chunk_for_batch(face_id, timestamp)
 
     def _prepare_chunk_for_batch(self, face_id: int, timestamp: float):
@@ -68,22 +64,18 @@ class IncrementalRPPGProcessor:
         if not face_data['statistics'].is_ready():
             # Not enough data for stable statistics, skip this chunk
             print(f"current chunk cleared for face {face_id}")
-            face_data['current_chunk_frames'] = []
+            face_data['statistics'].clear_current_chunk()
             return
         
-        # Get current chunk frames
-        chunk_frames = face_data['current_chunk_frames'][:self.chunk_size]
+        # Get chunk info
         chunk_id = face_data['chunk_counter']
         
-        # Create chunk object
-        chunk = IncrementalChunk(chunk_id, chunk_frames, timestamp=timestamp)
+        # Create chunk object (we don't need to pass frames anymore)
+        chunk = IncrementalChunk(chunk_id, timestamp=timestamp)
         
         try:
-            # Preprocess the chunk using rolling statistics
-            preprocessed_chunk = self._preprocess_chunk(
-                chunk_frames, 
-                face_data['statistics']
-            )
+            # Get preprocessed chunk using rolling statistics
+            preprocessed_chunk = face_data['statistics'].get_preprocessed_chunk()
             
             # Store in pending chunks for batch processing
             self.pending_chunks[face_id] = {
@@ -98,7 +90,7 @@ class IncrementalRPPGProcessor:
         
         # Update counters and clear current chunk
         face_data['chunk_counter'] += 1
-        face_data['current_chunk_frames'] = []
+        face_data['statistics'].clear_current_chunk()
 
     def process_pending_chunks(self):
         """Process all pending chunks in a single batch inference call."""
@@ -183,48 +175,6 @@ class IncrementalRPPGProcessor:
             # Store the processed chunk
             self.face_data[face_id]['processed_chunks'].append(chunk)
     
-    def _preprocess_chunk(self, chunk_frames: List[np.ndarray], 
-                         statistics: RollingStatistics) -> np.ndarray:
-        """Preprocess a chunk using rolling statistics."""
-        # Convert to numpy array
-        chunk_array = np.array(chunk_frames, dtype=np.float32)
-        
-        # Get global statistics for the entire window
-        global_mean = statistics.get_mean()
-        global_std = statistics.get_std()
-        global_diff_std = statistics.get_diff_std()
-        global_diff_chunk = statistics.get_diff_chunk()
-
-        diffnormalized_chunk = self._diff_normalize_chunk_try(global_diff_std, global_diff_chunk)
-        standardized_chunk = self._standardize_chunk(chunk_array, global_mean, global_std)
-
-        # Concatenate along channel dimension
-        preprocessed_chunk = np.concatenate([diffnormalized_chunk, standardized_chunk], axis=-1)
-        
-        return preprocessed_chunk
-    
-    def _standardize_chunk(self, chunk: np.ndarray, global_mean: np.ndarray, 
-                          global_std: np.ndarray) -> np.ndarray:
-        """Standardize chunk using global statistics."""
-        standardized = (chunk - global_mean) / (global_std + 1e-7)
-        standardized[np.isnan(standardized)] = 0
-        return standardized
-    
-    def _diff_normalize_chunk_try(self, global_diff_std: float, global_diff_chunk: np.ndarray) -> np.ndarray:
-        """Apply differential normalization using the correct approach from base.py."""
-        n, h, w, c = global_diff_chunk.shape
-
-        # Step 2: Normalize using the global differential std from rolling statistics
-        # This is the key fix - use the std calculated from ALL differential frames in the window
-        diffnormalized_data = global_diff_chunk / (global_diff_std)
-        
-        # Step 3: Add padding for the last frame (to maintain same length as input)
-        diffnormalized_data_padding = np.zeros((1, h, w, c), dtype=np.float32)
-        diffnormalized_data = np.append(diffnormalized_data, diffnormalized_data_padding, axis=0)
-        diffnormalized_data[np.isnan(diffnormalized_data)] = 0
-        
-        return diffnormalized_data
-    
     def get_heart_rate(self, face_id: int) -> Optional[float]:
         """Get heart rate for a face if enough chunks are processed."""
         if face_id not in self.face_data:
@@ -275,7 +225,7 @@ class IncrementalRPPGProcessor:
         return {
             'total_chunks': len(face_data['processed_chunks']),
             'processed_chunks': len(processed_chunks),
-            'current_chunk_frames': len(face_data['current_chunk_frames']),
+            'current_chunk_frames': face_data['statistics'].get_current_chunk_size(),
             'ready_for_hr': len(processed_chunks) >= self.chunks_per_window,
             'statistics_ready': face_data['statistics'].is_ready(),
             'last_hr': face_data['last_hr'],
