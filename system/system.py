@@ -59,14 +59,37 @@ class System:
 
         if video_file is not None:
             print(f'Using video file: {video_file}')
-            self.video_frames = np.load(video_file)
-            # self.video_frames = self.video_frames[:31] # Limit to first 180 frames for test [Todo: remove this line]
-            self.video_frames = np.flip(self.video_frames, axis=3)  # Convert BGR to RGB by flipping the last axis
             
-            print(f'Video frames loaded: {len(self.video_frames)} frames')
-            self.total_frames = len(self.video_frames)
-            self.current_frame_idx = 0
-            self.cap = None
+            # Check file extension to determine how to load the video
+            if video_file.lower().endswith('.npy'):
+                print('Loading NPY file into memory...')
+                self.video_frames = np.load(video_file)
+                # self.video_frames = self.video_frames[:31] # Limit to first 180 frames for test [Todo: remove this line]
+                self.video_frames = np.flip(self.video_frames, axis=3)  # Convert BGR to RGB by flipping the last axis
+                
+                print(f'Video frames loaded: {len(self.video_frames)} frames')
+                self.total_frames = len(self.video_frames)
+                self.current_frame_idx = 0
+                self.cap = None
+                self.is_npy_file = True
+            else:
+                print('Loading AVI/video file with OpenCV...')
+                self.cap = cv2.VideoCapture(video_file)
+                if not self.cap.isOpened():
+                    raise ValueError(f"Could not open video file: {video_file}")
+                
+                self.total_frames = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+                video_fps = self.cap.get(cv2.CAP_PROP_FPS)
+                print(f'Video file loaded: {self.total_frames} frames at {video_fps} FPS')
+                
+                # Use video file's FPS if not explicitly set
+                if fps == 30:  # Default value
+                    self.fps = video_fps
+                    print(f'Using video file FPS: {self.fps}')
+                
+                self.current_frame_idx = 0
+                self.video_frames = None
+                self.is_npy_file = False
 
             if timestamp_file is not None:
                 print(f'Using timestamps from: {timestamp_file}')
@@ -81,7 +104,7 @@ class System:
             else:
                 print('No timestamps provided, using constant FPS.')
                 self.use_timestamps = False
-                self.frame_interval = 1.0 / fps
+                self.frame_interval = 1.0 / self.fps
         else:
             print(f'Using camera ID: {camera_id}')
             self.cap = cv2.VideoCapture(camera_id)
@@ -146,12 +169,28 @@ class System:
         self.processing_metrics.start_time = time.time()
             
     def stop(self):
+        print("Stopping system...")
         self.running = False
         self.processing_metrics.end_time = time.time()
         
-        self.capture_thread.join()
-        self.processing_thread.join()
-        self.display_thread.join()
+        # Give threads a moment to finish their current operations
+        time.sleep(0.1)
+        
+        # Join threads with timeout to prevent indefinite blocking
+        threads_info = [
+            (self.capture_thread, "capture"),
+            (self.processing_thread, "processing"), 
+            (self.display_thread, "display")
+        ]
+        
+        for thread, name in threads_info:
+            if thread.is_alive():
+                print(f"Waiting for {name} thread to finish...")
+                thread.join(timeout=5.0)  # 5 second timeout
+                if thread.is_alive():
+                    print(f"Warning: {name} thread did not finish within timeout")
+                else:
+                    print(f"{name} thread finished successfully")
 
         if self.cap is not None:
             self.cap.release()
@@ -171,6 +210,8 @@ class System:
     def capture_frames(self):
         if self.video_frames is not None:
             self._capture_from_npy()
+        elif self.video_file is not None:
+            self._capture_from_video_file()
         else:
             self._capture_from_camera()
 
@@ -190,6 +231,13 @@ class System:
                 self.skipped_frames += 1
                 print(f"[{self.skipped_frames}] Frame skipped due to full queue.")
                 time.sleep(0.001)  # Brief yield to prevent tight loop
+                
+    def _capture_from_video_file(self):
+        if self.use_timestamps:
+            self._capture_avi_with_timestamps()
+        else:
+            self._capture_avi_with_constant_fps()
+            
     def _capture_from_npy(self):
         if self.use_timestamps:
             self._capture_with_timestamps()
@@ -252,11 +300,83 @@ class System:
         if self.current_frame_idx >= self.total_frames:
             print("Reached end of video file.")
             self.running = False
+    
+    def _capture_avi_with_constant_fps(self):
+        frame_start_time = time.time()
+        
+        while self.running:
+            ret, frame = self.cap.read()
+            if not ret:
+                print("Reached end of video file.")
+                self.running = False
+                break
+            
+            # Convert BGR to RGB
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            
+            try:
+                self.frame_queue.put(frame, block=False)
+            except queue.Full:
+                self.skipped_frames += 1
+                print(f"[{self.skipped_frames}] Frame skipped due to full queue.")
+            
+            self.current_frame_idx += 1
+            
+            expected_time = frame_start_time + (self.current_frame_idx * self.frame_interval)
+            current_time = time.time()
+            
+            if expected_time > current_time:
+                time.sleep(expected_time - current_time)
+        
+        print(f"AVI capture finished. Processed {self.current_frame_idx} frames.")
+    
+    def _capture_avi_with_timestamps(self):
+        if self.start_time is None:
+            self.start_time = time.time()
+            first_timestamp = self.timestamps_df.iloc[0]['timestamp']
+            self.timestamp_offset = self.start_time - first_timestamp
+        
+        while self.running:
+            if self.current_frame_idx >= len(self.timestamps_df):
+                print("Reached end of timestamp file.")
+                self.running = False
+                break
+            
+            ret, frame = self.cap.read()
+            if not ret:
+                print("Reached end of video file.")
+                self.running = False
+                break
+            
+            # Convert BGR to RGB
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            
+            expected_timestamp = self.timestamps_df.iloc[self.current_frame_idx]['timestamp'] + self.timestamp_offset
+            current_time = time.time()
+            
+            # Wait until it's time to display this frame
+            if expected_timestamp > current_time:
+                time.sleep(expected_timestamp - current_time)
+            
+            try:
+                self.frame_queue.put(frame, block=False)
+            except queue.Full:
+                self.skipped_frames += 1
+                print(f"[{self.skipped_frames}] Frame skipped due to full queue.")
+            
+            self.current_frame_idx += 1
+        
+        print(f"AVI capture with timestamps finished. Processed {self.current_frame_idx} frames.")
                     
     def process_frames(self):
         while self.running:
             try:
                 frame = self.frame_queue.get(timeout=1)
+                
+                # Check for cleanup signal
+                if frame is None:
+                    break
+                    
                 t0 = time.time()
 
                 # Face Detection
@@ -303,6 +423,12 @@ class System:
                 # Yield CPU when no frames available
                 time.sleep(0.001)
                 continue
+            except Exception as e:
+                if self.running:  # Only print errors if system is still supposed to be running
+                    print(f"Error in process_frames: {e}")
+                break
+        
+        print("Processing thread finished.")
 
     def display_frames(self):
         prev_time = time.time()
@@ -312,6 +438,11 @@ class System:
         while self.running:
             try:
                 frame, objects, heart_rates, roi_coords = self.result_queue.get(timeout=1)
+                
+                # Check for cleanup signal
+                if frame is None:
+                    break
+                    
                 frame_count += 1
 
                 frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)  # Convert back to BGR for OpenCV display
@@ -352,10 +483,19 @@ class System:
                 # Yield CPU when no display data available
                 time.sleep(0.001)
                 continue
+            except Exception as e:
+                if self.running:  # Only print errors if system is still supposed to be running
+                    print(f"Error in display_frames: {e}")
+                break
+        
+        print("Display thread finished.")
 
     def _cleanup_components(self):
         """Cleanup all components and release resources."""
         try:
+            # Clear queues first to unblock any waiting threads
+            self._clear_queues()
+            
             # Cleanup rPPG signal extractor
             if hasattr(self.rppg_signal_extractor, 'cleanup'):
                 self.rppg_signal_extractor.cleanup()
@@ -367,18 +507,6 @@ class System:
             # Cleanup pipeline
             if hasattr(self.pipeline, 'cleanup'):
                 self.pipeline.cleanup()
-                
-            # Clear queues
-            while not self.frame_queue.empty():
-                try:
-                    self.frame_queue.get_nowait()
-                except:
-                    break
-            while not self.result_queue.empty():
-                try:
-                    self.result_queue.get_nowait()
-                except:
-                    break
             
             # Force garbage collection
             import gc
@@ -386,6 +514,36 @@ class System:
             
         except Exception as e:
             print(f"Warning: Error during cleanup: {e}")
+    
+    def _clear_queues(self):
+        """Clear all queues to unblock waiting threads."""
+        try:
+            # Clear frame queue
+            while not self.frame_queue.empty():
+                try:
+                    self.frame_queue.get_nowait()
+                except:
+                    break
+            
+            # Clear result queue
+            while not self.result_queue.empty():
+                try:
+                    self.result_queue.get_nowait()
+                except:
+                    break
+                    
+            # Add dummy items to unblock any threads waiting on get()
+            try:
+                self.frame_queue.put(None, block=False)
+            except:
+                pass
+            try:
+                self.result_queue.put((None, None, None, None), block=False)
+            except:
+                pass
+                
+        except Exception as e:
+            print(f"Warning: Error clearing queues: {e}")
 
     def __del__(self):
         """Destructor to ensure cleanup."""
@@ -415,7 +573,21 @@ class System:
 
     def store_all_csv(self, ):
         """Store all relevant data to CSV files."""
-        base_video_name = os.path.basename(self.video_file).split("_")[1] if self.video_file else f"camera_{self.camera_id}"
+        if self.video_file:
+            # Handle both .npy and .avi files by removing extension and extracting base name
+            base_name = os.path.basename(self.video_file)
+            if base_name.lower().endswith('.npy'):
+                # For NPY files, try to extract number from filename like "video_01_timestamp_roi_data.npy"
+                parts = base_name.split("_")
+                if len(parts) > 1 and parts[1].isdigit():
+                    base_video_name = parts[1]
+                else:
+                    base_video_name = os.path.splitext(base_name)[0]
+            else:
+                # For AVI and other video files, use filename without extension
+                base_video_name = os.path.splitext(base_name)[0]
+        else:
+            base_video_name = f"camera_{self.camera_id}"
 
         output_folder = "output"
         output_folder = os.path.join(output_folder, base_video_name)
