@@ -14,4 +14,18 @@ class Metrics:
         self.end_time = 0
 
     def __str__(self):
-        return f"Processing Count: {self.processing_count}\nTotal Processing Time: {self.total_processing_time} seconds\nFace Detection Time: {self.processing_time['face_detection']} seconds\nFace Tracking Time: {self.processing_time['face_tracking']} seconds\nROI Selection Time: {self.processing_time['roi_selection']} seconds\nCore Time: {self.processing_time['core_time']} seconds\nSkipped Frames: {self.skipped_frames}\nStart Time: {self.start_time}\nEnd Time: {self.end_time}\nAverageFPS: {self.processing_count / (self.end_time - self.start_time)}"
+        return f"Processing Count: {self.processing_count}\nTotal Processing Time: {self.total_processing_time} seconds\nFace Detection Time: {self.processing_time['face_detection']} seconds\nFace Tracking Time: {self.processing_time['face_tracking']} seconds\nROI Selection Time: {self.processing_time['roi_selection']} seconds\nCore Time: {self.processing_time['core_time']} seconds\nSkipped Frames: {self.skipped_frames}\nStart Time: {self.start_time}\nEnd Time: {self.end_time}\nAverage FPS: {self.processing_count / (self.end_time - self.start_time)}"
+
+    def to_tuple(self):
+        return [
+            ("Processing Count", self.processing_count),
+            ("Total Processing Time", self.total_processing_time),
+            ("Face Detection Time", self.processing_time['face_detection']),
+            ("Face Tracking Time", self.processing_time['face_tracking']),
+            ("ROI Selection Time", self.processing_time['roi_selection']),
+            ("Core Time", self.processing_time['core_time']),
+            ("Skipped Frames", self.skipped_frames),
+            ("Start Time", self.start_time),
+            ("End Time", self.end_time),
+            ("Average FPS", self.processing_count / (self.end_time - self.start_time))
+        ]

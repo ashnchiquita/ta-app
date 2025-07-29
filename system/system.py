@@ -44,18 +44,23 @@ class System:
                     window_size=180,
                     fps=30,
                     step_size=180,
-                    use_incremental=None):
+                    use_incremental=None,
+
+                    log_dir="output",
+                ):
         
         self.camera_id = camera_id
         self.video_file = video_file
         self.timestamp_file = timestamp_file
         self.fps = fps
 
-        # catetan
-        self.fpss = []
-        
-        self.heart_rates_timestamps = []
-        self.heart_rates_arr = []
+        # Logging
+        self.fps_log = []
+        self.heart_rates_log = []
+
+        self.log_dir = log_dir
+        if not os.path.exists(self.log_dir):
+            os.makedirs(self.log_dir)
 
         if video_file is not None:
             print(f'Using video file: {video_file}')
@@ -73,7 +78,7 @@ class System:
                 self.cap = None
                 self.is_npy_file = True
             else:
-                print('Loading AVI/video file with OpenCV...')
+                print('Loading video file with OpenCV...')
                 self.cap = cv2.VideoCapture(video_file)
                 if not self.cap.isOpened():
                     raise ValueError(f"Could not open video file: {video_file}")
@@ -205,7 +210,7 @@ class System:
         self.processing_metrics.skipped_frames = self.skipped_frames
         print(self.processing_metrics)
 
-        self.store_all_csv()
+        self.store_all_logs()
             
     def capture_frames(self):
         if self.video_frames is not None:
@@ -403,15 +408,13 @@ class System:
                         roi_coords[object_id] = roi_coord
                         self.pipeline.add_face_data(object_id, roi, t0)
 
-                # # CORE: BVP + HR Extraction
-                # new_results, core_time = self.pipeline.process_faces()
                 new_results, core_time = self.pipeline.process_faces()
                 self.processing_metrics.processing_time['core_time'] += core_time
 
                 currtime = time.time()
 
                 for face_id, hr in new_results.items():
-                    self.heart_rates_arr.append((currtime, face_id, hr))
+                    self.heart_rates_log.append((currtime, face_id, hr))
                     self.heart_rates[face_id] = hr
                 
                 self.result_queue.put((frame, objects, self.heart_rates.copy(), roi_coords))
@@ -453,7 +456,7 @@ class System:
                     fps = frame_count / elapsed_time
                     frame_count = 0
                     prev_time = current_time
-                    self.fpss.append((time.time(), fps))
+                    self.fps_log.append((time.time(), fps))
 
                 for object_id in objects.keys():
                     if object_id not in roi_coords:
@@ -550,53 +553,38 @@ class System:
         if hasattr(self, 'running') and self.running:
             self.stop()
 
-    def store_csv(self, output_file_prefix):
+    def store_fps(self):
         """Store FPS timestamps and values to a CSV file."""
         
-        df = pd.DataFrame({
-            'timestamp': [item[0] for item in self.fpss],
-            'fps': [item[1] for item in self.fpss]
-        })
-        
-        df.to_csv(f"{output_file_prefix}fps.csv", index=False)
-        print(f"FPS data stored to {output_file_prefix}fps.csv")
+        df = pd.DataFrame(self.fps_log, columns=['timestamp', 'fps'])
 
-    def store_heart_rate_csv(self, output_file_prefix):
+        output_file = os.path.join(self.log_dir, "fps.csv")
+
+        df.to_csv(output_file, index=False)
+        print(f"FPS data stored to {output_file}")
+
+    def store_heart_rate(self):
         """Store heart rate timestamps and values to a CSV file."""
-        if not self.heart_rates_arr:
+        if not self.heart_rates_log:
             print("No heart rate data to store.")
             return
 
-        df = pd.DataFrame(self.heart_rates_arr, columns=['timestamp', 'face_id', 'heart_rate'])
-        df.to_csv(f"{output_file_prefix}heart_rate.csv", index=False)
-        print(f"Heart rate data stored to {output_file_prefix}heart_rate.csv")
+        df = pd.DataFrame(self.heart_rates_log, columns=['timestamp', 'face_id', 'heart_rate'])
 
-    def store_all_csv(self, ):
-        """Store all relevant data to CSV files."""
-        if self.video_file:
-            # Handle both .npy and .avi files by removing extension and extracting base name
-            base_name = os.path.basename(self.video_file)
-            if base_name.lower().endswith('.npy'):
-                # For NPY files, try to extract number from filename like "video_01_timestamp_roi_data.npy"
-                parts = base_name.split("_")
-                if len(parts) > 1 and parts[1].isdigit():
-                    base_video_name = parts[1]
-                else:
-                    base_video_name = os.path.splitext(base_name)[0]
-            else:
-                # For AVI and other video files, use filename without extension
-                base_video_name = os.path.splitext(base_name)[0]
-        else:
-            base_video_name = f"camera_{self.camera_id}"
+        output_file = os.path.join(self.log_dir, "heart_rate.csv")
+        df.to_csv(output_file, index=False)
+        print(f"Heart rate data stored to {output_file}")
 
-        output_folder = "output"
-        output_folder = os.path.join(output_folder, base_video_name)
-        if not os.path.exists(output_folder):
-            os.makedirs(output_folder)
-        self.store_csv(f"{output_folder}/")
-        self.store_heart_rate_csv(f"{output_folder}/")
+    def store_processing_metrics(self):
+        metrics_data = self.processing_metrics.to_tuple()
+        output_file = os.path.join(self.log_dir, "processing_metrics.csv")
+        
+        df = pd.DataFrame(metrics_data, columns=['Metric', 'Value'])
+        df.to_csv(output_file, index=False)
+        print(f"Processing metrics stored to {output_file}")
 
-        # Store processing metrics
-        metrics_str = str(self.processing_metrics)
-        with open(f"{output_folder}/processing_metrics.txt", 'w') as f:
-            f.write(metrics_str)
+    def store_all_logs(self):
+        self.store_fps()
+        self.store_heart_rate()
+        self.store_processing_metrics()
+        
