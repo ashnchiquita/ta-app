@@ -33,7 +33,6 @@ class System:
     def __init__(self, 
                     camera_id=None,
                     video_file=None,
-                    timestamp_file=None,
                     
                     face_detector=None,
                     face_tracker=None,
@@ -51,7 +50,6 @@ class System:
         
         self.camera_id = camera_id
         self.video_file = video_file
-        self.timestamp_file = timestamp_file
         self.fps = fps
 
         # Logging
@@ -96,25 +94,11 @@ class System:
                 self.video_frames = None
                 self.is_npy_file = False
 
-            if timestamp_file is not None:
-                print(f'Using timestamps from: {timestamp_file}')
-                self.timestamps_df = pd.read_csv(
-                    timestamp_file, 
-                    names=['frame_number', 'timestamp'],
-                    dtype={'frame_number': int, 'timestamp': float},
-                    header=0
-                )
-                self.use_timestamps = True
-                self.start_time = None
-            else:
-                print('No timestamps provided, using constant FPS.')
-                self.use_timestamps = False
-                self.frame_interval = 1.0 / self.fps
+            self.frame_interval = 1.0 / self.fps
         else:
             print(f'Using camera ID: {camera_id}')
             self.cap = cv2.VideoCapture(camera_id)
             self.video_frames = None
-            self.use_timestamps = False
 
         # self.face_detector = face_detector or HaarCascade()
         # self.face_detector = face_detector or MediaPipe()
@@ -151,6 +135,7 @@ class System:
 
         self.processing_metrics = Metrics()
         self.skipped_frames = 0
+        
         # Debug info
         print(f"Initialized System with:")
         print(f"  Face Detector: {type(self.face_detector).__name__}")
@@ -236,20 +221,8 @@ class System:
                 self.skipped_frames += 1
                 print(f"[{self.skipped_frames}] Frame skipped due to full queue.")
                 time.sleep(0.001)  # Brief yield to prevent tight loop
-                
-    def _capture_from_video_file(self):
-        if self.use_timestamps:
-            self._capture_avi_with_timestamps()
-        else:
-            self._capture_avi_with_constant_fps()
             
     def _capture_from_npy(self):
-        if self.use_timestamps:
-            self._capture_with_timestamps()
-        else:
-            self._capture_with_constant_fps()
-
-    def _capture_with_constant_fps(self):
         frame_start_time = time.time()
         
         while self.running and self.current_frame_idx < self.total_frames:
@@ -272,41 +245,8 @@ class System:
         if self.current_frame_idx >= self.total_frames:
             print("Reached end of video file.")
             self.running = False
-    
-    def _capture_with_timestamps(self):
-        if self.start_time is None:
-            self.start_time = time.time()
-            first_timestamp = self.timestamps_df.iloc[0]['timestamp']
-            self.timestamp_offset = self.start_time - first_timestamp
-        
-        while self.running and self.current_frame_idx < self.total_frames:
-            if self.current_frame_idx >= len(self.timestamps_df):
-                print("Reached end of timestamp file.")
-                self.running = False
-                break
-                
-            frame = self.video_frames[self.current_frame_idx]
-            
-            expected_timestamp = self.timestamps_df.iloc[self.current_frame_idx]['timestamp'] + self.timestamp_offset
-            current_time = time.time()
-            
-            # Wait until it's time to display this frame
-            if expected_timestamp > current_time:
-                time.sleep(expected_timestamp - current_time)
-            
-            try:
-                self.frame_queue.put(frame, block=False)
-            except queue.Full:
-                self.skipped_frames += 1
-                print(f"[{self.skipped_frames}] Frame skipped due to full queue.")
-            
-            self.current_frame_idx += 1
-        
-        if self.current_frame_idx >= self.total_frames:
-            print("Reached end of video file.")
-            self.running = False
-    
-    def _capture_avi_with_constant_fps(self):
+
+    def _capture_from_video_file(self):
         frame_start_time = time.time()
         
         while self.running:
@@ -334,44 +274,6 @@ class System:
                 time.sleep(expected_time - current_time)
         
         print(f"AVI capture finished. Processed {self.current_frame_idx} frames.")
-    
-    def _capture_avi_with_timestamps(self):
-        if self.start_time is None:
-            self.start_time = time.time()
-            first_timestamp = self.timestamps_df.iloc[0]['timestamp']
-            self.timestamp_offset = self.start_time - first_timestamp
-        
-        while self.running:
-            if self.current_frame_idx >= len(self.timestamps_df):
-                print("Reached end of timestamp file.")
-                self.running = False
-                break
-            
-            ret, frame = self.cap.read()
-            if not ret:
-                print("Reached end of video file.")
-                self.running = False
-                break
-            
-            # Convert BGR to RGB
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            
-            expected_timestamp = self.timestamps_df.iloc[self.current_frame_idx]['timestamp'] + self.timestamp_offset
-            current_time = time.time()
-            
-            # Wait until it's time to display this frame
-            if expected_timestamp > current_time:
-                time.sleep(expected_timestamp - current_time)
-            
-            try:
-                self.frame_queue.put(frame, block=False)
-            except queue.Full:
-                self.skipped_frames += 1
-                print(f"[{self.skipped_frames}] Frame skipped due to full queue.")
-            
-            self.current_frame_idx += 1
-        
-        print(f"AVI capture with timestamps finished. Processed {self.current_frame_idx} frames.")
                     
     def process_frames(self):
         while self.running:
