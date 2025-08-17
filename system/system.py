@@ -46,11 +46,13 @@ class System:
                     use_incremental=None,
 
                     log_dir="output",
+                    resolution_factor=1.0
                 ):
         
         self.camera_id = camera_id
         self.video_file = video_file
         self.fps = fps
+        self.resolution_factor = resolution_factor
 
         # Logging
         self.fps_log = []
@@ -107,7 +109,7 @@ class System:
         # self.face_detector = face_detector or DegirumFaceDetector()
         self.face_tracker = face_tracker or Centroid()
         # self.roi_selector = roi_selector or FullFace()
-        self.roi_selector = roi_selector or FullFaceSquare(target_size=(72,72), larger_box_coef=1.5)
+        self.roi_selector = roi_selector or FullFaceSquare(target_size=(72,72), larger_box_coef=1.0)
         # self.rppg_signal_extractor = rppg_signal_extractor or POS(fps=fps)
         self.rppg_signal_extractor = rppg_signal_extractor or HEFDeepPhys(fps=fps, model_path=os.path.join(HEF_DIR, "PURE_DeepPhys_quantized_20250706-000109.hef"))
         # self.rppg_signal_extractor = rppg_signal_extractor or ONNXDeepPhys(fps=fps, model_path=os.path.join(ONNX_DIR, "PURE_DeepPhys.onnx"))
@@ -142,6 +144,19 @@ class System:
         print(f"  rPPG Extractor: {type(self.rppg_signal_extractor).__name__}")
         print(f"  Window Size: {window_size}")
         print(f"  Use Incremental: {use_incremental}")
+        print(f"  Resolution Factor: {resolution_factor}")
+    
+    def _resize_frame(self, frame):
+        """Resize frame by resolution_factor while keeping aspect ratio."""
+        if self.resolution_factor == 1.0:
+            return frame
+        
+        height, width = frame.shape[:2]
+        new_width = int(width * self.resolution_factor)
+        new_height = int(height * self.resolution_factor)
+        
+        resized_frame = cv2.resize(frame, (new_width, new_height), interpolation=cv2.INTER_LINEAR)
+        return resized_frame
             
     def start(self):
         self.running = True
@@ -215,6 +230,8 @@ class System:
             try:
                 # convert to RGB
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                # Apply resolution scaling
+                frame = self._resize_frame(frame)
                 self.frame_queue.put(frame, block=False)
             except queue.Full:
                 # If queue is full, skip and yield CPU briefly
@@ -229,6 +246,8 @@ class System:
             frame = self.video_frames[self.current_frame_idx]
             
             try:
+                # Apply resolution scaling
+                frame = self._resize_frame(frame)
                 self.frame_queue.put(frame, block=False)
             except queue.Full:
                 self.skipped_frames += 1
@@ -260,6 +279,8 @@ class System:
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             
             try:
+                # Apply resolution scaling
+                frame = self._resize_frame(frame)
                 self.frame_queue.put(frame, block=False)
             except queue.Full:
                 self.skipped_frames += 1

@@ -1,4 +1,5 @@
 import os
+import time
 
 MY_VIDEOS = [
     '/home/pme/ta/data/camera/00/video_00_20250503_152120.npy',
@@ -34,9 +35,15 @@ ubfc_exceptions = [2, 6, 7, 19, 21, 28, 29]
 ubfc_rppg_subjects = [i for i in range(1, 50) if i not in ubfc_exceptions]
 UBFC_RPPG_VIDEOS = {}
 for subject in ubfc_rppg_subjects:
-    UBFC_RPPG_VIDEOS[subject] = [
-        f'/home/pme/ta/data/UBFC-rPPG/raw/subject{subject}/vid.avi' for i in range(1, 6)
-    ]
+    UBFC_RPPG_VIDEOS[subject] = f'/media/pme/SSD NUR/Datasets/rPPG/UBFC-rPPG/subject{subject}/vid.avi'
+
+UBFC_RPPG_CUSTOM_VIDEOS = {}
+UBFC_RPPG_CUSTOM_VERSIONS = ['a', 'b', 'c']
+for version in UBFC_RPPG_CUSTOM_VERSIONS:
+    UBFC_RPPG_CUSTOM_VIDEOS[version] = {}
+    
+    for i in range(1, 10):
+        UBFC_RPPG_CUSTOM_VIDEOS[version][i] = f'/media/pme/SSD NUR/Multisubject/Sintetik/{version}/collage_{i}.npy'
 
 def is_valid_my_video_index(idx):
     return 0 <= idx < len(MY_VIDEOS) and os.path.exists(MY_VIDEOS[idx])
@@ -44,9 +51,18 @@ def is_valid_my_video_index(idx):
 def is_valid_ubfc_rppg_subject_index(idx):
     return idx in ubfc_rppg_subjects and os.path.exists(UBFC_RPPG_VIDEOS[idx])
 
-def get_my_videos_log_dir(idx):
-    video_name = os.path.basename(MY_VIDEOS[idx]).split('_')[1]
-    return f'/home/pme/ta/logs/my-videos/{video_name}'
+def is_valid_ubfc_rppg_custom_video_index(version, idx):
+    return version in UBFC_RPPG_CUSTOM_VIDEOS and idx in UBFC_RPPG_CUSTOM_VIDEOS[version] and os.path.exists(UBFC_RPPG_CUSTOM_VIDEOS[version][idx])
 
-def get_ubfc_rppg_log_dir(subject_idx):
-    return f'/home/pme/ta/logs/UBFC-rPPG/subject{subject_idx}'
+def get_my_videos_log_dir(idx, resolution_factor):
+    video_name = os.path.basename(MY_VIDEOS[idx]).split('_')[1]
+    return f'/home/pme/ta/ta-app/logs/my-videos_r{resolution_factor}/{video_name}'
+
+def get_ubfc_rppg_log_dir(subject_idx, resolution_factor):
+    return f'/home/pme/ta/ta-app/logs/ubfc-rppg_r{resolution_factor}/{subject_idx}'
+
+def get_ubfc_rppg_custom_log_dir(version, video_idx, resolution_factor):
+    return f'/home/pme/ta/ta-app/logs/ubfc-rppg-custom_r{resolution_factor}/{version}/{video_idx}'
+
+def get_camera_log_dir(resolution_factor):
+    return f'/home/pme/ta/ta-app/logs/camera_r{resolution_factor}/{time.time()}/'

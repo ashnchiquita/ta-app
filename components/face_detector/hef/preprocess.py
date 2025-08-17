@@ -33,9 +33,13 @@ class Preprocessor:
             # resize preserving aspect ratio
             scaled_image = self._resize(image_obj, nw, nh, resample_method)
 
-            image_obj, dx, dy = self._pad(
-                scaled_image, w, h, self.fill_color
-            )
+            if ih != iw:
+                image_obj, dx, dy = self._pad(
+                    scaled_image, w, h, self.fill_color
+                )
+            else:
+                image_obj = scaled_image
+                
             coord_conv = lambda x, y: (
                 min(max(0, (x - dx) / gain), iw),
                 min(max(0, (y - dy) / gain), ih),

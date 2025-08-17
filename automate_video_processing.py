@@ -23,14 +23,21 @@ import sys
 from typing import List
 from videos import get_my_videos_log_dir, MY_VIDEOS
 
+MODE = 'ubfc-rppg-custom'
+VERSION = 'b'
+RESOLUTION_FACTOR = 0.1
+PREFIX_PATH = f'/home/pme/ta/ta-app/logs/{MODE}_r{RESOLUTION_FACTOR}'
+if VERSION:
+    PREFIX_PATH += f"/{VERSION}"
+
 class VideoProcessingAutomator:
-    def __init__(self, video_indices: List[int], max_retries: int = 10):
+    def __init__(self, video_indices: List[int], max_retries: int = 3):
         """
         Initialize the automator.
         
         Args:
             video_indices: List of video indices to process
-            max_retries: Maximum number of retries per video (default: 10)
+            max_retries: Maximum number of retries per video (default: 3)
         """
         self.video_indices = video_indices
         self.max_retries = max_retries
@@ -48,7 +55,9 @@ class VideoProcessingAutomator:
             bool: True if the command executed successfully, False otherwise
         """
         try:
-            cmd = ["python", "main.py", "-m", "my-videos", "-v", str(video_index)]
+            cmd = ["python", "main.py", "-m", MODE, "-v", str(video_index), "-r", str(RESOLUTION_FACTOR)]
+            if VERSION:
+                cmd += ["-V", VERSION]
             print(f"Running: {' '.join(cmd)}")
             
             result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)  # 5 minutes timeout
@@ -80,8 +89,8 @@ class VideoProcessingAutomator:
             bool: True if df['Value'][6] == 0, False otherwise
         """
         try:
-            log_dir = get_my_videos_log_dir(video_index)
-            metrics_file = os.path.join(log_dir, "processing-metrics.csv")
+            log_dir = os.path.join(PREFIX_PATH, f"{video_index:01d}")
+            metrics_file = os.path.join(log_dir, "processing_metrics.csv")
             
             if not os.path.exists(metrics_file):
                 print(f"⚠ Metrics file not found: {metrics_file}")
@@ -109,16 +118,25 @@ class VideoProcessingAutomator:
             print(f"✗ Error checking metrics for video {video_index}: {e}")
             return False
     
-    def wait_with_countdown(self, minutes: int, reason: str = ""):
+    def wait_with_countdown(self, minutes: int = 0, reason: str = "", seconds: int = 0):
         """
-        Wait for specified minutes with a countdown display.
+        Wait for specified time with a countdown display.
         
         Args:
-            minutes: Number of minutes to wait
+            minutes: Number of minutes to wait (default: 0)
             reason: Reason for waiting (for display)
+            seconds: Number of seconds to wait (default: 0)
         """
-        total_seconds = minutes * 60
-        print(f"⏳ Waiting {minutes} minute(s) {reason}...")
+        total_seconds = minutes * 60 + seconds
+        
+        if minutes > 0 and seconds > 0:
+            time_str = f"{minutes} minute(s) and {seconds} second(s)"
+        elif minutes > 0:
+            time_str = f"{minutes} minute(s)"
+        else:
+            time_str = f"{seconds} second(s)"
+            
+        print(f"⏳ Waiting {time_str} {reason}...")
         
         for remaining in range(total_seconds, 0, -1):
             mins, secs = divmod(remaining, 60)
@@ -142,14 +160,14 @@ class VideoProcessingAutomator:
         print(f"🎬 Processing Video {video_index}")
         print(f"{'='*60}")
         
-        # Validate video index
-        if video_index < 0 or video_index >= len(MY_VIDEOS):
-            print(f"✗ Invalid video index {video_index} (valid range: 0-{len(MY_VIDEOS)-1})")
-            return False
+        # # Validate video index
+        # if video_index < 0 or video_index >= len(MY_VIDEOS):
+        #     print(f"✗ Invalid video index {video_index} (valid range: 0-{len(MY_VIDEOS)-1})")
+        #     return False
         
-        if not os.path.exists(MY_VIDEOS[video_index]):
-            print(f"✗ Video file not found: {MY_VIDEOS[video_index]}")
-            return False
+        # if not os.path.exists(MY_VIDEOS[video_index]):
+        #     print(f"✗ Video file not found: {MY_VIDEOS[video_index]}")
+        #     return False
         
         retry_count = 0
         
@@ -207,9 +225,9 @@ class VideoProcessingAutomator:
             else:
                 self.failed_videos.append(video_index)
             
-            # Wait 1 minute before next video (except for the last one)
+            # Wait 30 seconds before next video (except for the last one)
             if i < len(self.video_indices) - 1:
-                self.wait_with_countdown(1, "before next video")
+                self.wait_with_countdown(0, "before next video", 30)
         
         # Print final summary
         end_time = time.time()
@@ -255,18 +273,18 @@ Examples:
     parser.add_argument(
         '--max-retries', '-r',
         type=int,
-        default=10,
-        help='Maximum number of retries per video (default: 10)'
+        default=3,
+        help='Maximum number of retries per video (default: 3)'
     )
     
     args = parser.parse_args()
     
     # Validate video indices
-    invalid_indices = [idx for idx in args.video_list if idx < 0 or idx >= len(MY_VIDEOS)]
-    if invalid_indices:
-        print(f"❌ Error: Invalid video indices: {invalid_indices}")
-        print(f"Valid range: 0-{len(MY_VIDEOS)-1}")
-        sys.exit(1)
+    # invalid_indices = [idx for idx in args.video_list if idx < 0 or idx >= len(MY_VIDEOS)]
+    # if invalid_indices:
+    #     print(f"❌ Error: Invalid video indices: {invalid_indices}")
+    #     print(f"Valid range: 0-{len(MY_VIDEOS)-1}")
+    #     sys.exit(1)
     
     # Remove duplicates and sort
     video_indices = sorted(list(set(args.video_list)))

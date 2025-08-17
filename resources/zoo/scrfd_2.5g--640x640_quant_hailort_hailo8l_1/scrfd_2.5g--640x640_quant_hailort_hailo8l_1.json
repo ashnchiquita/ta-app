@@ -53,7 +53,7 @@
                 ]
             },
             "OutputNMSThreshold": 0.6,
-            "OutputConfThreshold": 0.7,
+            "OutputConfThreshold": 0.6,
             "PythonFile": "HailoDetectionScrfd.py"
         }
     ]
